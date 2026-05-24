@@ -12,18 +12,16 @@ function checkSymptoms() {
     var symptoms = document.getElementById('symptoms').value;
     var nonce = document.getElementById('gp_medical_nonce').value;
     var output = document.getElementById('ai-medical-advice');
-
     output.innerHTML = "Consulting AI Triage...";
-
-    jQuery.post(gp_ajax.ajaxurl, {
-        action: 'gp_check_symptoms',
-        symptoms: symptoms,
-        nonce: nonce
-    }, function(res) {
-        if(res.success) {
-            output.innerHTML = res.data;
-        } else {
-            output.innerHTML = "Error: " + res.data;
-        }
+    jQuery.post(gp_ajax.ajaxurl, { action: 'gp_check_symptoms', symptoms: symptoms, nonce: nonce }, function(res) {
+        if(res.success) output.innerHTML = res.data;
     });
 }
+
+// Exit Intent Logic
+jQuery(document).on('mouseleave', function(e) {
+    if (e.clientY < 0 && !localStorage.getItem('gp_exit_shown')) {
+        jQuery('#gp-exit-popup').fadeIn();
+        localStorage.setItem('gp_exit_shown', 'true');
+    }
+});

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Admin Dashboard Class - UI Enhanced
+ * GrowthPress Admin Dashboard Class - Final
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,11 @@ class GrowthPress_Dashboard {
 
     public function handle_lead_stage_update() {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-        wp_set_object_terms( intval($_POST['lead_id']), sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
+        $lead_id = intval($_POST['lead_id']);
+        $stage = sanitize_text_field($_POST['stage']);
+        wp_set_object_terms( $lead_id, $stage, 'gp_lead_stage' );
+
+        GrowthPress_Activity::log( "Lead #" . $lead_id . " moved to " . $stage );
         wp_send_json_success( 'Lead stage updated.' );
     }
 
@@ -45,35 +49,49 @@ class GrowthPress_Dashboard {
             if ( method_exists($instance, 'generate_sample_data') ) $instance->generate_sample_data();
         }
         update_option( 'growthpress_niche', $niche );
+        GrowthPress_Activity::log( "System reconfigured for niche: " . $niche );
         wp_send_json_success( "System configured for $niche." );
     }
 
     public function render_dashboard() {
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+        $logs = GrowthPress_Activity::get_logs();
         ?>
         <div class="wrap growthpress-dashboard">
             <h1>GrowthPress Business OS</h1>
 
-            <div id="gp-kanban-board" class="kanban-board" style="display: flex; gap: 20px; margin-top: 30px; overflow-x: auto;">
-                <?php
-                $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
-                foreach ( $stages as $slug => $label ) : ?>
-                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width: 250px; background: #eee; padding: 15px; border-radius: 10px;">
-                        <h3 style="margin-top:0;"><?php echo $label; ?></h3>
-                        <div class="kanban-cards">
-                            <?php foreach ( $leads as $lead ) :
-                                $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
-                                $score = get_post_meta($lead->ID, '_gp_lead_score', true) ?: 0;
-                                if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) : ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="margin-bottom: 10px; cursor: grab; background: white;">
-                                        <strong><?php echo esc_html($lead->post_title); ?></strong>
-                                        <div class="lead-score" style="font-size: 0.8rem; color: #2563EB;">Score: <?php echo $score; ?></div>
-                                    </div>
-                                <?php endif;
-                            endforeach; ?>
-                        </div>
+            <div class="dashboard-content" style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+                <div class="main-panel">
+                    <div id="gp-kanban-board" class="kanban-board" style="display: flex; gap: 15px; overflow-x: auto;">
+                        <?php
+                        $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
+                        foreach ( $stages as $slug => $label ) : ?>
+                            <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width: 200px; background: #eee; padding: 10px; border-radius: 8px;">
+                                <h4><?php echo $label; ?></h4>
+                                <div class="kanban-cards">
+                                    <?php foreach ( $leads as $lead ) :
+                                        $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
+                                        if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) : ?>
+                                            <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="margin-bottom: 5px; background: white; padding: 10px; cursor: grab;">
+                                                <?php echo esc_html($lead->post_title); ?>
+                                            </div>
+                                        <?php endif;
+                                    endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+                </div>
+                <div class="side-panel">
+                    <div class="glass-card">
+                        <h3>Team Activity Feed</h3>
+                        <ul style="font-size: 0.85rem; color: #555;">
+                            <?php foreach($logs as $log): ?>
+                                <li style="margin-bottom: 10px;"><strong><?php echo $log['time']; ?>:</strong> <?php echo esc_html($log['msg']); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <?php
