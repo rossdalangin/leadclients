@@ -11,6 +11,7 @@ class GrowthPress_Content_Studio {
 
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'add_studio_menu' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_studio_assets' ) );
         add_action( 'wp_ajax_gp_generate_content', array( $this, 'handle_generation' ) );
     }
 
@@ -23,6 +24,16 @@ class GrowthPress_Content_Studio {
             'growthpress-studio',
             array( $this, 'render_studio' )
         );
+    }
+
+    public function enqueue_studio_assets( $hook ) {
+        if ( 'growthpress_page_growthpress-studio' !== $hook ) {
+            return;
+        }
+        wp_enqueue_script( 'growthpress-studio-js', GROWTHPRESS_CORE_URL . 'assets/js/admin-dashboard.js', array( 'jquery' ), GROWTHPRESS_CORE_VERSION, true );
+        wp_localize_script( 'growthpress-studio-js', 'gp_admin', array(
+            'nonce' => wp_create_nonce( 'gp_admin_nonce' )
+        ));
     }
 
     public function handle_generation() {
@@ -70,7 +81,7 @@ class GrowthPress_Content_Studio {
 
                     <button class="button button-primary" onclick="generateContent()">Generate with AI</button>
                 </div>
-                <div id="gp-studio-output" class="output-area"></div>
+                <div id="gp-studio-output" class="output-area" style="margin-top: 20px;"></div>
             </div>
         </div>
         <script>
@@ -85,7 +96,9 @@ class GrowthPress_Content_Studio {
             $('#gp-studio-output').html('Thinking...');
             $.post(ajaxurl, data, function(res) {
                 if(res.success) {
-                    $('#gp-studio-output').html('<pre style="white-space: pre-wrap;">' + res.data + '</pre>');
+                    $('#gp-studio-output').html('<div class="glass-card" style="background: #f8fafc;"><pre style="white-space: pre-wrap; font-family: inherit;">' + res.data + '</pre></div>');
+                } else {
+                    $('#gp-studio-output').html('Error: ' + res.data);
                 }
             });
         }

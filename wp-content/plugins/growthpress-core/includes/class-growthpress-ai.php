@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Core Class - Marketing Enhanced
+ * GrowthPress AI Core Class - Proposal Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,9 +51,10 @@ class GrowthPress_AI {
         return $body['choices'][0]['message']['content'] ?? '';
     }
 
-    /**
-     * AI Marketing Engine Methods
-     */
+    public function generate_proposal( $client_name, $service, $niche ) {
+        $prompt = "Create a professional business proposal for $client_name regarding our $service services. As a $niche firm, focus on our expertise, the project scope, and anticipated ROI. Maintain a high-ticket, premium tone.";
+        return $this->call_ai( $prompt, "You are a senior business development consultant." );
+    }
 
     public function generate_blog_post( $topic, $niche ) {
         $prompt = "Write a high-quality, SEO-optimized blog post about \"$topic\" for a $niche business. Include headings, a call to action, and focus on authority building.";
@@ -73,6 +74,11 @@ class GrowthPress_AI {
     public function analyze_sentiment( $message ) {
         $prompt = "Analyze the sentiment and urgency of this lead message: \"$message\". Return a JSON object with 'sentiment' (positive, neutral, negative) and 'urgency' (1-10).";
         return $this->call_ai( $prompt, "You are a lead qualification assistant." );
+    }
+
+    public function generate_followup( $lead_data, $previous_interaction = '' ) {
+        $prompt = "Generate a professional follow-up message for a lead with these details: " . json_encode($lead_data);
+        return $this->call_ai( $prompt, "You are a high-ticket sales consultant." );
     }
 
     public function generate_missed_call_reply( $niche ) {

@@ -13,6 +13,14 @@ class GrowthPress_Medical {
         add_shortcode( 'gp_symptom_checker', array( $this, 'render_symptom_checker' ) );
         add_action( 'wp_ajax_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
         add_action( 'wp_ajax_nopriv_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
+        add_action( 'gp_appointment_created', array( $this, 'generate_telemedicine_link' ) );
+    }
+
+    public function generate_telemedicine_link( $appointment_id ) {
+        // Mock link generation (could integrate with Zoom/Google Meet API)
+        $meeting_link = "https://telehealth.growthpress.io/room/" . wp_generate_password(8, false);
+        update_post_meta( $appointment_id, '_gp_telemedicine_link', $meeting_link );
+        error_log( "Medical OS: Telemedicine link generated for appointment $appointment_id: $meeting_link" );
     }
 
     public function render_symptom_checker() {
