@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Admin Dashboard Class - White Label
+ * GrowthPress Admin Dashboard Class - AI Closing Logic
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,19 +53,44 @@ class GrowthPress_Dashboard {
         wp_send_json_success();
     }
 
-    private function generate_niche_pages($niche) {
-        $pages = array('Home' => '[gp_lead_form]', 'Services' => '[gp_booking_form]', 'Contact' => '[gp_ai_faq]');
+    private function generate_niche_pages($n) {
+        $pages = array('Home' => '[gp_lead_form]', 'Services' => '[gp_booking_form]');
         foreach($pages as $t => $c) { if(!get_page_by_title($t)) wp_insert_post(array('post_title'=>$t,'post_content'=>$c,'post_type'=>'page','post_status'=>'publish')); }
     }
 
-    private function generate_niche_funnel($niche) {
-        $funnel = array('Strategy Guide' => '[gp_lead_form]', 'Success Page' => 'Thank you.');
-        foreach($funnel as $t => $c) { wp_insert_post(array('post_title'=>$t,'post_content'=>$c,'post_type'=>'page','post_status'=>'publish')); }
+    private function generate_niche_funnel($n) {
+        wp_insert_post(array('post_title'=>'Strategy Guide','post_content'=>'[gp_lead_form]','post_type'=>'page','post_status'=>'publish'));
     }
 
     public function render_dashboard() {
-        $brand = get_option('growthpress_brand_name', 'GrowthPress');
-        include_once GROWTHPRESS_CORE_PATH . 'admin/views/dashboard.php';
+        $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+        $stages = array( 'new' => 'New', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
+        ?>
+        <div class="wrap growthpress-dashboard">
+            <h1><?php echo get_option('growthpress_brand_name', 'GrowthPress'); ?> OS</h1>
+
+            <div id="gp-kanban-board" style="display:flex; gap:15px; margin-top:20px; overflow-x:auto;">
+                <?php foreach ( $stages as $slug => $label ) : ?>
+                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width:220px; background:#f4f4f4; padding:10px; border-radius:8px;">
+                        <h4><?php echo $label; ?></h4>
+                        <div class="kanban-cards">
+                            <?php foreach ( $leads as $lead ) :
+                                $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
+                                if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) : ?>
+                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:10px; padding:10px; cursor:grab;">
+                                        <strong><?php echo esc_html($lead->post_title); ?></strong>
+                                        <div class="ai-next-step" style="font-size:10px; color:#2563EB; margin-top:5px; border-top:1px solid #eee; padding-top:3px;">
+                                            AI Tip: Send case study.
+                                        </div>
+                                    </div>
+                                <?php endif;
+                            endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php
     }
 }
 new GrowthPress_Dashboard();

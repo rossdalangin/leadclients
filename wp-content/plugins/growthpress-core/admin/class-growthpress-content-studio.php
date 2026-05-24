@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Content Studio - Enhanced Instructions
+ * GrowthPress AI Content Studio - Sales Assistant Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,14 +16,7 @@ class GrowthPress_Content_Studio {
     }
 
     public function add_studio_menu() {
-        add_submenu_page(
-            'growthpress-dashboard',
-            'AI Content Studio',
-            'AI Content Studio',
-            'manage_options',
-            'growthpress-studio',
-            array( $this, 'render_studio' )
-        );
+        add_submenu_page( 'growthpress-dashboard', 'AI Content Studio', 'AI Content Studio', 'manage_options', 'growthpress-studio', array( $this, 'render_studio' ) );
     }
 
     public function enqueue_studio_assets( $hook ) {
@@ -43,6 +36,7 @@ class GrowthPress_Content_Studio {
             case 'blog': $result = $ai->generate_blog_post($topic, $niche); break;
             case 'social': $result = $ai->generate_social_content($topic); break;
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
+            case 'sales': $result = $ai->call_ai("Generate a discovery call script and objection handling guide for a $niche business regarding \"$topic\".", "You are a sales trainer."); break;
             default: $result = 'Invalid type.';
         }
         wp_send_json_success($result);
@@ -51,62 +45,34 @@ class GrowthPress_Content_Studio {
     public function render_studio() {
         ?>
         <div class="wrap growthpress-studio">
-            <h1>AI Content Studio</h1>
-            <p class="description">Generate high-converting marketing materials tailored to your specific business niche.</p>
-
+            <h1>AI Content & Sales Studio</h1>
             <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
                 <div class="studio-input glass-card">
-                    <h3>Asset Configuration</h3>
-                    <div class="form-group" style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:bold;">Asset Type</label>
-                        <select id="gp-content-type" style="width:100%;">
-                            <option value="blog">SEO Blog Post (Long Form)</option>
-                            <option value="social">Social Media Bundle (3 Posts)</option>
-                            <option value="ad">Direct-Response Ad Copy</option>
-                        </select>
-                        <p class="help-text" style="font-size:11px;">Blogs include H2 tags and CTA. Ads include Google/FB formats.</p>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:bold;">Primary Topic / Keyword</label>
-                        <input type="text" id="gp-content-topic" placeholder="e.g. Why Invisalign is better than braces" style="width:100%;">
-                        <p class="help-text" style="font-size:11px;">Example: "Emergency roofing repair" or "Dental implants for seniors".</p>
-                    </div>
-
-                    <button class="button button-primary button-hero" onclick="generateContent()">Generate Asset with AI</button>
-                    <div style="margin-top:20px; font-size:12px; background:#fff9db; padding:10px; border-radius:5px;">
-                        <strong>Pro Tip:</strong> Use specific keywords to get better SEO results. The AI automatically adapts the tone to your <strong><?php echo get_option('growthpress_niche'); ?></strong> niche.
-                    </div>
+                    <h3>Asset Generation</h3>
+                    <select id="gp-content-type" style="width:100%;">
+                        <option value="blog">SEO Blog Post</option>
+                        <option value="social">Social Media Bundle</option>
+                        <option value="ad">Ad Copy</option>
+                        <option value="sales">Sales Script & Objection Handling</option>
+                    </select>
+                    <p class="description">Select 'Sales Script' to get a discovery call talk track for your <?php echo get_option('growthpress_niche'); ?> niche.</p>
+                    <input type="text" id="gp-content-topic" placeholder="e.g. Closing Dental Implant Leads" style="width:100%; margin-top:10px;">
+                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate with AI</button>
                 </div>
-
                 <div class="studio-output glass-card">
-                    <h3>Generated Output</h3>
-                    <div id="gp-studio-output" style="min-height:200px; border:1px dashed #ccc; padding:15px; background:#fff;">
-                        <p style="color:#999; text-align:center;">Configure and click generate to see results...</p>
-                    </div>
+                    <div id="gp-studio-output">Results appear here...</div>
                 </div>
             </div>
         </div>
         <script>
         function generateContent() {
-            var $ = jQuery;
-            $('#gp-studio-output').html('<div style="text-align:center; padding:50px;"><span class="spinner is-active"></span> Thinking...</div>');
-            $.post(ajaxurl, {
-                action: 'gp_generate_content',
-                content_type: $('#gp-content-type').val(),
-                topic: $('#gp-content-topic').val(),
-                gp_nonce: gp_admin.nonce
-            }, function(res) {
-                if(res.success) {
-                    $('#gp-studio-output').html('<div style="white-space:pre-wrap; font-family:Inter, sans-serif; line-height:1.6;">' + res.data + '</div>');
-                } else {
-                    $('#gp-studio-output').html('Error: ' + res.data);
-                }
+            jQuery('#gp-studio-output').html('Thinking...');
+            jQuery.post(ajaxurl, { action:'gp_generate_content', content_type:jQuery('#gp-content-type').val(), topic:jQuery('#gp-content-topic').val(), gp_nonce:gp_admin.nonce }, function(res) {
+                if(res.success) jQuery('#gp-studio-output').html('<pre style="white-space:pre-wrap;">' + res.data + '</pre>');
             });
         }
         </script>
         <?php
     }
 }
-
 new GrowthPress_Content_Studio();

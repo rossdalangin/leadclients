@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Contractor Module - UI Enhanced
+ * GrowthPress Contractor Module - Map & Estimation Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +12,7 @@ class GrowthPress_Contractor {
     public function __construct() {
         add_action( 'init', array( $this, 'register_contractor_cpts' ) );
         add_shortcode( 'gp_contractor_estimator', array( $this, 'render_estimator' ) );
+        add_shortcode( 'gp_service_area', array( $this, 'render_service_area' ) );
     }
 
     public function register_contractor_cpts() {
@@ -20,6 +21,11 @@ class GrowthPress_Contractor {
             'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-admin-tools',
             'supports'    => array( 'title', 'editor', 'thumbnail' ),
         ) );
+    }
+
+    public function render_service_area() {
+        $area = get_option('gp_contractor_zip_codes', '90210, 90211, 90212');
+        return '<div class="gp-map-box glass-card"><h3>Our Service Area</h3><p>We provide expert services in the following areas: ' . esc_html($area) . '</p><div id="gp-mock-map" style="background:#e2e8f0; height:200px; display:flex; align-items:center; justify-content:center; border-radius:8px;">[Interactive Map Integration]</div></div>';
     }
 
     public function render_estimator() {
@@ -38,26 +44,17 @@ class GrowthPress_Contractor {
                     <option value="full">Whole Home</option>
                 </select>
             </div>
-            <div class="form-row">
-                <label>Material Tier</label>
-                <select id="gp-tier">
-                    <option value="standard">Standard Contractor Grade</option>
-                    <option value="luxury">Luxury / Bespoke</option>
-                </select>
-            </div>
             <button onclick="calcEstimate()" style="margin-top:15px;">Calculate Quote</button>
-            <div id="estimate-result" style="margin-top:20px; font-weight:bold;"></div>
+            <div id="estimate-result" style="margin-top:20px; font-weight:bold; color: #2563EB;"></div>
         </div>
         <script>
         function calcEstimate() {
             var sqft = jQuery('#gp-sq-ft').val();
             var type = jQuery('#gp-renov-type').val();
-            var tier = jQuery('#gp-tier').val();
             var base = type === 'kitchen' ? 150 : (type === 'bath' ? 200 : 80);
-            var mult = tier === 'luxury' ? 1.5 : 1.0;
-            var total = sqft * base * mult;
+            var total = sqft * base;
             if(sqft) {
-                jQuery('#estimate-result').html('Projected Investment: $' + total.toLocaleString() + '<br><small>Includes labor, materials, and management.</small>');
+                jQuery('#estimate-result').html('Estimated Investment: $' + total.toLocaleString());
             }
         }
         </script>
@@ -66,7 +63,7 @@ class GrowthPress_Contractor {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Sample Renovation', 'post_type' => 'gp_project', 'post_status' => 'publish'));
+        wp_insert_post(array('post_title' => 'Luxury Kitchen Remodel', 'post_type' => 'gp_project', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Contractor();
