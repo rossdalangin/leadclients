@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI FAQ Assistant - Bubble Enhanced
+ * GrowthPress AI FAQ Assistant - Intent Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,7 +52,12 @@ class GrowthPress_AI_FAQ {
                 $chat.append('<p><strong>You:</strong> ' + query + '</p>');
                 jQuery('#gp-faq-input').val('');
                 jQuery.post(gp_ajax.ajaxurl, { action: 'gp_ai_faq_ask', query: query, nonce: nonce }, function(res) {
-                    if(res.success) $chat.append('<p style="color:#2563EB;"><strong>AI:</strong> ' + res.data + '</p>');
+                    if(res.success) {
+                        $chat.append('<p style="color:#2563EB;"><strong>AI:</strong> ' + res.data.answer + '</p>');
+                        if(res.data.intent === 'booking') {
+                            $chat.append('<div class="glass-card" style="margin-top:10px; font-size:12px;">🗓️ <a href="/services">Click here to book your appointment now.</a></div>');
+                        }
+                    }
                     $chat.scrollTop($chat[0].scrollHeight);
                 });
             }
@@ -60,18 +65,18 @@ class GrowthPress_AI_FAQ {
         <?php
     }
 
-    public function render_faq_assistant() {
-        // Keeping legacy shortcode support
-        return '<div class="glass-card">Use the chat bubble in the bottom right for assistance.</div>';
-    }
+    public function render_faq_assistant() { return '<div class="glass-card">Use the chat bubble for assistance.</div>'; }
 
     public function handle_faq_query() {
         check_ajax_referer('gp_ai_faq_nonce', 'nonce');
         $query = sanitize_text_field($_POST['query']);
         $niche = get_option('growthpress_niche', 'Business');
+
         $ai = GrowthPress_AI::get_instance();
-        $prompt = "A visitor is asking: \"$query\". As an expert in $niche, provide a helpful and concise answer. Suggest booking if needed.";
-        $response = $ai->call_ai($prompt, "You are a professional business assistant for a $niche company.");
+        $prompt = "A visitor is asking: \"$query\". As an expert in $niche, provide a concise answer. Also detect if they want to 'book', 'schedule', or 'start' and return JSON with 'answer' and 'intent' (booking or general).";
+        $response_raw = $ai->call_ai($prompt, "You are a professional business assistant.");
+
+        $response = json_decode($response_raw, true) ?: array('answer' => $response_raw, 'intent' => 'general');
         wp_send_json_success($response);
     }
 }

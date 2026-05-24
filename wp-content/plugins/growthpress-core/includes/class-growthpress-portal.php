@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Customer Portal Class - Final Automation
+ * GrowthPress Customer Portal Class - Final
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,43 +17,53 @@ class GrowthPress_Portal {
 
     public function trigger_post_acceptance_logic( $proposal_id ) {
         $lead_id = get_post_meta($proposal_id, '_related_lead', true);
-
-        // 1. Create project kickoff task
         $crm = GrowthPress_CRM::get_instance();
-        $crm->create_task( "PROJECT KICKOFF: " . get_the_title($lead_id), "Proposal accepted. Start onboarding.", $lead_id );
+        $crm->create_task( "PROJECT KICKOFF: " . get_the_title($lead_id), "Proposal accepted.", $lead_id );
 
-        // 2. Generate Invoice
         $payments = new GrowthPress_Payments();
-        $payments->create_invoice( 500, $proposal_id, 'proposal' ); // Mock 500 deposit
+        $payments->create_invoice( 500, $proposal_id, 'proposal' );
 
-        // 3. AI generated confirmation
+        // AI Welcome
         $ai = GrowthPress_AI::get_instance();
-        $msg = $ai->call_ai("Generate a project kickoff email.", "You are a customer success manager.");
+        $msg = $ai->call_ai("Generate a welcome email for a new project.", "You are a customer success manager.");
         update_post_meta($proposal_id, '_kickoff_msg', $msg);
     }
 
     public function render_portal() {
         if ( ! is_user_logged_in() ) return '<p>Please login.</p>';
         $email = wp_get_current_user()->user_email;
+
+        // Fetch projects (linked to this email via lead)
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email ) );
+        $lead_ids = wp_list_pluck($leads, 'ID');
+
         $proposals = array();
-        if ( ! empty($leads) ) {
-            $lead_ids = wp_list_pluck($leads, 'ID');
+        $projects = array();
+        if ( ! empty($lead_ids) ) {
             $proposals = get_posts( array( 'post_type' => 'gp_proposal', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
+            $projects = get_posts( array( 'post_type' => 'gp_project', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
         }
+
         ob_start(); ?>
-        <div class="gp-portal-container glass-card">
-            <h2>Client Portal</h2>
-            <h3>Active Proposals</h3>
-            <?php foreach($proposals as $prop):
-                $status = get_post_meta($prop->ID, '_gp_proposal_status', true) ?: 'Pending'; ?>
-                <div class="proposal">
-                    <strong><?php echo esc_html($prop->post_title); ?></strong> - Status: <?php echo $status; ?>
-                    <?php if($status === 'Pending'): ?>
-                        <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">Accept & Pay Deposit</button>
-                    <?php endif; ?>
+        <div class="gp-portal-container container">
+            <div class="glass-card">
+                <h2>Customer Dashboard</h2>
+                <div class="portal-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div class="portal-section">
+                        <h3>Project Status</h3>
+                        <?php if($projects): foreach($projects as $p):
+                            $status = get_post_meta($p->ID, '_gp_project_status', true) ?: 'Active'; ?>
+                            <div class="project-item"><?php echo $p->post_title; ?>: <strong><?php echo $status; ?></strong></div>
+                        <?php endforeach; else: echo "<p>No active projects.</p>"; endif; ?>
+                    </div>
+                    <div class="portal-section">
+                        <h3>Proposals & Documents</h3>
+                        <?php foreach($proposals as $prop): ?>
+                            <div class="proposal"><?php echo $prop->post_title; ?> <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">View</button></div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
         <script>
             function acceptProposal(id) {
