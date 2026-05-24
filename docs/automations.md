@@ -6,8 +6,15 @@
 2. **Missed Appointment Recovery**:
    - Appointment Status: 'No Show' -> Trigger SMS sequence -> Provide Re-booking Link.
 3. **Emergency Detection**:
-   - Message Content contains 'emergency' or 'urgent' -> AI boosts score to 100 -> Immediate Lead Routing to Mobile.
+   - Message Content contains 'emergency' or 'urgent' -> AI boosts score to 100 -> Immediate Lead Routing.
 
-## AI Assistant Prompts
-- **Dental FAQ Assistant**: "You are a specialized dental assistant. Answer questions about treatments while encouraging booking."
-- **Sales Follow-up**: "Generate a short, high-conversion SMS for a lead who hasn't responded in 24 hours."
+## Key Shortcodes
+- `[gp_lead_form]`: Standard lead capture.
+- `[gp_quiz_lead_form]`: Multi-step conversational quiz capture.
+- `[gp_booking_form]`: Appointment scheduling.
+- `[gp_ai_faq]`: Conversational AI assistant.
+- `[gp_review_feed]`: Reputation social proof.
+- `[gp_client_portal]`: Customer dashboard.
+- `[gp_solar_calculator]`: Interactive ROI tool.
+- `[gp_contractor_estimator]`: Instant project pricing.
+- `[gp_before_after]`: Visual proof component.
