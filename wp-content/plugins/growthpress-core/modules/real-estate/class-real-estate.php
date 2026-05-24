@@ -23,12 +23,14 @@ class GrowthPress_RealEstate {
         ) );
     }
 
-    /**
-     * AI Property Recommendation
-     */
-    public function get_recommendations( $buyer_intent ) {
-        // Logic to match buyer intent with current listings via OpenAI
+    public function generate_sample_data() {
+        $props = array(
+            'Sunset Hills Estate' => 'Luxury 5-bedroom home with panoramic views.',
+            'Modern Downtown Loft' => 'Sleek 2-bedroom loft in the heart of the city.'
+        );
+        foreach($props as $title => $content) {
+            wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'gp_property', 'post_status' => 'publish'));
+        }
     }
 }
-
 new GrowthPress_RealEstate();

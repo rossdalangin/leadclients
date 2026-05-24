@@ -14,28 +14,24 @@ class GrowthPress_Law {
     }
 
     public function register_law_cpts() {
-        // Legal Cases / Practice Areas
         register_post_type( 'gp_legal_case', array(
             'labels'      => array( 'name' => 'Practice Areas', 'singular_name' => 'Practice Area' ),
             'public'      => true,
             'show_ui'     => true,
             'menu_icon'   => 'dashicons-hammer',
             'supports'    => array( 'title', 'editor', 'thumbnail' ),
-            'has_archive' => true,
         ) );
     }
 
-    /**
-     * Legal Intake Form Processing
-     */
-    public function process_legal_intake( $data ) {
-        // AI urgency scoring for legal matters
-        $ai = GrowthPress_AI::get_instance();
-        $analysis = $ai->analyze_sentiment( $data['case_description'] );
-
-        // Save as lead with legal metadata
-        // ...
+    public function generate_sample_data() {
+        $cases = array(
+            'Personal Injury' => 'We help victims of accidents get the compensation they deserve.',
+            'Family Law' => 'Compassionate legal support for divorce, custody, and family matters.',
+            'Corporate Law' => 'Expert legal counsel for businesses of all sizes.'
+        );
+        foreach($cases as $title => $content) {
+            wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'gp_legal_case', 'post_status' => 'publish'));
+        }
     }
 }
-
 new GrowthPress_Law();

@@ -34,6 +34,23 @@ class GrowthPress_Dental {
         ) );
     }
 
+    public function generate_sample_data() {
+        $treatments = array(
+            'Dental Implants' => 'Restore your smile with permanent, natural-looking dental implants.',
+            'Invisalign' => 'Straighten your teeth discreetly with the world\'s most advanced clear aligner system.',
+            'Teeth Whitening' => 'Brighten your smile in just one visit with our professional whitening treatments.'
+        );
+
+        foreach ( $treatments as $title => $content ) {
+            wp_insert_post( array(
+                'post_title'   => $title,
+                'post_content' => $content,
+                'post_type'    => 'gp_treatment',
+                'post_status'  => 'publish'
+            ) );
+        }
+    }
+
     /**
      * Dental specific automation: Insurance inquiry trigger
      */

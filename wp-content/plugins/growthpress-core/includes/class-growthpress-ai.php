@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Core Class
+ * GrowthPress AI Core Class - Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,9 +23,6 @@ class GrowthPress_AI {
         $this->api_key = get_option('growthpress_openai_api_key', '');
     }
 
-    /**
-     * Call OpenAI API
-     */
     public function call_ai( $prompt, $context = '' ) {
         if ( empty( $this->api_key ) ) {
             return new WP_Error( 'missing_api_key', __( 'OpenAI API key is missing.', 'growthpress-core' ) );
@@ -54,22 +51,28 @@ class GrowthPress_AI {
         return $body['choices'][0]['message']['content'] ?? '';
     }
 
-    /**
-     * Perform Sentiment Analysis on Lead Message
-     */
     public function analyze_sentiment( $message ) {
         $prompt = "Analyze the sentiment and urgency of this lead message: \"$message\". Return a JSON object with 'sentiment' (positive, neutral, negative) and 'urgency' (1-10).";
         return $this->call_ai( $prompt, "You are a lead qualification assistant." );
     }
 
     /**
-     * Generate Follow-up Response
+     * Missed Call Automation Prompt
      */
-    public function generate_followup( $lead_data, $previous_interaction = '' ) {
-        $prompt = "Generate a professional follow-up message for a lead with these details: " . json_encode($lead_data);
-        return $this->call_ai( $prompt, "You are a high-ticket sales consultant." );
+    public function generate_missed_call_reply( $niche ) {
+        $context = "You are a specialized receptionist for a $niche business.";
+        $prompt = "A potential client just called and we missed it. Generate a friendly, professional SMS offering to book a discovery call or appointment immediately.";
+        return $this->call_ai( $prompt, $context );
+    }
+
+    /**
+     * Re-engagement Campaign Prompt
+     */
+    public function generate_reactivation_email( $lead_name, $niche ) {
+        $context = "You are a marketing strategist for a $niche.";
+        $prompt = "Write a short, engaging re-activation email for $lead_name who inquired 30 days ago but hasn't booked yet. Offer a small incentive or helpful advice.";
+        return $this->call_ai( $prompt, $context );
     }
 }
 
-// Initialize
 GrowthPress_AI::get_instance();

@@ -43,8 +43,10 @@ class GrowthPress_CRM {
     }
 
     public function render_lead_form() {
+        $nonce = wp_create_nonce( 'gp_lead_nonce' );
         ob_start(); ?>
         <form id="gp-lead-form" class="glass-card">
+            <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
             <input type="text" name="lead_name" placeholder="Full Name" required>
             <input type="email" name="lead_email" placeholder="Email Address" required>
             <textarea name="lead_message" placeholder="How can we help?"></textarea>
@@ -56,7 +58,10 @@ class GrowthPress_CRM {
     }
 
     public function handle_lead_submission() {
-        // Validation and lead creation logic
+        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) {
+            wp_send_json_error( 'Security check failed.' );
+        }
+
         $lead_id = wp_insert_post( array(
             'post_title'   => sanitize_text_field( $_POST['lead_name'] ),
             'post_content' => sanitize_textarea_field( $_POST['lead_message'] ),

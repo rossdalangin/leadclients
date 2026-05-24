@@ -23,14 +23,19 @@ class GrowthPress_Contractor {
         ) );
     }
 
-    /**
-     * Project Estimation Calculator Logic
-     */
+    public function generate_sample_data() {
+        $projects = array(
+            'Modern Kitchen Remodel' => 'A complete overhaul of a 1950s kitchen into a modern chef\'s paradise.',
+            'Luxury Bathroom Suite' => 'Transforming a standard bathroom into a spa-like retreat.'
+        );
+        foreach($projects as $title => $content) {
+            wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'gp_project', 'post_status' => 'publish'));
+        }
+    }
+
     public function calculate_estimate( $sq_ft, $material_type ) {
         $rates = array( 'basic' => 50, 'premium' => 120 );
-        $base_price = $sq_ft * ( $rates[$material_type] ?? 80 );
-        return $base_price;
+        return $sq_ft * ( $rates[$material_type] ?? 80 );
     }
 }
-
 new GrowthPress_Contractor();
