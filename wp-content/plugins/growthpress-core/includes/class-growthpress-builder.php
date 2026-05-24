@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Page Builder Integration Class - Funnel Enhanced
+ * GrowthPress Page Builder Integration Class - Bricks Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +13,7 @@ class GrowthPress_Builder {
         add_action( 'elementor/elements/categories_registered', array( $this, 'register_elementor_category' ) );
         add_action( 'elementor/widgets/register', array( $this, 'register_elementor_widgets' ) );
         add_action( 'init', array( $this, 'register_block_patterns' ) );
+        add_filter( 'bricks/builder/i18n', array( $this, 'register_bricks_category' ) );
     }
 
     public function register_elementor_category( $elements_manager ) {
@@ -24,26 +25,15 @@ class GrowthPress_Builder {
         $widgets_manager->register( new \GrowthPress_Lead_Form_Widget() );
     }
 
+    public function register_bricks_category( $i18n ) {
+        $i18n['growthpress'] = 'GrowthPress OS';
+        return $i18n;
+    }
+
     public function register_block_patterns() {
         if ( ! function_exists( 'register_block_pattern' ) ) return;
-
         register_block_pattern_category( 'growthpress', array( 'label' => 'GrowthPress' ) );
 
-        // Lead Magnet Funnel Pattern
-        register_block_pattern( 'growthpress/lead-magnet', array(
-            'title' => 'GP Lead Magnet Funnel',
-            'categories' => array( 'growthpress' ),
-            'content' => '<!-- wp:group {"className":"gp-funnel glass-card"} --><div class="wp-block-group gp-funnel glass-card"><h2>Download Your Free AI Strategy Guide</h2><p>Learn how to automate your client intake in 5 minutes.</p><!-- wp:shortcode -->[gp_lead_form]<!-- /wp:shortcode --></div><!-- /wp:group -->'
-        ) );
-
-        // Webinar Funnel Pattern
-        register_block_pattern( 'growthpress/webinar', array(
-            'title' => 'GP Webinar Funnel',
-            'categories' => array( 'growthpress' ),
-            'content' => '<!-- wp:group {"className":"gp-webinar glass-card"} --><div class="wp-block-group gp-webinar glass-card"><h2>LIVE TRAINING: Scaling with AI</h2><p>Register now for our upcoming session on business automation.</p><!-- wp:shortcode -->[gp_booking_form]<!-- /wp:shortcode --></div><!-- /wp:group -->'
-        ) );
-
-        // Legacy Patterns
         register_block_pattern( 'growthpress/hero', array(
             'title' => 'GP Hero Section',
             'categories' => array( 'growthpress' ),
