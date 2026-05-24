@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Settings Page
+ * GrowthPress Settings Page - Instruction Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,20 +33,31 @@ class GrowthPress_Settings {
 
     public function render_settings() {
         ?>
-        <div class="wrap">
-            <h1>GrowthPress Settings</h1>
-            <form method="post" action="options.php" class="glass-card">
+        <div class="wrap growthpress-settings">
+            <h1>GrowthPress System Configuration</h1>
+            <p class="description">Configure the core parameters of your Business Operating System. <strong>Note:</strong> Ensure your OpenAI API key is active to enable AI triage and content features.</p>
+
+            <form method="post" action="options.php" class="glass-card" style="max-width: 800px; margin-top: 20px;">
                 <?php settings_fields( 'growthpress_settings_group' ); ?>
-                <?php do_settings_sections( 'growthpress_settings_group' ); ?>
+
                 <table class="form-table">
                     <tr>
-                        <th scope="row">OpenAI API Key</th>
-                        <td><input type="password" name="growthpress_openai_api_key" value="<?php echo esc_attr( get_option('growthpress_openai_api_key') ); ?>" class="regular-text"></td>
+                        <th scope="row">
+                            <label>OpenAI API Key</label>
+                            <p class="description">Used for AI Triage, Content Gen, and Lead Scoring.</p>
+                        </th>
+                        <td>
+                            <input type="password" name="growthpress_openai_api_key" value="<?php echo esc_attr( get_option('growthpress_openai_api_key') ); ?>" class="regular-text">
+                            <p class="help-text" style="font-size: 11px; color: #666;">Example: sk-proj-xxxxxxxxxxxxxxxxxxxx</p>
+                        </td>
                     </tr>
                     <tr>
-                        <th scope="row">System Niche</th>
+                        <th scope="row">
+                            <label>Business Niche</label>
+                            <p class="description">Select your industry to load custom logic and tools.</p>
+                        </th>
                         <td>
-                            <select name="growthpress_niche">
+                            <select name="growthpress_niche" style="width: 25em;">
                                 <?php
                                 $niches = array('dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants');
                                 $current = get_option('growthpress_niche');
@@ -54,15 +65,31 @@ class GrowthPress_Settings {
                                     <option value="<?php echo $n; ?>" <?php selected($current, $n); ?>><?php echo ucfirst($n); ?></option>
                                 <?php endforeach; ?>
                             </select>
+                            <p class="help-text" style="font-size: 11px; color: #666;">This affects Schema markup, Urgency banners, and AI prompts.</p>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">REST API Token (Bearer)</th>
-                        <td><input type="text" name="growthpress_api_token" value="<?php echo esc_attr( get_option('growthpress_api_token') ); ?>" class="regular-text"></td>
+                        <th scope="row">
+                            <label>API Auth Token</label>
+                            <p class="description">Secure Bearer token for Zapier / Make.com.</p>
+                        </th>
+                        <td>
+                            <input type="text" name="growthpress_api_token" value="<?php echo esc_attr( get_option('growthpress_api_token') ); ?>" class="regular-text">
+                            <p class="help-text" style="font-size: 11px; color: #666;">Example: gp_live_998877665544332211</p>
+                        </td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <?php submit_button('Save OS Configuration'); ?>
             </form>
+
+            <div class="glass-card" style="margin-top: 20px; max-width: 800px; border-left: 4px solid #2563EB;">
+                <h4>Quick Instructions</h4>
+                <ol>
+                    <li>Generate an API key at <a href="https://platform.openai.com" target="_blank">OpenAI</a>.</li>
+                    <li>Select your niche to activate industry-specific Custom Post Types.</li>
+                    <li>Use the <strong>Niche Setup Wizard</strong> on the main dashboard to generate demo pages.</li>
+                </ol>
+            </div>
         </div>
         <?php
     }
