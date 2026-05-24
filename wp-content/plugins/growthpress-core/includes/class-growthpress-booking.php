@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Booking Engine Class - Frontend Enhanced
+ * GrowthPress Booking Engine Class - Multi-Staff Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,11 +38,21 @@ class GrowthPress_Booking {
 
     public function render_booking_form() {
         $nonce = wp_create_nonce('gp_booking_nonce');
+        $staff = get_users( array( 'role__in' => array('author', 'editor', 'administrator') ) );
         ob_start(); ?>
         <div class="gp-booking-widget glass-card">
             <h3>Book an Appointment</h3>
             <form id="gp-booking-form">
                 <input type="hidden" name="nonce" value="<?php echo $nonce; ?>">
+                <div class="form-group">
+                    <label>Preferred Professional</label>
+                    <select name="staff_id">
+                        <option value="0">Any Available</option>
+                        <?php foreach($staff as $member): ?>
+                            <option value="<?php echo $member->ID; ?>"><?php echo esc_html($member->display_name); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Select Service</label>
                     <select name="service">
@@ -51,11 +61,8 @@ class GrowthPress_Booking {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Date</label>
+                    <label>Date & Time</label>
                     <input type="date" name="date" required>
-                </div>
-                <div class="form-group">
-                    <label>Time</label>
                     <input type="time" name="time" required>
                 </div>
                 <div class="form-group">
@@ -70,17 +77,13 @@ class GrowthPress_Booking {
         jQuery('#gp-booking-form').on('submit', function(e) {
             e.preventDefault();
             var $form = jQuery(this);
-            var $feedback = $form.find('.form-feedback');
-            $feedback.text('Processing...');
             jQuery.post(gp_ajax.ajaxurl, {
                 action: 'gp_submit_booking',
                 formData: $form.serialize()
             }, function(res) {
                 if(res.success) {
-                    $feedback.text('Appointment booked successfully!');
+                    $form.find('.form-feedback').text('Appointment booked successfully!');
                     $form[0].reset();
-                } else {
-                    $feedback.text('Error: ' + res.data);
                 }
             });
         });
@@ -99,6 +102,7 @@ class GrowthPress_Booking {
             'service'     => $data['service'],
             'client_name' => $data['client_name'],
             'date'        => $data['date'] . ' ' . $data['time'],
+            'staff_id'    => intval($data['staff_id']),
         ) );
 
         if ( $appointment_id ) {
@@ -120,6 +124,7 @@ class GrowthPress_Booking {
 
         if ( $appointment_id ) {
             update_post_meta( $appointment_id, '_appointment_date', $data['date'] );
+            update_post_meta( $appointment_id, '_staff_id', $data['staff_id'] );
             do_action( 'gp_appointment_created', $appointment_id );
         }
         return $appointment_id;

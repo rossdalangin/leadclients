@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Admin Dashboard Class - Analytics Enhanced
+ * GrowthPress Admin Dashboard Class - UI Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,48 +50,24 @@ class GrowthPress_Dashboard {
 
     public function render_dashboard() {
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
-        $stats = array(
-            'leads' => wp_count_posts('gp_lead')->publish ?? 0,
-            'appointments' => wp_count_posts('gp_appointment')->publish ?? 0,
-        );
         ?>
         <div class="wrap growthpress-dashboard">
             <h1>GrowthPress Business OS</h1>
 
-            <div class="stats-grid">
-                <div class="stat-card glass-card">
-                    <h3>Leads</h3>
-                    <div class="value"><?php echo $stats['leads']; ?></div>
-                </div>
-                <div class="stat-card glass-card">
-                    <h3>Bookings</h3>
-                    <div class="value"><?php echo $stats['appointments']; ?></div>
-                </div>
-            </div>
-
-            <div class="dashboard-content">
-                <div class="main-panel glass-card">
-                    <h3>Lead Growth Trend</h3>
-                    <canvas id="gp-leads-chart" height="100"></canvas>
-                </div>
-                <aside class="side-panel glass-card">
-                    <h3>AI Recommendations</h3>
-                    <ul><li>💡 Optimize follow-up timing.</li></ul>
-                </aside>
-            </div>
-
-            <div id="gp-kanban-board" class="kanban-board" style="margin-top: 30px;">
+            <div id="gp-kanban-board" class="kanban-board" style="display: flex; gap: 20px; margin-top: 30px; overflow-x: auto;">
                 <?php
                 $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
                 foreach ( $stages as $slug => $label ) : ?>
-                    <div class="kanban-col" data-stage="<?php echo $slug; ?>">
-                        <h3><?php echo $label; ?></h3>
+                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width: 250px; background: #eee; padding: 15px; border-radius: 10px;">
+                        <h3 style="margin-top:0;"><?php echo $label; ?></h3>
                         <div class="kanban-cards">
                             <?php foreach ( $leads as $lead ) :
                                 $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
+                                $score = get_post_meta($lead->ID, '_gp_lead_score', true) ?: 0;
                                 if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) : ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>">
-                                        <?php echo esc_html($lead->post_title); ?>
+                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="margin-bottom: 10px; cursor: grab; background: white;">
+                                        <strong><?php echo esc_html($lead->post_title); ?></strong>
+                                        <div class="lead-score" style="font-size: 0.8rem; color: #2563EB;">Score: <?php echo $score; ?></div>
                                     </div>
                                 <?php endif;
                             endforeach; ?>
@@ -100,23 +76,6 @@ class GrowthPress_Dashboard {
                 <?php endforeach; ?>
             </div>
         </div>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctx = document.getElementById('gp-leads-chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    datasets: [{
-                        label: 'New Leads',
-                        data: [12, 19, 3, 5],
-                        borderColor: '#2563EB',
-                        tension: 0.4
-                    }]
-                }
-            });
-        });
-        </script>
         <?php
     }
 }

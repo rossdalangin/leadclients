@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Quiz Enhanced
+ * GrowthPress CRM Core Class - Routing Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +21,7 @@ class GrowthPress_CRM {
     private function __construct() {
         add_action( 'init', array( $this, 'register_cpts' ) );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
+        add_action( 'gp_lead_captured', array( $this, 'route_lead' ) );
         add_shortcode( 'gp_lead_form', array( $this, 'render_lead_form' ) );
         add_shortcode( 'gp_quiz_lead_form', array( $this, 'render_quiz_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
@@ -48,45 +49,12 @@ class GrowthPress_CRM {
         ) );
     }
 
-    public function render_quiz_form() {
-        $nonce = wp_create_nonce('gp_lead_nonce');
-        ob_start(); ?>
-        <div class="gp-quiz-container glass-card" id="gp-quiz-form">
-            <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
-
-            <div class="quiz-step active" data-step="1">
-                <h3>Step 1: What is your primary goal?</h3>
-                <button type="button" class="quiz-btn" onclick="nextStep(2)">Growth</button>
-                <button type="button" class="quiz-btn" onclick="nextStep(2)">Automation</button>
-            </div>
-
-            <div class="quiz-step" data-step="2" style="display:none;">
-                <h3>Step 2: Your Contact Details</h3>
-                <input type="text" id="quiz-name" placeholder="Name" required>
-                <input type="email" id="quiz-email" placeholder="Email" required>
-                <button type="button" onclick="submitQuiz()">Complete Assessment</button>
-            </div>
-        </div>
-        <script>
-        function nextStep(step) {
-            jQuery('.quiz-step').hide();
-            jQuery('.quiz-step[data-step="'+step+'"]').show();
+    public function route_lead( $lead_id ) {
+        $locations = get_posts( array( 'post_type' => 'gp_location', 'posts_per_page' => 1 ) );
+        if ( ! empty($locations) ) {
+            update_post_meta( $lead_id, '_assigned_location', $locations[0]->ID );
+            error_log( "CRM: Lead $lead_id routed to location " . $locations[0]->post_title );
         }
-        function submitQuiz() {
-            var data = {
-                action: 'gp_submit_lead',
-                lead_name: jQuery('#quiz-name').val(),
-                lead_email: jQuery('#quiz-email').val(),
-                lead_message: 'Completed Quiz Assessment',
-                gp_nonce: jQuery('input[name="gp_nonce"]').val()
-            };
-            jQuery.post(gp_ajax.ajaxurl, data, function(res) {
-                if(res.success) jQuery('#gp-quiz-form').html('<h3>Thank you! Our AI is analyzing your results.</h3>');
-            });
-        }
-        </script>
-        <?php
-        return ob_get_clean();
     }
 
     public function trigger_lead_automations( $lead_id ) {
@@ -137,6 +105,34 @@ class GrowthPress_CRM {
         return ob_get_clean();
     }
 
+    public function render_quiz_form() {
+        $nonce = wp_create_nonce('gp_lead_nonce');
+        ob_start(); ?>
+        <div class="gp-quiz-container glass-card" id="gp-quiz-form">
+            <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
+            <div class="quiz-step active" data-step="1">
+                <h3>Step 1: What is your primary goal?</h3>
+                <button type="button" onclick="nextStep(2)">Growth</button>
+                <button type="button" onclick="nextStep(2)">Automation</button>
+            </div>
+            <div class="quiz-step" data-step="2" style="display:none;">
+                <h3>Step 2: Your Contact Details</h3>
+                <input type="text" id="quiz-name" placeholder="Name" required>
+                <input type="email" id="quiz-email" placeholder="Email" required>
+                <button type="button" onclick="submitQuiz()">Complete Assessment</button>
+            </div>
+        </div>
+        <script>
+        function nextStep(step) { jQuery('.quiz-step').hide(); jQuery('.quiz-step[data-step="'+step+'"]').show(); }
+        function submitQuiz() {
+            var data = { action: 'gp_submit_lead', lead_name: jQuery('#quiz-name').val(), lead_email: jQuery('#quiz-email').val(), lead_message: 'Completed Quiz', gp_nonce: jQuery('input[name="gp_nonce"]').val() };
+            jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) jQuery('#gp-quiz-form').html('<h3>Thank you!</h3>'); });
+        }
+        </script>
+        <?php
+        return ob_get_clean();
+    }
+
     public function add_internal_notes_meta_box() {
         add_meta_box( 'gp_internal_notes', 'Internal Team Notes', array( $this, 'render_internal_notes' ), 'gp_lead', 'side' );
     }
@@ -154,12 +150,7 @@ class GrowthPress_CRM {
     }
 
     public function create_task( $title, $description, $lead_id = 0 ) {
-        $task_id = wp_insert_post( array(
-            'post_title'   => $title,
-            'post_content' => $description,
-            'post_type'    => 'gp_task',
-            'post_status'  => 'publish',
-        ) );
+        $task_id = wp_insert_post( array( 'post_title' => $title, 'post_content' => $description, 'post_type' => 'gp_task', 'post_status' => 'publish' ) );
         if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
         return $task_id;
     }
