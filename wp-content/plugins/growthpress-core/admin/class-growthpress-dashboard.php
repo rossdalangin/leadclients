@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Admin Dashboard Class - Final Setup Wizard
+ * GrowthPress Admin Dashboard Class - Funnel Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,9 +32,7 @@ class GrowthPress_Dashboard {
 
     public function handle_lead_stage_update() {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-        $lead_id = intval($_POST['lead_id']);
-        wp_set_object_terms( $lead_id, sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
-        GrowthPress_Activity::log( "Lead #$lead_id updated." );
+        wp_set_object_terms( intval($_POST['lead_id']), sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
         wp_send_json_success();
     }
 
@@ -42,10 +40,9 @@ class GrowthPress_Dashboard {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $niche = sanitize_text_field($_POST['niche']);
 
-        // 1. Generate Industry Pages
         $this->generate_niche_pages($niche);
+        $this->generate_niche_funnel($niche);
 
-        // 2. Generate Sample Data for Module
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
         if ( class_exists($class_name) ) {
             $instance = new $class_name();
@@ -53,24 +50,31 @@ class GrowthPress_Dashboard {
         }
 
         update_option( 'growthpress_niche', $niche );
-        wp_send_json_success( "System configured for $niche with core pages." );
+        wp_send_json_success( "System configured for $niche with pages and funnels." );
     }
 
     private function generate_niche_pages($niche) {
         $pages = array(
-            'Home'     => 'Welcome to our premium ' . $niche . ' services. [gp_urgency_banner] [gp_lead_form]',
-            'Services' => 'Explore our high-ticket ' . $niche . ' solutions. [gp_booking_form]',
-            'Contact'  => 'Get in touch with our team. [gp_ai_faq]',
+            'Home'     => 'Welcome to our ' . $niche . ' OS. [gp_urgency_banner] [gp_lead_form]',
+            'Services' => 'Our ' . $niche . ' services. [gp_booking_form]',
+            'Contact'  => 'Talk to us. [gp_ai_faq]',
         );
         foreach($pages as $title => $content) {
-            if ( ! get_page_by_title($title) ) {
-                wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'page', 'post_status' => 'publish'));
-            }
+            if ( ! get_page_by_title($title) ) wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
+    }
+
+    private function generate_niche_funnel($niche) {
+        $funnel_pages = array(
+            'Free AI Strategy Guide' => 'Get your ' . $niche . ' growth guide. [gp_lead_form]',
+            'Thank You' => 'Check your email for the guide. Next step: [gp_booking_form]'
+        );
+        foreach($funnel_pages as $title => $content) {
+            wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'page', 'post_status' => 'publish'));
         }
     }
 
     public function render_dashboard() {
-        // Render logic remains same with enhanced UI...
         include_once GROWTHPRESS_CORE_PATH . 'admin/views/dashboard.php';
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Core Class - Final Intelligence
+ * GrowthPress AI Core Class - Filter Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,11 +40,20 @@ class GrowthPress_AI {
         return $body['choices'][0]['message']['content'] ?? '';
     }
 
+    /**
+     * AI Spam Filtering
+     */
+    public function is_spam( $message, $name, $email ) {
+        $prompt = "Classify this lead submission as 'spam' or 'valid'. Name: $name, Email: $email, Message: \"$message\". Return only the word 'spam' or 'valid'.";
+        $result = $this->call_ai( $prompt, "You are a specialized security assistant." );
+        return trim(strtolower($result)) === 'spam';
+    }
+
     public function suggest_closing_tactics( $lead_id ) {
         $lead = get_post($lead_id);
         $history = get_post_meta($lead_id, '_behavior_history', true);
-        $prompt = "Analyze this lead (Name: {$lead->post_title}, History: $history). Suggest 3 closing tactics or talking points for a sales call.";
-        return $this->call_ai($prompt, "You are a high-ticket sales psychologist.");
+        $prompt = "Analyze this lead (Name: {$lead->post_title}, History: $history). Suggest 3 closing tactics.";
+        return $this->call_ai($prompt, "You are a sales psychologist.");
     }
 
     public function generate_proposal( $client_name, $service, $niche ) {

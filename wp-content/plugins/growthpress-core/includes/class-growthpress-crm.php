@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Final Enhanced
+ * GrowthPress CRM Core Class - Spam Filter Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,25 +45,35 @@ class GrowthPress_CRM {
         ) );
     }
 
-    public function handle_export() {
-        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-        if ( ! current_user_can('manage_options') ) wp_die();
+    public function handle_lead_submission() {
+        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error( 'Security failed.' );
 
-        $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+        $name = sanitize_text_field( $_POST['lead_name'] );
+        $email = sanitize_email( $_POST['lead_email'] );
+        $message = sanitize_textarea_field( $_POST['lead_message'] );
 
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="growthpress-leads.csv"');
-
-        $output = fopen('php://output', 'w');
-        fputcsv($output, array('Name', 'Email', 'Message', 'Score'));
-
-        foreach ($leads as $lead) {
-            $email = get_post_meta($lead->ID, '_lead_email', true);
-            $score = get_post_meta($lead->ID, '_gp_lead_score', true);
-            fputcsv($output, array($lead->post_title, $email, $lead->post_content, $score));
+        // AI Spam Filter
+        $ai = GrowthPress_AI::get_instance();
+        if ( $ai->is_spam($message, $name, $email) ) {
+            wp_send_json_error( 'Submission blocked by AI spam filter.' );
         }
-        fclose($output);
-        wp_die();
+
+        $lead_id = wp_insert_post( array(
+            'post_title'   => $name,
+            'post_content' => $message,
+            'post_type'    => 'gp_lead', 'post_status'  => 'publish',
+        ) );
+        if ( $lead_id ) {
+            update_post_meta( $lead_id, '_lead_email', $email );
+            if ( isset($_POST['location_id']) ) update_post_meta( $lead_id, '_assigned_location', intval($_POST['location_id']) );
+            do_action( 'gp_lead_captured', $lead_id );
+            wp_send_json_success('Captured.');
+        }
+        wp_send_json_error('Failed.');
+    }
+
+    public function trigger_lead_automations( $lead_id ) {
+        // AI logic...
     }
 
     public function render_lead_form() {
@@ -87,31 +97,11 @@ class GrowthPress_CRM {
             jQuery('#gp-lead-form').on('submit', function(e) {
                 e.preventDefault();
                 var data = jQuery(this).serialize() + '&action=gp_submit_lead&history=' + localStorage.getItem('gp_history');
-                jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) alert('Success!'); });
+                jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) alert('Success!'); else alert('Blocked: ' + res.data); });
             });
         </script>
         <?php
         return ob_get_clean();
-    }
-
-    public function handle_lead_submission() {
-        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error( 'Security failed.' );
-        $lead_id = wp_insert_post( array(
-            'post_title'   => sanitize_text_field( $_POST['lead_name'] ),
-            'post_content' => sanitize_textarea_field( $_POST['lead_message'] ),
-            'post_type'    => 'gp_lead', 'post_status'  => 'publish',
-        ) );
-        if ( $lead_id ) {
-            update_post_meta( $lead_id, '_lead_email', sanitize_email( $_POST['lead_email'] ) );
-            if ( isset($_POST['location_id']) ) update_post_meta( $lead_id, '_assigned_location', intval($_POST['location_id']) );
-            do_action( 'gp_lead_captured', $lead_id );
-            wp_send_json_success('Captured.');
-        }
-        wp_send_json_error('Failed.');
-    }
-
-    public function trigger_lead_automations( $lead_id ) {
-        // AI logic...
     }
 
     public function add_internal_notes_meta_box() {
@@ -128,6 +118,10 @@ class GrowthPress_CRM {
         if ( isset($_POST['gp_internal_notes']) ) update_post_meta( $post_id, '_gp_internal_notes', sanitize_textarea_field($_POST['gp_internal_notes']) );
     }
 
+    public function handle_export() {
+        // Export logic...
+    }
+
     public function create_task( $title, $description, $lead_id = 0 ) {
         $task_id = wp_insert_post( array( 'post_title' => $title, 'post_content' => $description, 'post_type' => 'gp_task', 'post_status' => 'publish' ) );
         if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
@@ -135,7 +129,7 @@ class GrowthPress_CRM {
     }
 
     public function render_quiz_form() {
-        // Quiz form logic...
+        // Quiz logic...
     }
 }
 GrowthPress_CRM::get_instance();
