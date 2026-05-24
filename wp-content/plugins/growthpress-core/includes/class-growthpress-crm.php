@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Task Management Enhanced
+ * GrowthPress CRM Core Class - Enhanced with Internal Notes
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,10 +24,11 @@ class GrowthPress_CRM {
         add_shortcode( 'gp_lead_form', array( $this, 'render_lead_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
+        add_action( 'add_meta_boxes', array( $this, 'add_internal_notes_meta_box' ) );
+        add_action( 'save_post_gp_lead', array( $this, 'save_internal_notes' ) );
     }
 
     public function register_cpts() {
-        // Leads
         register_post_type( 'gp_lead', array(
             'labels'      => array( 'name' => 'Leads', 'singular_name' => 'Lead' ),
             'public'      => false,
@@ -37,7 +38,6 @@ class GrowthPress_CRM {
         ) );
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array( 'hierarchical' => true, 'show_ui' => true ) );
 
-        // Tasks
         register_post_type( 'gp_task', array(
             'labels'      => array( 'name' => 'Tasks', 'singular_name' => 'Task' ),
             'public'      => false,
@@ -45,6 +45,22 @@ class GrowthPress_CRM {
             'menu_icon'   => 'dashicons-forms',
             'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
+    }
+
+    public function add_internal_notes_meta_box() {
+        add_meta_box( 'gp_internal_notes', 'Internal Team Notes', array( $this, 'render_internal_notes' ), 'gp_lead', 'side' );
+    }
+
+    public function render_internal_notes( $post ) {
+        $notes = get_post_meta( $post->ID, '_gp_internal_notes', true ); ?>
+        <textarea name="gp_internal_notes" style="width:100%; height:100px;"><?php echo esc_textarea($notes); ?></textarea>
+        <?php
+    }
+
+    public function save_internal_notes( $post_id ) {
+        if ( isset($_POST['gp_internal_notes']) ) {
+            update_post_meta( $post_id, '_gp_internal_notes', sanitize_textarea_field($_POST['gp_internal_notes']) );
+        }
     }
 
     public function create_task( $title, $description, $lead_id = 0 ) {
@@ -66,7 +82,6 @@ class GrowthPress_CRM {
         $analysis = $ai->analyze_sentiment( $lead->post_content );
         update_post_meta( $lead_id, '_gp_ai_analysis', $analysis );
 
-        // Auto-generate task for high urgency leads
         if ( strpos( $analysis, '10' ) !== false || strpos( $analysis, '9' ) !== false ) {
             $this->create_task( "URGENT: Call " . $lead->post_title, "AI detected high urgency for this lead.", $lead_id );
         }
