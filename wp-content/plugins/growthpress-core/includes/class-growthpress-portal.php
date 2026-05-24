@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Customer Portal Class - Document Enhanced
+ * GrowthPress Customer Portal Class - Law Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,27 +35,26 @@ class GrowthPress_Portal {
         $lead_ids = wp_list_pluck($leads, 'ID');
 
         $proposals = array();
-        $docs = array();
+        $cases = array();
         if ( ! empty($lead_ids) ) {
             $proposals = get_posts( array( 'post_type' => 'gp_proposal', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
-            // Stubs for secure documents
-            $docs = array(
-                array('title' => 'Project Strategy.pdf', 'url' => '#'),
-                array('title' => 'Onboarding Guide.pdf', 'url' => '#')
-            );
+            $cases = get_posts( array( 'post_type' => 'gp_legal_case', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
         }
 
         ob_start(); ?>
         <div class="gp-portal-container container">
             <div class="glass-card">
-                <h2>Welcome, <?php echo wp_get_current_user()->display_name; ?></h2>
+                <h2>Customer Dashboard</h2>
                 <div class="portal-nav" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <a href="#appointments">Appointments</a> | <a href="#proposals">Proposals</a> | <a href="#documents">Documents</a>
+                    <a href="#appointments">Appointments</a> | <a href="#proposals">Proposals</a> | <a href="#cases">Legal Cases</a>
                 </div>
 
-                <div id="appointments">
-                    <h3>Your Appointments</h3>
-                    <p>No upcoming appointments found.</p>
+                <div id="cases" style="margin-top:30px;">
+                    <h3>Your Legal Cases</h3>
+                    <?php if($cases): foreach($cases as $c):
+                        $status = get_post_meta($c->ID, '_gp_case_status', true) ?: 'Under Review'; ?>
+                        <div class="case-item"><?php echo esc_html($c->post_title); ?>: <strong><?php echo $status; ?></strong></div>
+                    <?php endforeach; else: echo "<p>No active legal cases.</p>"; endif; ?>
                 </div>
 
                 <div id="proposals" style="margin-top:30px;">
@@ -63,13 +62,6 @@ class GrowthPress_Portal {
                     <?php foreach($proposals as $prop): ?>
                         <div class="proposal"><?php echo esc_html($prop->post_title); ?> <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">View</button></div>
                     <?php endforeach; ?>
-                </div>
-
-                <div id="documents" style="margin-top:30px;">
-                    <h3>Secure Files</h3>
-                    <?php if($docs): foreach($docs as $doc): ?>
-                        <div class="doc-item">📄 <?php echo $doc['title']; ?> - <a href="<?php echo $doc['url']; ?>">Download</a></div>
-                    <?php endforeach; else: echo "<p>No documents uploaded yet.</p>"; endif; ?>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Law Firm Module
+ * GrowthPress Law Firm Module - Final
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,23 +15,16 @@ class GrowthPress_Law {
 
     public function register_law_cpts() {
         register_post_type( 'gp_legal_case', array(
-            'labels'      => array( 'name' => 'Practice Areas', 'singular_name' => 'Practice Area' ),
-            'public'      => true,
+            'labels'      => array( 'name' => 'Cases', 'singular_name' => 'Case' ),
+            'public'      => false,
             'show_ui'     => true,
             'menu_icon'   => 'dashicons-hammer',
-            'supports'    => array( 'title', 'editor', 'thumbnail' ),
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
     }
 
     public function generate_sample_data() {
-        $cases = array(
-            'Personal Injury' => 'We help victims of accidents get the compensation they deserve.',
-            'Family Law' => 'Compassionate legal support for divorce, custody, and family matters.',
-            'Corporate Law' => 'Expert legal counsel for businesses of all sizes.'
-        );
-        foreach($cases as $title => $content) {
-            wp_insert_post(array('post_title' => $title, 'post_content' => $content, 'post_type' => 'gp_legal_case', 'post_status' => 'publish'));
-        }
+        wp_insert_post(array('post_title' => 'Personal Injury Case #102', 'post_type' => 'gp_legal_case', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Law();

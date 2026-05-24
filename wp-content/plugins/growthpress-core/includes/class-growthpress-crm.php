@@ -25,9 +25,6 @@ class GrowthPress_CRM {
         add_shortcode( 'gp_quiz_lead_form', array( $this, 'render_quiz_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
-        add_action( 'wp_ajax_gp_export_leads', array( $this, 'handle_export' ) );
-        add_action( 'add_meta_boxes', array( $this, 'add_internal_notes_meta_box' ) );
-        add_action( 'save_post_gp_lead', array( $this, 'save_internal_notes' ) );
     }
 
     public function register_cpts() {
@@ -46,72 +43,46 @@ class GrowthPress_CRM {
         ) );
     }
 
-    public function render_quiz_form() {
-        $nonce = wp_create_nonce('gp_lead_nonce');
-        // Filterable quiz steps for dynamic customization
-        $steps = apply_filters('gp_quiz_steps', array(
-            array('q' => 'What is your primary business goal?', 'o' => array('Growth', 'Automation', 'Authority')),
-            array('q' => 'Estimated monthly revenue?', 'o' => array('< $10k', '$10k - $50k', '$50k+'))
-        ));
-
+    public function render_lead_form() {
+        $nonce = wp_create_nonce( 'gp_lead_nonce' );
+        $niche = get_option('growthpress_niche');
         ob_start(); ?>
-        <div class="gp-quiz-container glass-card" id="gp-quiz-form">
+        <form id="gp-lead-form" class="glass-card">
             <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
-            <?php foreach($steps as $i => $step): ?>
-                <div class="quiz-step" data-step="<?php echo $i+1; ?>" style="<?php echo $i === 0 ? '' : 'display:none;'; ?>">
-                    <h3><?php echo $step['q']; ?></h3>
-                    <?php foreach($step['o'] as $opt): ?>
-                        <button type="button" class="quiz-btn" onclick="nextStep(<?php echo $i+2; ?>)"><?php echo $opt; ?></button>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
-            <div class="quiz-step" data-step="<?php echo count($steps)+1; ?>" style="display:none;">
-                <h3>Your Details</h3>
-                <input type="text" id="quiz-name" placeholder="Name" required>
-                <input type="email" id="quiz-email" placeholder="Email" required>
-                <button type="button" onclick="submitQuiz()">Get My AI Roadmap</button>
-            </div>
-        </div>
+            <input type="text" name="lead_name" placeholder="Full Name" required>
+            <input type="email" name="lead_email" placeholder="Email Address" required>
+
+            <?php if($niche === 'dental'): ?>
+                <input type="text" name="insurance_provider" placeholder="Insurance Provider (Optional)">
+            <?php endif; ?>
+
+            <textarea name="lead_message" placeholder="How can we help?"></textarea>
+            <button type="submit">Get Started</button>
+        </form>
         <script>
-        function nextStep(s) { jQuery('.quiz-step').hide(); jQuery('.quiz-step[data-step="'+s+'"]').show(); }
-        function submitQuiz() {
-            var data = { action:'gp_submit_lead', lead_name:jQuery('#quiz-name').val(), lead_email:jQuery('#quiz-email').val(), lead_message:'Quiz Completed', gp_nonce:jQuery('input[name="gp_nonce"]').val() };
-            jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) jQuery('#gp-quiz-form').html('<h3>Thank you! AI is analyzing...</h3>'); });
-        }
+            jQuery('#gp-lead-form').on('submit', function(e) {
+                e.preventDefault();
+                var data = jQuery(this).serialize() + '&action=gp_submit_lead';
+                jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) alert('Captured!'); });
+            });
         </script>
         <?php
         return ob_get_clean();
     }
 
     public function handle_lead_submission() {
-        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error( 'Security failed.' );
+        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error();
         $lead_id = wp_insert_post( array( 'post_title' => sanitize_text_field( $_POST['lead_name'] ), 'post_content' => sanitize_textarea_field( $_POST['lead_message'] ), 'post_type' => 'gp_lead', 'post_status' => 'publish' ) );
         if ( $lead_id ) {
             update_post_meta( $lead_id, '_lead_email', sanitize_email( $_POST['lead_email'] ) );
+            if ( isset($_POST['insurance_provider']) ) update_post_meta( $lead_id, '_insurance', sanitize_text_field($_POST['insurance_provider']) );
             do_action( 'gp_lead_captured', $lead_id );
             wp_send_json_success();
         }
         wp_send_json_error();
     }
 
-    public function render_lead_form() {
-        $nonce = wp_create_nonce( 'gp_lead_nonce' );
-        ob_start(); ?>
-        <form id="gp-lead-form" class="glass-card">
-            <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
-            <input type="text" name="lead_name" placeholder="Full Name" required>
-            <input type="email" name="lead_email" placeholder="Email Address" required>
-            <textarea name="lead_message" placeholder="How can we help?"></textarea>
-            <button type="submit">Get Started</button>
-        </form>
-        <?php
-        return ob_get_clean();
-    }
-
     public function trigger_lead_automations($id) {}
-    public function add_internal_notes_meta_box() {}
-    public function save_internal_notes($id) {}
-    public function handle_export() {}
-    public function create_task($t, $d, $lid=0) {}
+    public function render_quiz_form() {}
 }
 GrowthPress_CRM::get_instance();
