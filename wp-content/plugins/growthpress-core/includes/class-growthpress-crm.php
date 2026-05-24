@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Enhanced with Automation
+ * GrowthPress CRM Core Class - Task Management Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,15 @@ class GrowthPress_CRM {
     }
 
     private function __construct() {
-        add_action( 'init', array( $this, 'register_lead_cpt' ) );
+        add_action( 'init', array( $this, 'register_cpts' ) );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
         add_shortcode( 'gp_lead_form', array( $this, 'render_lead_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
     }
 
-    public function register_lead_cpt() {
+    public function register_cpts() {
+        // Leads
         register_post_type( 'gp_lead', array(
             'labels'      => array( 'name' => 'Leads', 'singular_name' => 'Lead' ),
             'public'      => false,
@@ -35,23 +36,43 @@ class GrowthPress_CRM {
             'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array( 'hierarchical' => true, 'show_ui' => true ) );
+
+        // Tasks
+        register_post_type( 'gp_task', array(
+            'labels'      => array( 'name' => 'Tasks', 'singular_name' => 'Task' ),
+            'public'      => false,
+            'show_ui'     => true,
+            'menu_icon'   => 'dashicons-forms',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
+    }
+
+    public function create_task( $title, $description, $lead_id = 0 ) {
+        $task_id = wp_insert_post( array(
+            'post_title'   => $title,
+            'post_content' => $description,
+            'post_type'    => 'gp_task',
+            'post_status'  => 'publish',
+        ) );
+        if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
+        return $task_id;
     }
 
     public function trigger_lead_automations( $lead_id ) {
         $niche = get_option( 'growthpress_niche', 'business' );
         $ai = GrowthPress_AI::get_instance();
 
-        // 1. AI Sentiment Analysis & Scoring
         $lead = get_post( $lead_id );
         $analysis = $ai->analyze_sentiment( $lead->post_content );
         update_post_meta( $lead_id, '_gp_ai_analysis', $analysis );
 
-        // 2. Automated AI Follow-up Generation
+        // Auto-generate task for high urgency leads
+        if ( strpos( $analysis, '10' ) !== false || strpos( $analysis, '9' ) !== false ) {
+            $this->create_task( "URGENT: Call " . $lead->post_title, "AI detected high urgency for this lead.", $lead_id );
+        }
+
         $followup = $ai->generate_followup( array( 'name' => $lead->post_title, 'niche' => $niche ) );
         update_post_meta( $lead_id, '_gp_pending_followup', $followup );
-
-        // 3. Mock SMS Notification (Twilio/WhatsApp stub)
-        error_log( "GP Automation: SMS sent to lead $lead_id for niche $niche" );
     }
 
     public function handle_lead_submission() {

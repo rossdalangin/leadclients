@@ -19,6 +19,7 @@ define( 'GROWTHPRESS_CORE_URL', plugin_dir_url( __FILE__ ) );
 function growthpress_core_load_modules() {
     $files = array(
         'includes/class-growthpress-ai.php',
+        'includes/class-growthpress-ai-faq.php',
         'includes/class-growthpress-crm.php',
         'includes/class-growthpress-booking.php',
         'includes/class-growthpress-api.php',
