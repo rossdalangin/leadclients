@@ -23,5 +23,8 @@ add_action( 'after_setup_theme', 'growthpress_setup' );
 function growthpress_scripts() {
 	wp_enqueue_style( 'growthpress-inter-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' );
 	wp_enqueue_style( 'growthpress-style', get_stylesheet_uri() );
+
+	wp_enqueue_script( 'growthpress-frontend-js', GROWTHPRESS_CORE_URL . 'assets/js/frontend.js', array('jquery'), '1.0.0', true );
+	wp_localize_script( 'growthpress-frontend-js', 'gp_ajax', array( 'ajaxurl' => admin_url('admin-ajax.php') ) );
 }
 add_action( 'wp_enqueue_scripts', 'growthpress_scripts' );

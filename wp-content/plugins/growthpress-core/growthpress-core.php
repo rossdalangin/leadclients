@@ -25,6 +25,8 @@ function growthpress_core_load_modules() {
         'includes/class-growthpress-seo.php',
         'includes/class-growthpress-builder.php',
         'admin/class-growthpress-dashboard.php',
+        'admin/class-growthpress-content-studio.php',
+        'admin/class-growthpress-settings.php',
     );
 
     foreach ( $files as $file ) {

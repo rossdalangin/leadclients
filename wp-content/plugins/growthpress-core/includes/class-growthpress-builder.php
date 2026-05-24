@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Page Builder Integration Class
+ * GrowthPress Page Builder Integration Class - Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +11,7 @@ class GrowthPress_Builder {
 
     public function __construct() {
         add_action( 'elementor/elements/categories_registered', array( $this, 'register_elementor_category' ) );
+        add_action( 'elementor/widgets/register', array( $this, 'register_elementor_widgets' ) );
         add_action( 'init', array( $this, 'register_block_patterns' ) );
     }
 
@@ -24,12 +25,17 @@ class GrowthPress_Builder {
         );
     }
 
+    public function register_elementor_widgets( $widgets_manager ) {
+        // Register Lead Form Widget
+        require_once __DIR__ . '/widgets/elementor-lead-form.php';
+        $widgets_manager->register( new \GrowthPress_Lead_Form_Widget() );
+    }
+
     public function register_block_patterns() {
         if ( function_exists( 'register_block_pattern_category' ) ) {
             register_block_pattern_category( 'growthpress', array( 'label' => __( 'GrowthPress', 'growthpress-core' ) ) );
         }
 
-        // Example Pattern: Hero Section
         register_block_pattern(
             'growthpress/hero',
             array(
