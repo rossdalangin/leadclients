@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Spam Filter Enhanced
+ * GrowthPress CRM Core Class - Tagging Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,6 +38,13 @@ class GrowthPress_CRM {
         ) );
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array( 'hierarchical' => true, 'show_ui' => true ) );
 
+        // Lead Tags Taxonomy
+        register_taxonomy( 'gp_lead_tag', 'gp_lead', array(
+            'labels' => array( 'name' => 'Lead Tags', 'singular_name' => 'Lead Tag' ),
+            'hierarchical' => false,
+            'show_ui' => true,
+        ) );
+
         register_post_type( 'gp_task', array(
             'labels'      => array( 'name' => 'Tasks', 'singular_name' => 'Task' ),
             'public'      => false, 'show_ui' => true, 'menu_icon' => 'dashicons-forms',
@@ -45,24 +52,37 @@ class GrowthPress_CRM {
         ) );
     }
 
+    public function trigger_lead_automations( $lead_id ) {
+        $niche = get_option( 'growthpress_niche', 'business' );
+        $ai = GrowthPress_AI::get_instance();
+        $lead = get_post( $lead_id );
+
+        // 1. AI Analysis
+        $analysis_raw = $ai->analyze_sentiment( $lead->post_content );
+        $analysis = json_decode($analysis_raw, true) ?: array('sentiment' => 'neutral', 'urgency' => 5);
+        update_post_meta( $lead_id, '_gp_ai_analysis', $analysis );
+
+        // 2. Automated Tagging
+        $tags = array();
+        if ( $analysis['urgency'] >= 8 ) $tags[] = 'Hot Lead';
+        if ( $analysis['sentiment'] === 'negative' ) $tags[] = 'Needs Attention';
+        if ( ! empty($tags) ) wp_set_post_terms( $lead_id, $tags, 'gp_lead_tag' );
+
+        // 3. Follow-up
+        $followup = $ai->generate_followup( array( 'name' => $lead->post_title, 'niche' => $niche ) );
+        update_post_meta( $lead_id, '_gp_pending_followup', $followup );
+    }
+
     public function handle_lead_submission() {
         if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error( 'Security failed.' );
-
         $name = sanitize_text_field( $_POST['lead_name'] );
         $email = sanitize_email( $_POST['lead_email'] );
         $message = sanitize_textarea_field( $_POST['lead_message'] );
 
-        // AI Spam Filter
         $ai = GrowthPress_AI::get_instance();
-        if ( $ai->is_spam($message, $name, $email) ) {
-            wp_send_json_error( 'Submission blocked by AI spam filter.' );
-        }
+        if ( $ai->is_spam($message, $name, $email) ) wp_send_json_error( 'Spam blocked.' );
 
-        $lead_id = wp_insert_post( array(
-            'post_title'   => $name,
-            'post_content' => $message,
-            'post_type'    => 'gp_lead', 'post_status'  => 'publish',
-        ) );
+        $lead_id = wp_insert_post( array( 'post_title' => $name, 'post_content' => $message, 'post_type' => 'gp_lead', 'post_status' => 'publish' ) );
         if ( $lead_id ) {
             update_post_meta( $lead_id, '_lead_email', $email );
             if ( isset($_POST['location_id']) ) update_post_meta( $lead_id, '_assigned_location', intval($_POST['location_id']) );
@@ -70,10 +90,6 @@ class GrowthPress_CRM {
             wp_send_json_success('Captured.');
         }
         wp_send_json_error('Failed.');
-    }
-
-    public function trigger_lead_automations( $lead_id ) {
-        // AI logic...
     }
 
     public function render_lead_form() {
@@ -97,7 +113,7 @@ class GrowthPress_CRM {
             jQuery('#gp-lead-form').on('submit', function(e) {
                 e.preventDefault();
                 var data = jQuery(this).serialize() + '&action=gp_submit_lead&history=' + localStorage.getItem('gp_history');
-                jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) alert('Success!'); else alert('Blocked: ' + res.data); });
+                jQuery.post(gp_ajax.ajaxurl, data, function(res) { if(res.success) alert('Success!'); });
             });
         </script>
         <?php
