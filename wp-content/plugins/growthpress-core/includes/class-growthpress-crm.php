@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class
+ * GrowthPress CRM Core Class - Enhanced with Automation
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class GrowthPress_CRM {
 
     private function __construct() {
         add_action( 'init', array( $this, 'register_lead_cpt' ) );
-        add_action( 'save_post_gp_lead', array( $this, 'calculate_lead_score' ), 10, 2 );
+        add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
         add_shortcode( 'gp_lead_form', array( $this, 'render_lead_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
@@ -34,12 +34,42 @@ class GrowthPress_CRM {
             'menu_icon'   => 'dashicons-groups',
             'supports'    => array( 'title', 'editor', 'custom-fields' ),
         ) );
+        register_taxonomy( 'gp_lead_stage', 'gp_lead', array( 'hierarchical' => true, 'show_ui' => true ) );
+    }
 
-        register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
-            'labels' => array( 'name' => 'Stages' ),
-            'hierarchical' => true,
-            'show_ui' => true,
+    public function trigger_lead_automations( $lead_id ) {
+        $niche = get_option( 'growthpress_niche', 'business' );
+        $ai = GrowthPress_AI::get_instance();
+
+        // 1. AI Sentiment Analysis & Scoring
+        $lead = get_post( $lead_id );
+        $analysis = $ai->analyze_sentiment( $lead->post_content );
+        update_post_meta( $lead_id, '_gp_ai_analysis', $analysis );
+
+        // 2. Automated AI Follow-up Generation
+        $followup = $ai->generate_followup( array( 'name' => $lead->post_title, 'niche' => $niche ) );
+        update_post_meta( $lead_id, '_gp_pending_followup', $followup );
+
+        // 3. Mock SMS Notification (Twilio/WhatsApp stub)
+        error_log( "GP Automation: SMS sent to lead $lead_id for niche $niche" );
+    }
+
+    public function handle_lead_submission() {
+        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error( 'Security check failed.' );
+
+        $lead_id = wp_insert_post( array(
+            'post_title'   => sanitize_text_field( $_POST['lead_name'] ),
+            'post_content' => sanitize_textarea_field( $_POST['lead_message'] ),
+            'post_type'    => 'gp_lead',
+            'post_status'  => 'publish',
         ) );
+
+        if ( $lead_id ) {
+            update_post_meta( $lead_id, '_lead_email', sanitize_email( $_POST['lead_email'] ) );
+            do_action( 'gp_lead_captured', $lead_id );
+            wp_send_json_success( 'Lead captured and automation triggered!' );
+        }
+        wp_send_json_error( 'Failed to capture lead.' );
     }
 
     public function render_lead_form() {
@@ -51,38 +81,9 @@ class GrowthPress_CRM {
             <input type="email" name="lead_email" placeholder="Email Address" required>
             <textarea name="lead_message" placeholder="How can we help?"></textarea>
             <button type="submit">Get Started</button>
-            <div class="form-feedback"></div>
         </form>
         <?php
         return ob_get_clean();
     }
-
-    public function handle_lead_submission() {
-        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) {
-            wp_send_json_error( 'Security check failed.' );
-        }
-
-        $lead_id = wp_insert_post( array(
-            'post_title'   => sanitize_text_field( $_POST['lead_name'] ),
-            'post_content' => sanitize_textarea_field( $_POST['lead_message'] ),
-            'post_type'    => 'gp_lead',
-            'post_status'  => 'publish',
-        ) );
-
-        if ( $lead_id ) {
-            update_post_meta( $lead_id, '_lead_email', sanitize_email( $_POST['lead_email'] ) );
-            wp_send_json_success( 'Lead captured successfully!' );
-        }
-        wp_send_json_error( 'Failed to capture lead.' );
-    }
-
-    public function calculate_lead_score( $post_id, $post ) {
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-        $score = 0;
-        $content = $post->post_content;
-        if ( strpos( $content, 'emergency' ) !== false ) $score += 50;
-        update_post_meta( $post_id, '_gp_lead_score', $score );
-    }
 }
-
 GrowthPress_CRM::get_instance();

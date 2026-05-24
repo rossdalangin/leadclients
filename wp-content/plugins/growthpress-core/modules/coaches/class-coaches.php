@@ -1,34 +1,7 @@
 <?php
-/**
- * GrowthPress Coaches Module
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
-
 class GrowthPress_Coaches {
-
-    public function __construct() {
-        add_action( 'init', array( $this, 'register_coach_cpts' ) );
-    }
-
-    public function register_coach_cpts() {
-        register_post_type( 'gp_course', array(
-            'labels'      => array( 'name' => 'Courses', 'singular_name' => 'Course' ),
-            'public'      => true,
-            'show_ui'     => true,
-            'menu_icon'   => 'dashicons-welcome-learn-more',
-            'supports'    => array( 'title', 'editor', 'thumbnail' ),
-        ) );
-    }
-
-    /**
-     * Discovery Call Trigger
-     */
-    public function trigger_discovery_call( $lead_id ) {
-        // Logic to schedule discovery call immediately
+    public function generate_sample_data() {
+        wp_insert_post(array('post_title' => 'Discovery Session', 'post_type' => 'page', 'post_status' => 'publish'));
     }
 }
-
 new GrowthPress_Coaches();

@@ -1,25 +1,8 @@
 <?php
-/**
- * GrowthPress Roofing Module
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
-
 class GrowthPress_Roofing {
-
-    public function __construct() {
-        add_action( 'gp_emergency_booking', array( $this, 'handle_emergency_request' ) );
-    }
-
-    /**
-     * Emergency repair booking logic
-     */
-    public function handle_emergency_request( $data ) {
-        // High priority lead tagging
-        // Instant SMS notification via Twilio
+    public function __construct() { add_action( 'gp_emergency_booking', array( $this, 'handle_emergency' ) ); }
+    public function generate_sample_data() {
+        wp_insert_post(array('post_title' => 'Emergency Leak Repair', 'post_type' => 'page', 'post_status' => 'publish'));
     }
 }
-
 new GrowthPress_Roofing();
