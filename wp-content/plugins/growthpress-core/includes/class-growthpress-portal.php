@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Customer Portal Class - Automation Enhanced
+ * GrowthPress Customer Portal Class - Final Automation
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,14 +17,18 @@ class GrowthPress_Portal {
 
     public function trigger_post_acceptance_logic( $proposal_id ) {
         $lead_id = get_post_meta($proposal_id, '_related_lead', true);
+
+        // 1. Create project kickoff task
         $crm = GrowthPress_CRM::get_instance();
+        $crm->create_task( "PROJECT KICKOFF: " . get_the_title($lead_id), "Proposal accepted. Start onboarding.", $lead_id );
 
-        // Create project kickoff task
-        $crm->create_task( "PROJECT KICKOFF: " . get_the_title($lead_id), "Proposal accepted. Start onboarding process.", $lead_id );
+        // 2. Generate Invoice
+        $payments = new GrowthPress_Payments();
+        $payments->create_invoice( 500, $proposal_id, 'proposal' ); // Mock 500 deposit
 
-        // AI generated confirmation
+        // 3. AI generated confirmation
         $ai = GrowthPress_AI::get_instance();
-        $msg = $ai->call_ai("Generate a project kickoff email for a client who just accepted our proposal.", "You are a customer success manager.");
+        $msg = $ai->call_ai("Generate a project kickoff email.", "You are a customer success manager.");
         update_post_meta($proposal_id, '_kickoff_msg', $msg);
     }
 
@@ -44,9 +48,9 @@ class GrowthPress_Portal {
             <?php foreach($proposals as $prop):
                 $status = get_post_meta($prop->ID, '_gp_proposal_status', true) ?: 'Pending'; ?>
                 <div class="proposal">
-                    <?php echo esc_html($prop->post_title); ?> - Status: <?php echo $status; ?>
+                    <strong><?php echo esc_html($prop->post_title); ?></strong> - Status: <?php echo $status; ?>
                     <?php if($status === 'Pending'): ?>
-                        <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">Accept</button>
+                        <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">Accept & Pay Deposit</button>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>

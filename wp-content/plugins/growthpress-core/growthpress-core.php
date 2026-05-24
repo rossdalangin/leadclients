@@ -30,6 +30,8 @@ function growthpress_core_load_modules() {
         'includes/class-growthpress-portal.php',
         'includes/class-growthpress-locations.php',
         'includes/class-growthpress-activity.php',
+        'includes/class-growthpress-payments.php',
+        'includes/class-growthpress-funnels.php',
         'admin/class-growthpress-dashboard.php',
         'admin/class-growthpress-content-studio.php',
         'admin/class-growthpress-settings.php',
