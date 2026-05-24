@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI FAQ Assistant - Intent Enhanced
+ * GrowthPress AI FAQ Assistant - Industry Deep Dive
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,24 +23,24 @@ class GrowthPress_AI_FAQ {
         <div id="gp-ai-chat-bubble" class="gp-chat-bubble">
             <div id="gp-chat-icon">💬</div>
             <div id="gp-chat-window" style="display:none;">
-                <div class="chat-header">AI Business Assistant</div>
+                <div class="chat-header"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> Assistant</div>
                 <div id="gp-faq-chat-box" class="chat-body"></div>
                 <div class="chat-footer">
                     <input type="hidden" id="gp_ai_faq_nonce" value="<?php echo $nonce; ?>">
-                    <input type="text" id="gp-faq-input" placeholder="Ask a question...">
+                    <input type="text" id="gp-faq-input" placeholder="How can we help?">
                     <button onclick="askAI()">Send</button>
                 </div>
             </div>
         </div>
         <style>
             .gp-chat-bubble { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
-            #gp-chat-icon { background: #2563EB; width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+            #gp-chat-icon { background: <?php echo get_option('growthpress_primary_color', '#2563EB'); ?>; width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
             #gp-chat-window { position: absolute; bottom: 70px; right: 0; width: 300px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee; overflow: hidden; }
-            .chat-header { background: #2563EB; color: white; padding: 15px; font-weight: bold; }
+            .chat-header { background: <?php echo get_option('growthpress_primary_color', '#2563EB'); ?>; color: white; padding: 15px; font-weight: bold; }
             .chat-body { height: 250px; overflow-y: auto; padding: 15px; background: #f8fafc; font-size: 14px; }
             .chat-footer { padding: 10px; border-top: 1px solid #eee; display: flex; }
             .chat-footer input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 5px; margin-right: 5px; }
-            .chat-footer button { background: #2563EB; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+            .chat-footer button { background: <?php echo get_option('growthpress_primary_color', '#2563EB'); ?>; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
         </style>
         <script>
             jQuery('#gp-chat-icon').on('click', function() { jQuery('#gp-chat-window').toggle(); });
@@ -55,7 +55,7 @@ class GrowthPress_AI_FAQ {
                     if(res.success) {
                         $chat.append('<p style="color:#2563EB;"><strong>AI:</strong> ' + res.data.answer + '</p>');
                         if(res.data.intent === 'booking') {
-                            $chat.append('<div class="glass-card" style="margin-top:10px; font-size:12px;">🗓️ <a href="/services">Click here to book your appointment now.</a></div>');
+                            $chat.append('<div class="glass-card" style="margin-top:10px; font-size:12px;">🗓️ <a href="/services">Click here to book your consultation.</a></div>');
                         }
                     }
                     $chat.scrollTop($chat[0].scrollHeight);
@@ -73,12 +73,11 @@ class GrowthPress_AI_FAQ {
         $niche = get_option('growthpress_niche', 'Business');
 
         $ai = GrowthPress_AI::get_instance();
-        $prompt = "A visitor is asking: \"$query\". As an expert in $niche, provide a concise answer. Also detect if they want to 'book', 'schedule', or 'start' and return JSON with 'answer' and 'intent' (booking or general).";
-        $response_raw = $ai->call_ai($prompt, "You are a professional business assistant.");
+        $prompt = "A visitor is asking: \"$query\". As a specialist in $niche, provide expert advice and next steps. For Law, focus on legal intake triage. For Accounting, focus on tax/financial strategy. Detect booking intent and return JSON: answer, intent.";
+        $response_raw = $ai->call_ai($prompt, "You are an elite $niche advisor.");
 
         $response = json_decode($response_raw, true) ?: array('answer' => $response_raw, 'intent' => 'general');
         wp_send_json_success($response);
     }
 }
-
 new GrowthPress_AI_FAQ();

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Customer Portal Class - Final
+ * GrowthPress Customer Portal Class - Document Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,45 +23,53 @@ class GrowthPress_Portal {
         $payments = new GrowthPress_Payments();
         $payments->create_invoice( 500, $proposal_id, 'proposal' );
 
-        // AI Welcome
         $ai = GrowthPress_AI::get_instance();
         $msg = $ai->call_ai("Generate a welcome email for a new project.", "You are a customer success manager.");
         update_post_meta($proposal_id, '_kickoff_msg', $msg);
     }
 
     public function render_portal() {
-        if ( ! is_user_logged_in() ) return '<p>Please login.</p>';
+        if ( ! is_user_logged_in() ) return '<p>Please login to access your portal.</p>';
         $email = wp_get_current_user()->user_email;
-
-        // Fetch projects (linked to this email via lead)
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email ) );
         $lead_ids = wp_list_pluck($leads, 'ID');
 
         $proposals = array();
-        $projects = array();
+        $docs = array();
         if ( ! empty($lead_ids) ) {
             $proposals = get_posts( array( 'post_type' => 'gp_proposal', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
-            $projects = get_posts( array( 'post_type' => 'gp_project', 'meta_key' => '_related_lead', 'meta_compare' => 'IN', 'meta_value' => $lead_ids ) );
+            // Stubs for secure documents
+            $docs = array(
+                array('title' => 'Project Strategy.pdf', 'url' => '#'),
+                array('title' => 'Onboarding Guide.pdf', 'url' => '#')
+            );
         }
 
         ob_start(); ?>
         <div class="gp-portal-container container">
             <div class="glass-card">
-                <h2>Customer Dashboard</h2>
-                <div class="portal-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                    <div class="portal-section">
-                        <h3>Project Status</h3>
-                        <?php if($projects): foreach($projects as $p):
-                            $status = get_post_meta($p->ID, '_gp_project_status', true) ?: 'Active'; ?>
-                            <div class="project-item"><?php echo $p->post_title; ?>: <strong><?php echo $status; ?></strong></div>
-                        <?php endforeach; else: echo "<p>No active projects.</p>"; endif; ?>
-                    </div>
-                    <div class="portal-section">
-                        <h3>Proposals & Documents</h3>
-                        <?php foreach($proposals as $prop): ?>
-                            <div class="proposal"><?php echo $prop->post_title; ?> <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">View</button></div>
-                        <?php endforeach; ?>
-                    </div>
+                <h2>Welcome, <?php echo wp_get_current_user()->display_name; ?></h2>
+                <div class="portal-nav" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <a href="#appointments">Appointments</a> | <a href="#proposals">Proposals</a> | <a href="#documents">Documents</a>
+                </div>
+
+                <div id="appointments">
+                    <h3>Your Appointments</h3>
+                    <p>No upcoming appointments found.</p>
+                </div>
+
+                <div id="proposals" style="margin-top:30px;">
+                    <h3>Active Proposals</h3>
+                    <?php foreach($proposals as $prop): ?>
+                        <div class="proposal"><?php echo esc_html($prop->post_title); ?> <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">View</button></div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div id="documents" style="margin-top:30px;">
+                    <h3>Secure Files</h3>
+                    <?php if($docs): foreach($docs as $doc): ?>
+                        <div class="doc-item">📄 <?php echo $doc['title']; ?> - <a href="<?php echo $doc['url']; ?>">Download</a></div>
+                    <?php endforeach; else: echo "<p>No documents uploaded yet.</p>"; endif; ?>
                 </div>
             </div>
         </div>
