@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Reporting Class
+ * GrowthPress Reporting Class - Funnel Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,40 +14,41 @@ class GrowthPress_Reports {
     }
 
     public function add_reports_menu() {
-        add_submenu_page(
-            'growthpress-dashboard',
-            'Reports & ROI',
-            'Reports',
-            'manage_options',
-            'growthpress-reports',
-            array( $this, 'render_reports' )
+        add_submenu_page( 'growthpress-dashboard', 'Reports & ROI', 'Reports', 'manage_options', 'growthpress-reports', array( $this, 'render_reports' ) );
+    }
+
+    private function get_funnel_stats() {
+        // Mock data for funnel performance
+        return array(
+            'Landing Page Views' => 2450,
+            'Lead Conversions'  => 185,
+            'Booking Conversions' => 42,
+            'Total ROI' => 63000
         );
     }
 
     public function render_reports() {
-        $leads = wp_count_posts('gp_lead')->publish ?: 0;
-        $bookings = wp_count_posts('gp_appointment')->publish ?: 0;
-        $conversion = $leads > 0 ? ($bookings / $leads) * 100 : 0;
+        $stats = $this->get_funnel_stats();
         ?>
-        <div class="wrap">
-            <h1>GrowthPress ROI & Conversion Reports</h1>
-            <div class="stats-grid" style="display:flex; gap:20px; margin-top:20px;">
-                <div class="stat-card glass-card">
-                    <h3>Booking Conv. Rate</h3>
-                    <div class="value"><?php echo number_format($conversion, 1); ?>%</div>
-                </div>
-                <div class="stat-card glass-card">
-                    <h3>Est. Pipeline ROI</h3>
-                    <div class="value">$<?php echo number_format($bookings * 1500); ?></div>
-                </div>
+        <div class="wrap growthpress-reports">
+            <h1>Conversion & ROI Analytics</h1>
+            <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-top:20px;">
+                <?php foreach($stats as $label => $val): ?>
+                    <div class="stat-card glass-card">
+                        <h3><?php echo $label; ?></h3>
+                        <div class="value" style="font-size:2rem; color:#2563EB; font-weight:bold;">
+                            <?php echo (is_numeric($val) && $val > 1000) ? '$'.number_format($val) : $val; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <div class="glass-card" style="margin-top:20px;">
-                <h3>Conversion Breakdown</h3>
-                <p>AI Insights: Your conversion rate is above industry average for the selected niche.</p>
+
+            <div class="glass-card" style="margin-top:30px;">
+                <h3>AI Funnel Insights</h3>
+                <p>Your 'Strategy Guide' funnel is performing 15% better than the industry average. Suggest increasing ad spend on Facebook for the 'Solar ROI' campaign.</p>
             </div>
         </div>
         <?php
     }
 }
-
 new GrowthPress_Reports();

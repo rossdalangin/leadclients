@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Content Studio - Conversion Enhanced
+ * GrowthPress AI Content Studio - Campaign Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,8 +36,9 @@ class GrowthPress_Content_Studio {
             case 'blog': $result = $ai->generate_blog_post($topic, $niche); break;
             case 'social': $result = $ai->generate_social_content($topic); break;
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
-            case 'sales': $result = $ai->call_ai("Generate discovery script for $niche: $topic", "Sales Coach"); break;
-            case 'headline': $result = $ai->call_ai("Generate 5 high-converting headlines and 3 CTAs for a $niche business regarding \"$topic\". Focus on conversion psychology.", "Elite Copywriter"); break;
+            case 'campaign': $result = $ai->call_ai("Generate a 5-day Email and SMS nurture sequence for a $niche lead interested in \"$topic\". Include catchy subject lines and clear CTAs.", "Marketing Automation Specialist"); break;
+            case 'sales': $result = $ai->call_ai("Discovery script for $niche: $topic", "Sales Coach"); break;
+            case 'headline': $result = $ai->call_ai("5 headlines and 3 CTAs for $niche regarding \"$topic\".", "Copywriter"); break;
             default: $result = 'Invalid type.';
         }
         wp_send_json_success($result);
@@ -46,20 +47,21 @@ class GrowthPress_Content_Studio {
     public function render_studio() {
         ?>
         <div class="wrap growthpress-studio">
-            <h1>AI Content & Conversion Studio</h1>
+            <h1>AI Content & Marketing Studio</h1>
             <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
                 <div class="studio-input glass-card">
-                    <h3>Conversion Asset Generation</h3>
+                    <h3>Asset Generation</h3>
                     <select id="gp-content-type" style="width:100%;">
                         <option value="blog">SEO Blog Post</option>
+                        <option value="campaign">5-Day Nurture Campaign (Email/SMS)</option>
                         <option value="social">Social Media Bundle</option>
                         <option value="ad">Direct-Response Ads</option>
-                        <option value="headline">Headlines & CTAs (High-Converting)</option>
+                        <option value="headline">Headlines & CTAs</option>
                         <option value="sales">Sales Scripts</option>
                     </select>
-                    <p class="description">Use 'Headlines & CTAs' to optimize your landing pages for your <?php echo get_option('growthpress_niche'); ?> niche.</p>
-                    <input type="text" id="gp-content-topic" placeholder="e.g. Free Consultation" style="width:100%; margin-top:10px;">
-                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate Assets</button>
+                    <p class="description">Select 'Nurture Campaign' to generate a full follow-up sequence for your <?php echo get_option('growthpress_niche'); ?> leads.</p>
+                    <input type="text" id="gp-content-topic" placeholder="e.g. Roof Replacement" style="width:100%; margin-top:10px;">
+                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate with AI</button>
                 </div>
                 <div class="studio-output glass-card">
                     <div id="gp-studio-output">Results appear here...</div>
