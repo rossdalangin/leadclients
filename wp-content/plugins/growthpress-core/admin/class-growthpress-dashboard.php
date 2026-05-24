@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Admin Dashboard Class - AI Closing Logic
+ * GrowthPress Admin Dashboard Class - Visual Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +35,7 @@ class GrowthPress_Dashboard {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
         wp_set_object_terms( $lead_id, sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
-        GrowthPress_Activity::log( "Lead #$lead_id stage updated." );
+        GrowthPress_Activity::log( "Lead #$lead_id updated." );
         wp_send_json_success();
     }
 
@@ -59,15 +59,16 @@ class GrowthPress_Dashboard {
     }
 
     private function generate_niche_funnel($n) {
-        wp_insert_post(array('post_title'=>'Strategy Guide','post_content'=>'[gp_lead_form]','post_type'=>'page','post_status'=>'publish'));
+        wp_insert_post(array('post_title'=>'AI Growth Guide','post_content'=>'[gp_lead_form]','post_type'=>'page','post_status'=>'publish'));
     }
 
     public function render_dashboard() {
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
-        $stages = array( 'new' => 'New', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
+        $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
+        $ai = GrowthPress_AI::get_instance();
         ?>
         <div class="wrap growthpress-dashboard">
-            <h1><?php echo get_option('growthpress_brand_name', 'GrowthPress'); ?> OS</h1>
+            <h1><?php echo get_option('growthpress_brand_name', 'GrowthPress'); ?> Business OS</h1>
 
             <div id="gp-kanban-board" style="display:flex; gap:15px; margin-top:20px; overflow-x:auto;">
                 <?php foreach ( $stages as $slug => $label ) : ?>
@@ -76,11 +77,12 @@ class GrowthPress_Dashboard {
                         <div class="kanban-cards">
                             <?php foreach ( $leads as $lead ) :
                                 $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
-                                if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) : ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:10px; padding:10px; cursor:grab;">
+                                if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) :
+                                    $prob = $ai->predict_deal_probability($lead->ID); ?>
+                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:10px; padding:10px; cursor:grab; position:relative;">
                                         <strong><?php echo esc_html($lead->post_title); ?></strong>
-                                        <div class="ai-next-step" style="font-size:10px; color:#2563EB; margin-top:5px; border-top:1px solid #eee; padding-top:3px;">
-                                            AI Tip: Send case study.
+                                        <div class="gp-probability" style="font-size:10px; color:#10B981; margin-top:5px;">
+                                            AI Confidence: <?php echo $prob; ?>%
                                         </div>
                                     </div>
                                 <?php endif;
