@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Core Class - Enhanced
+ * GrowthPress AI Core Class - Marketing Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,23 +51,36 @@ class GrowthPress_AI {
         return $body['choices'][0]['message']['content'] ?? '';
     }
 
+    /**
+     * AI Marketing Engine Methods
+     */
+
+    public function generate_blog_post( $topic, $niche ) {
+        $prompt = "Write a high-quality, SEO-optimized blog post about \"$topic\" for a $niche business. Include headings, a call to action, and focus on authority building.";
+        return $this->call_ai( $prompt, "You are an elite content strategist and SEO expert." );
+    }
+
+    public function generate_social_content( $topic, $platform = 'Instagram' ) {
+        $prompt = "Create 3 engaging $platform posts about \"$topic\". Include emojis and relevant hashtags.";
+        return $this->call_ai( $prompt, "You are a creative social media manager." );
+    }
+
+    public function generate_ad_copy( $service, $niche ) {
+        $prompt = "Generate high-converting Facebook and Google ad copy for a $service offered by a $niche business. Focus on benefits and urgency.";
+        return $this->call_ai( $prompt, "You are a world-class direct response copywriter." );
+    }
+
     public function analyze_sentiment( $message ) {
         $prompt = "Analyze the sentiment and urgency of this lead message: \"$message\". Return a JSON object with 'sentiment' (positive, neutral, negative) and 'urgency' (1-10).";
         return $this->call_ai( $prompt, "You are a lead qualification assistant." );
     }
 
-    /**
-     * Missed Call Automation Prompt
-     */
     public function generate_missed_call_reply( $niche ) {
         $context = "You are a specialized receptionist for a $niche business.";
         $prompt = "A potential client just called and we missed it. Generate a friendly, professional SMS offering to book a discovery call or appointment immediately.";
         return $this->call_ai( $prompt, $context );
     }
 
-    /**
-     * Re-engagement Campaign Prompt
-     */
     public function generate_reactivation_email( $lead_name, $niche ) {
         $context = "You are a marketing strategist for a $niche.";
         $prompt = "Write a short, engaging re-activation email for $lead_name who inquired 30 days ago but hasn't booked yet. Offer a small incentive or helpful advice.";

@@ -12,17 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-// Define constants
 define( 'GROWTHPRESS_CORE_VERSION', '1.0.0' );
 define( 'GROWTHPRESS_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'GROWTHPRESS_CORE_URL', plugin_dir_url( __FILE__ ) );
 
-// Autoloader or simple inclusions
 function growthpress_core_load_modules() {
     $files = array(
         'includes/class-growthpress-ai.php',
         'includes/class-growthpress-crm.php',
         'includes/class-growthpress-booking.php',
+        'includes/class-growthpress-api.php',
+        'includes/class-growthpress-seo.php',
+        'includes/class-growthpress-builder.php',
         'admin/class-growthpress-dashboard.php',
     );
 
@@ -32,7 +33,6 @@ function growthpress_core_load_modules() {
         }
     }
 
-    // Load niche modules
     $modules = array(
         'dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants'
     );
