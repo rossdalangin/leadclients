@@ -19,7 +19,7 @@ class GrowthPress_RealEstate {
         register_post_type( 'gp_property', array(
             'labels'      => array( 'name' => 'Properties', 'singular_name' => 'Property' ),
             'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-admin-home',
-            'supports'    => array( 'title', 'editor', 'thumbnail' ),
+            'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
         ) );
     }
 
@@ -39,13 +39,26 @@ class GrowthPress_RealEstate {
 
     public function add_property_help_tabs() {
         $screen = get_current_screen();
-        if ( $screen->post_type !== 'gp_property' ) return;
+        if ( ! $screen || $screen->post_type !== 'gp_property' ) return;
 
         $screen->add_help_tab( array(
             'id'      => 'gp_re_ai',
             'title'   => 'AI Matchmaking',
             'content' => '<p>The AI Matchmaker scans your property descriptions and meta data to suggest listings to leads based on their specific lifestyle intent.</p>',
         ) );
+    }
+
+    public function suggest_properties_for_lead( $lead_id ) {
+        $lead = get_post($lead_id);
+        $all_props = get_posts(array('post_type' => 'gp_property', 'posts_per_page' => 10));
+
+        $prop_list = '';
+        foreach($all_props as $p) $prop_list .= "- {$p->post_title}: {$p->post_excerpt}\n";
+
+        $ai = GrowthPress_AI::get_instance();
+        $prompt = "Based on this lead inquiry: \"{$lead->post_content}\", which of these properties are the best match? \n$prop_list\n Return the top 2 property names and why.";
+
+        return $ai->call_ai($prompt, "Real Estate Matchmaker");
     }
 
     public function generate_sample_data() {

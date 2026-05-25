@@ -22,6 +22,9 @@ class GrowthPress_CRM {
         add_action( 'init', array( $this, 'register_cpts' ) );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
         add_action( 'gp_cron_followup', array( $this, 'handle_abandoned_inquiry_followup' ) );
+        add_action( 'add_meta_boxes', array( $this, 'add_crm_meta_boxes' ) );
+        add_action( 'wp_ajax_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
+        add_action( 'wp_ajax_nopriv_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
         if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
             wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
         }
@@ -47,6 +50,12 @@ class GrowthPress_CRM {
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,
+            'show_ui' => true
+        ) );
+
+        register_taxonomy( 'gp_lead_tag', 'gp_lead', array(
+            'labels' => array( 'name' => 'Lead Tags' ),
+            'hierarchical' => false,
             'show_ui' => true
         ) );
 
@@ -123,6 +132,13 @@ class GrowthPress_CRM {
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
 
+        // Auto-tagging based on content analysis
+        $tag_prompt = "Categorize this lead inquiry: \"{$lead->post_content}\" as either 'Residential', 'Commercial', or 'Enterprise'. Return ONLY the word.";
+        $tag = $ai->call_ai($tag_prompt, "Lead Classifier");
+        if ( ! is_wp_error($tag) && in_array(trim($tag), array('Residential', 'Commercial', 'Enterprise')) ) {
+            wp_set_object_terms($lead_id, trim($tag), 'gp_lead_tag');
+        }
+
         if ( isset($analysis['urgency']) && $analysis['urgency'] >= 9 ) {
             $staff = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
             if ( ! empty($staff) ) {
@@ -130,6 +146,72 @@ class GrowthPress_CRM {
                 GrowthPress_Activity::log( "URGENT LEAD #$lead_id routed to " . $staff[0]->display_name );
             }
         }
+    }
+
+    public function add_crm_meta_boxes() {
+        add_meta_box( 'gp_lead_insights', 'AI Sales Insights', array( $this, 'render_insights_meta' ), 'gp_lead', 'normal', 'high' );
+        add_meta_box( 'gp_lead_tasks', 'Related Tasks & Notes', array( $this, 'render_tasks_meta' ), 'gp_lead', 'normal', 'default' );
+        add_meta_box( 'gp_lead_behavior', 'Lead Behavioral Log', array( $this, 'render_behavior_meta' ), 'gp_lead', 'side' );
+    }
+
+    public function render_tasks_meta( $post ) {
+        $tasks = get_posts( array( 'post_type' => 'gp_task', 'meta_key' => '_related_lead', 'meta_value' => $post->ID, 'posts_per_page' => -1 ) );
+        ?>
+        <div class="gp-tasks-meta">
+            <?php if($tasks): foreach($tasks as $t): ?>
+                <div style="padding:10px; border:1px solid #ddd; border-radius:6px; margin-bottom:10px; background:#fff;">
+                    <strong><?php echo esc_html($t->post_title); ?></strong>
+                    <p style="margin:5px 0 0; font-size:12px;"><?php echo esc_html($t->post_content); ?></p>
+                </div>
+            <?php endforeach; else: echo "No tasks assigned to this lead."; endif; ?>
+            <hr>
+            <p><a href="<?php echo admin_url('post-new.php?post_type=gp_task'); ?>" class="button">Create New Task</a></p>
+        </div>
+        <?php
+    }
+
+    public function render_insights_meta( $post ) {
+        $prob = get_post_meta($post->ID, '_gp_ai_probability', true) ?: 50;
+        $ai = GrowthPress_AI::get_instance();
+        $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$post->post_content}\"", "Sales Closer");
+        ?>
+        <div class="gp-insights-box">
+            <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+                <div style="text-align:center; padding:15px; border-radius:12px; background:#f0f9ff; border:1px solid #bae6fd;">
+                    <div style="font-size:24px; font-weight:800; color:#2563EB;"><?php echo $prob; ?>%</div>
+                    <div style="font-size:10px; text-transform:uppercase; opacity:0.7;">Deal Probability</div>
+                </div>
+            </div>
+            <h4>AI Suggested Closing Strategy:</h4>
+            <div style="background:#f8fafc; padding:15px; border-radius:8px; font-size:13px;"><?php echo nl2br(esc_html($closing_tips)); ?></div>
+        </div>
+        <?php
+    }
+
+    public function render_behavior_meta( $post ) {
+        $log = get_post_meta($post->ID, '_behavior_log', true) ?: array();
+        ?>
+        <div class="gp-behavior-list">
+            <?php if($log): foreach(array_reverse($log) as $item): ?>
+                <div style="font-size:11px; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:4px;">
+                    <strong><?php echo esc_html($item['page']); ?></strong><br>
+                    <span style="opacity:0.6;"><?php echo esc_html($item['time']); ?></span>
+                </div>
+            <?php endforeach; else: echo "No behavior tracked yet."; endif; ?>
+        </div>
+        <?php
+    }
+
+    public function handle_behavior_logging() {
+        $email = sanitize_email($_POST['email']);
+        $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email, 'number' => 1 ) );
+        if ( ! empty($leads) ) {
+            $lead_id = $leads[0]->ID;
+            $log = get_post_meta($lead_id, '_behavior_log', true) ?: array();
+            $log[] = array('page' => sanitize_text_field($_POST['page']), 'time' => current_time('mysql'));
+            update_post_meta($lead_id, '_behavior_log', array_slice($log, -10)); // Keep last 10
+        }
+        wp_send_json_success();
     }
 
     public function create_task( $title, $desc = '', $lead_id = 0 ) {

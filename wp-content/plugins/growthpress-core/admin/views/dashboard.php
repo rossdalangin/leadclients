@@ -63,6 +63,9 @@
                                         <div class="gp-probability" style="font-size:10px; color:#10B981; font-weight:600;">
                                             AI Confidence: <?php echo $prob; ?>%
                                         </div>
+                                        <div class="gp-next-step" style="font-size:9px; background:#f1f5f9; padding:4px; border-radius:4px; margin-top:5px;">
+                                            AI Suggests: <?php echo $prob > 80 ? 'Send Proposal' : 'Qualifying Call'; ?>
+                                        </div>
                                     </div>
                                 <?php endif;
                             endforeach; ?>

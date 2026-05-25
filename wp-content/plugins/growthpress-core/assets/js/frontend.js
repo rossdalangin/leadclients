@@ -32,16 +32,31 @@ jQuery(document).on('submit', '.gp-form', function(e) {
     var action = $form.data('action');
     var formData = $form.serialize();
 
+    var leadEmail = $form.find('[name="lead_email"]').val();
     $.post(gp_ajax.ajaxurl, {
         action: action,
+        nonce: $form.find('[name="nonce"]').val(),
         lead_name: $form.find('[name="lead_name"]').val(),
-        lead_email: $form.find('[name="lead_email"]').val(),
+        lead_email: leadEmail,
         lead_msg: $form.find('[name="lead_msg"]').val()
     }, function(res) {
         if (res.success) {
+            localStorage.setItem('gp_lead_email', leadEmail);
             $form.html('<div class="success-msg">' + res.data + '</div>');
         }
     });
+});
+
+// Behavior Tracking
+jQuery(document).ready(function($) {
+    var email = localStorage.getItem('gp_lead_email');
+    if (email) {
+        $.post(gp_ajax.ajaxurl, {
+            action: 'gp_log_behavior',
+            email: email,
+            page: window.location.pathname
+        });
+    }
 });
 
 // Exit Intent Logic

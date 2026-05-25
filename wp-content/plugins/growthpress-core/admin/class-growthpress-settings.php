@@ -22,7 +22,7 @@ class GrowthPress_Settings {
         $keys = array(
             'growthpress_openai_api_key', 'growthpress_niche', 'growthpress_api_token',
             'growthpress_brand_name', 'growthpress_primary_color', 'growthpress_hot_threshold',
-            'growthpress_twilio_sid', 'growthpress_twilio_token'
+            'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_whatsapp_key'
         );
         foreach($keys as $k) register_setting( 'growthpress_settings_group', $k );
     }
@@ -75,6 +75,23 @@ class GrowthPress_Settings {
                         <td>
                             <input type="text" name="growthpress_api_token" value="<?php echo esc_attr( get_option('growthpress_api_token') ); ?>" class="regular-text">
                             <p class="description">Secure token for REST API. Example: gp_sec_token_99.</p>
+                        </td>
+                    </tr>
+
+                    <tr class="section-header"><th colspan="2"><h3>SMS & Communication</h3></th></tr>
+                    <tr>
+                        <th scope="row"><label>Twilio SID</label></th>
+                        <td><input type="text" name="growthpress_twilio_sid" value="<?php echo esc_attr( get_option('growthpress_twilio_sid') ); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>Twilio Auth Token</label></th>
+                        <td><input type="password" name="growthpress_twilio_token" value="<?php echo esc_attr( get_option('growthpress_twilio_token') ); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>WhatsApp Business API Key</label></th>
+                        <td>
+                            <input type="text" name="growthpress_whatsapp_key" value="<?php echo esc_attr( get_option('growthpress_whatsapp_key') ); ?>" class="regular-text">
+                            <p class="description">Required for high-ticket WhatsApp automation workflows.</p>
                         </td>
                     </tr>
                 </table>
