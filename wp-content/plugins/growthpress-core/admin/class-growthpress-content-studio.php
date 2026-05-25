@@ -36,10 +36,15 @@ class GrowthPress_Content_Studio {
             case 'blog': $result = $ai->generate_blog_post($topic, $niche); break;
             case 'social': $result = $ai->generate_social_content($topic); break;
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
-            case 'campaign': $result = $ai->call_ai("Generate 5-day email sequence for $topic in $niche.", "Automation Pro"); break;
-            case 'market': $result = $ai->call_ai("Generate a competitor analysis and 'Angle of Attack' sales strategy for a $niche business in the area of \"$topic\". Identify common weaknesses in the market.", "Market Strategist"); break;
+            case 'campaign': $result = $ai->generate_email_campaign($topic, $niche); break;
+            case 'market': $result = $ai->generate_market_insights($topic, $niche); break;
             default: $result = 'Invalid.';
         }
+
+        if ( is_wp_error($result) ) {
+            wp_send_json_error($result->get_error_message());
+        }
+
         wp_send_json_success($result);
     }
 

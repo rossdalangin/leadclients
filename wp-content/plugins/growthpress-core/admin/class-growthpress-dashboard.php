@@ -178,11 +178,72 @@ class GrowthPress_Dashboard {
     </div>
 </div>";
 
+        // Pricing Page
+        $pricing_content = "
+<div class=\"container\" style=\"text-align:center;\">
+    <h1>Transparent Investment Plans</h1>
+    <p>Choose the level of service that matches your {$niche_label} growth goals.</p>
+    <div class=\"wp-block-columns\" style=\"margin-top:50px;\">
+        <div class=\"wp-block-column glass-card\" style=\"padding:30px;\">
+            <h3>Standard</h3>
+            <div style=\"font-size:2rem; font-weight:800; color:#2563EB;\">$1,999/mo</div>
+            <p>Essential {$niche_label} services and basic AI automation.</p>
+            <ul style=\"text-align:left; font-size:14px;\">
+                <li>Core Lead Capture</li>
+                <li>Email Nurturing</li>
+                <li>Standard Support</li>
+            </ul>
+        </div>
+        <div class=\"wp-block-column glass-card\" style=\"padding:30px; border:2px solid #2563EB; transform:scale(1.05);\">
+            <div style=\"background:#2563EB; color:white; padding:5px; border-radius:4px; font-size:10px; margin-bottom:10px;\">MOST POPULAR</div>
+            <h3>Premium</h3>
+            <div style=\"font-size:2rem; font-weight:800; color:#2563EB;\">$3,999/mo</div>
+            <p>Full-scale AI-powered growth for high-ticket results.</p>
+            <ul style=\"text-align:left; font-size:14px;\">
+                <li>Advanced AI Triage</li>
+                <li>Omnichannel Automation</li>
+                <li>Priority Support</li>
+            </ul>
+        </div>
+        <div class=\"wp-block-column glass-card\" style=\"padding:30px;\">
+            <h3>Enterprise</h3>
+            <div style=\"font-size:2rem; font-weight:800; color:#2563EB;\">Custom</div>
+            <p>Bespoke solutions for multi-location teams.</p>
+            <ul style=\"text-align:left; font-size:14px;\">
+                <li>Custom API Integration</li>
+                <li>Dedicated Account Mgr</li>
+                <li>White-Label OS</li>
+            </ul>
+        </div>
+    </div>
+</div>";
+
+        // Case Studies Page
+        $cases_content = "
+<div class=\"container\">
+    <h1>Results & Transformation</h1>
+    <p>How we've helped {$niche_label} businesses scale their operations.</p>
+    <div class=\"wp-block-columns\" style=\"margin-top:40px;\">
+        <div class=\"wp-block-column glass-card\">
+            <h3>300% Growth in Bookings</h3>
+            <p>A regional {$niche_label} firm increased their efficiency by 40% in just 90 days.</p>
+            <a href=\"#\">Read Full Story</a>
+        </div>
+        <div class=\"wp-block-column glass-card\">
+            <h3>$1.2M Revenue Increase</h3>
+            <p>Leveraging our AI lead qualification to identify high-value clients instantly.</p>
+            <a href=\"#\">Read Full Story</a>
+        </div>
+    </div>
+</div>";
+
         $pages = array(
-            'Home'     => $home_content,
-            'Services' => $services_content,
-            'FAQ'      => $faq_content,
-            'Contact'  => $contact_content
+            'Home'         => $home_content,
+            'Services'     => $services_content,
+            'Pricing'      => $pricing_content,
+            'Case Studies' => $cases_content,
+            'FAQ'          => $faq_content,
+            'Contact'      => $contact_content
         );
 
         foreach($pages as $t => $c) {

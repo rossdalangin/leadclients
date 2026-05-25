@@ -24,7 +24,8 @@ class GrowthPress_AI {
     }
 
     public function call_ai( $prompt, $context = '' ) {
-        if ( empty( $this->api_key ) ) return new WP_Error( 'missing_api_key', 'Missing API key.' );
+        if ( empty( $this->api_key ) ) return new WP_Error( 'missing_api_key', 'Missing API key. Please configure in GrowthPress Settings.' );
+
         $response = wp_remote_post( 'https://api.openai.com/v1/chat/completions', array(
             'headers' => array( 'Authorization' => 'Bearer ' . $this->api_key, 'Content-Type'  => 'application/json' ),
             'body'    => json_encode( array(
@@ -33,9 +34,16 @@ class GrowthPress_AI {
             ) ),
             'timeout' => 30,
         ) );
+
         if ( is_wp_error( $response ) ) return $response;
+
+        $code = wp_remote_retrieve_response_code($response);
+        if ( $code !== 200 ) {
+            return new WP_Error( 'ai_api_error', 'AI Service returned error code: ' . $code );
+        }
+
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
-        return $body['choices'][0]['message']['content'] ?? '';
+        return $body['choices'][0]['message']['content'] ?? new WP_Error('empty_response', 'Empty response from AI.');
     }
 
     public function generate_growth_roadmap( $niche ) {

@@ -69,12 +69,17 @@ class GrowthPress_AI_FAQ {
 
     public function handle_faq_query() {
         check_ajax_referer('gp_ai_faq_nonce', 'nonce');
+
         $query = sanitize_text_field($_POST['query']);
         $niche = get_option('growthpress_niche', 'Business');
 
         $ai = GrowthPress_AI::get_instance();
         $prompt = "A visitor is asking: \"$query\". As a specialist in $niche, provide expert advice and next steps. For Law, focus on legal intake triage. For Accounting, focus on tax/financial strategy. Detect booking intent and return JSON: answer, intent.";
         $response_raw = $ai->call_ai($prompt, "You are an elite $niche advisor.");
+
+        if ( is_wp_error($response_raw) ) {
+            wp_send_json_error($response_raw->get_error_message());
+        }
 
         $response = json_decode($response_raw, true) ?: array('answer' => $response_raw, 'intent' => 'general');
         wp_send_json_success($response);
