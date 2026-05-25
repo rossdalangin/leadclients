@@ -162,33 +162,11 @@ class GrowthPress_Dashboard {
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
         $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
         $ai = GrowthPress_AI::get_instance();
-        ?>
-        <div class="wrap growthpress-dashboard">
-            <h1><?php echo get_option('growthpress_brand_name', 'GrowthPress'); ?> Business OS</h1>
 
-            <div id="gp-kanban-board" style="display:flex; gap:15px; margin-top:20px; overflow-x:auto;">
-                <?php foreach ( $stages as $slug => $label ) : ?>
-                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width:220px; background:#f4f4f4; padding:10px; border-radius:8px;">
-                        <h4><?php echo $label; ?></h4>
-                        <div class="kanban-cards">
-                            <?php foreach ( $leads as $lead ) :
-                                $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
-                                if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) :
-                                    $prob = $ai->predict_deal_probability($lead->ID); ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:10px; padding:10px; cursor:grab; position:relative;">
-                                        <strong><?php echo esc_html($lead->post_title); ?></strong>
-                                        <div class="gp-probability" style="font-size:10px; color:#10B981; margin-top:5px;">
-                                            AI Confidence: <?php echo $prob; ?>%
-                                        </div>
-                                    </div>
-                                <?php endif;
-                            endforeach; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php
+        $view_file = GROWTHPRESS_CORE_PATH . 'admin/views/dashboard.php';
+        if ( file_exists( $view_file ) ) {
+            include $view_file;
+        }
     }
 }
 new GrowthPress_Dashboard();

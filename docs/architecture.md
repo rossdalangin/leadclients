@@ -1,22 +1,49 @@
-# GrowthPress System Architecture
+# GrowthPress CRM & Sales Architecture
 
-## Overview
-GrowthPress is built as a modular WordPress ecosystem where the theme handles the UI/UX (Aesthetics) and the Core Plugin handles the Business Intelligence (Logic).
+## Lead Lifecycle Flow
+```mermaid
+graph TD
+    A[Traffic Source] --> B{Lead Capture}
+    B -->|Form Submission| C[GrowthPress CRM]
+    B -->|Quiz Completion| C
+    C --> D[AI Sentiment Analysis]
+    D --> E{Urgency Detection}
+    E -->|> 8| F[Assign to Admin / Priority Notification]
+    E -->|< 8| G[Assign to Sales Rep]
+    F --> H[Automated SMS/Email Follow-up]
+    G --> H
+    H --> I[Booking System Discovery Call]
+    I --> J[AI Proposal Generation]
+    J --> K[Client Portal Approval]
+    K --> L[Contract/Payment Integration]
+```
 
-## Component Map
-- `growthpress-core.php`: Entry point, module loader.
-- `/includes`: Core engines (AI, CRM, Booking, Reputation, Portal).
-- `/modules`: Niche-specific logic (Dental, Law, etc.).
-- `/admin`: Management dashboard, settings, and AI studio.
-- `/assets`: CSS/JS for both backend and frontend.
+## Database Schema (Modular Meta)
 
-## Key Modules
-- **CRM & Kanban**: Lead management with drag-and-drop pipeline.
-- **Booking Engine**: Appointment scheduling with automated reminders.
-- **Reputation**: Review management and AI-suggested replies.
-- **Client Portal**: Secure area for clients to manage appointments/docs.
-- **AI Content Studio**: In-dashboard marketing asset generation.
+| Object | Meta Key | Purpose |
+| :--- | :--- | :--- |
+| **Lead (gp_lead)** | `_lead_score` | AI-calculated lead quality (0-100) |
+| | `_lead_intent` | Identified intent (Residential, Commercial, Enterprise) |
+| | `_sentiment` | JSON analysis from OpenAI |
+| | `_behavior_log` | JSON array of pages visited and time on site |
+| **Appointment (gp_appointment)** | `_appointment_date` | Date and time of scheduling |
+| | `_staff_id` | Assigned professional ID |
+| | `_telemedicine_link` | Auto-generated meeting URL |
+| **Proposal (gp_proposal)** | `_related_lead` | ID of the lead this proposal belongs to |
+| | `_proposal_status` | Draft, Sent, Accepted, Declined |
+| | `_proposal_value` | Estimated contract value |
 
-## API Architecture
-- Integrated with OpenAI Chat Completions (GPT-4) for lead analysis.
-- REST API endpoints for external CRM syncing (Bearer Token Auth).
+## AI Intelligence Workflows
+
+### 1. Lead Qualification (The "Triage" Loop)
+1. Lead submits a query.
+2. `GrowthPress_CRM` triggers `gp_lead_captured`.
+3. `GrowthPress_AI` analyzes the message for sentiment and high-ticket identifiers.
+4. Lead is tagged and routed to the correct pipeline stage.
+5. If medical/legal, niche-specific triage logic is applied.
+
+### 2. Marketing Nurture Loop
+1. Lead stage changes to "Follow-up".
+2. System pulls `gp_lead_intent`.
+3. AI generates a personalized 5-day nurture sequence based on that intent.
+4. SMS/Email automation triggers via integrated APIs (Twilio/FluentCRM).

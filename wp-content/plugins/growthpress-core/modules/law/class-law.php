@@ -13,6 +13,8 @@ class GrowthPress_Law {
         add_action( 'init', array( $this, 'register_law_cpts' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_law_meta_boxes' ) );
         add_action( 'save_post_gp_legal_case', array( $this, 'save_law_meta' ) );
+        add_shortcode( 'gp_legal_intake', array( $this, 'render_legal_intake' ) );
+        add_action( 'wp_ajax_gp_legal_triage', array( $this, 'handle_legal_triage' ) );
     }
 
     public function register_law_cpts() {
@@ -44,6 +46,41 @@ class GrowthPress_Law {
 
     public function save_law_meta( $id ) {
         if ( isset($_POST['gp_case_status']) ) update_post_meta($id, '_gp_case_status', sanitize_text_field($_POST['gp_case_status']));
+    }
+
+    public function render_legal_intake() {
+        $nonce = wp_create_nonce('gp_legal_nonce');
+        return '
+        <div class="gp-legal-intake glass-card">
+            <h3>Secure Legal Intake</h3>
+            <p>Describe your situation for a preliminary AI assessment.</p>
+            <textarea id="legal-inquiry" placeholder="Describe your legal matter..."></textarea>
+            <input type="hidden" id="legal-nonce" value="' . $nonce . '">
+            <button onclick="runLegalTriage()" class="button">Start Secure Assessment</button>
+            <div id="legal-ai-result" style="margin-top:15px; font-size:14px;"></div>
+        </div>
+        <script>
+        function runLegalTriage() {
+            var inquiry = jQuery("#legal-inquiry").val();
+            var out = jQuery("#legal-ai-result");
+            out.html("AI Legal Assistant is analyzing...");
+            jQuery.post(gp_ajax.ajaxurl, {
+                action: "gp_legal_triage",
+                inquiry: inquiry,
+                nonce: jQuery("#legal-nonce").val()
+            }, function(res) {
+                if(res.success) out.html(res.data);
+            });
+        }
+        </script>';
+    }
+
+    public function handle_legal_triage() {
+        check_ajax_referer( 'gp_legal_nonce', 'nonce' );
+        $inquiry = sanitize_textarea_field($_POST['inquiry']);
+        $ai = GrowthPress_AI::get_instance();
+        $result = $ai->get_legal_triage($inquiry);
+        wp_send_json_success($result);
     }
 
     public function generate_sample_data() {

@@ -94,6 +94,11 @@ class GrowthPress_CRM {
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
         $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5);
 
+        // Cache AI scoring to prevent dashboard slowdowns
+        $prob = $ai->predict_deal_probability($lead_id);
+        update_post_meta($lead_id, '_gp_ai_probability', $prob);
+        update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
+
         // Advanced Sentiment-Based Routing
         if ( isset($analysis['urgency']) && $analysis['urgency'] >= 9 ) {
             $staff = get_users( array( 'role' => 'administrator', 'number' => 1 ) );

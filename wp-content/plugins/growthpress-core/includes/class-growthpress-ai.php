@@ -44,7 +44,12 @@ class GrowthPress_AI {
     }
 
     public function predict_deal_probability( $lead_id ) {
-        return 75; // Mock for performance
+        $lead = get_post($lead_id);
+        if (!$lead) return 50;
+        $content = $lead->post_content;
+        $prompt = "Based on this lead inquiry: \"$content\", predict the probability of closing this deal as a percentage (0-100). Return ONLY the number.";
+        $res = $this->call_ai($prompt, "Sales Predictor");
+        return is_numeric(trim($res)) ? intval(trim($res)) : 75;
     }
 
     public function analyze_sentiment( $msg ) {
@@ -52,12 +57,31 @@ class GrowthPress_AI {
         return $this->call_ai($prompt, "Lead Assistant");
     }
 
-    public function generate_blog_post($t, $n) { return $this->call_ai("Blog about $t for $n", "SEO Expert"); }
-    public function generate_ad_copy($s, $n) { return $this->call_ai("Ad for $s in $n", "Copywriter"); }
-    public function generate_social_content($t) { return $this->call_ai("3 posts for $t", "Social Manager"); }
+    public function generate_blog_post($t, $n) { return $this->call_ai("Write a 1000-word SEO-optimized blog post about \"$t\" specifically for a $n. Include H2s, H3s, and a conversion-focused conclusion.", "SEO Content Expert"); }
+    public function generate_ad_copy($s, $n) { return $this->call_ai("Create 3 variations of high-converting direct-response ad copy (Facebook/Google) for \"$s\" in the $n niche.", "Direct-Response Copywriter"); }
+    public function generate_social_content($t) { return $this->call_ai("Generate a week of social media content (5 posts) about \"$t\". Include hooks and call-to-actions.", "Social Media Strategist"); }
+    public function generate_email_campaign($topic, $niche) { return $this->call_ai("Generate a 5-day high-ticket email nurture sequence for \"$topic\" in the $niche niche. Focus on building authority and booking a call.", "Email Marketing Specialist"); }
+    public function generate_market_insights($topic, $niche) { return $this->call_ai("Analyze the market for \"$topic\" in the $niche industry. Identify competitor weaknesses and provide a 'Market Angle of Attack'.", "Market Strategist"); }
     public function generate_proposal($client, $service, $niche) { return $this->call_ai("Generate a high-ticket $service proposal for $client in the $niche niche. Focus on ROI and transformation.", "Sales Closer"); }
     public function generate_missed_call_reply($niche) { return "Hi, this is the AI Assistant for our $niche practice. We missed your call, but we are ready to help. What can we assist you with today?"; }
     public function generate_niche_funnel($niche) { return $this->call_ai("Generate a 5-step sales funnel strategy for a $niche business.", "Funnel Architect"); }
+
+    public function get_coaching_advice($challenge) {
+        return $this->call_ai("Provide high-performance coaching advice for this challenge: \"$challenge\". Focus on mindset and actionable scaling tactics.", "Executive Coach");
+    }
+
+    public function get_legal_triage($inquiry) {
+        return $this->call_ai("Analyze this legal inquiry: \"$inquiry\". Identify the potential legal area (e.g. Tort, Contract, Family) and urgency. Disclaimer: Not legal advice.", "Legal Intake Specialist");
+    }
+
+    public function get_dental_faq($question) {
+        return $this->call_ai("Answer this dental question: \"$question\". Focus on patient comfort and treatment benefits (e.g. Invisalign, Implants).", "Dental Assistant");
+    }
+
+    public function get_solar_consult($usage) {
+        return $this->call_ai("Act as an energy consultant. Given this usage data/question: \"$usage\", explain the ROI of switching to solar and federal tax credit benefits.", "Solar Expert");
+    }
+
     public function is_spam($m, $n, $e) { return false; }
 }
 GrowthPress_AI::get_instance();

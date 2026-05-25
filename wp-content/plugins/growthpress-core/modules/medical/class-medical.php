@@ -36,7 +36,15 @@ class GrowthPress_Medical {
     }
 
     public function handle_symptom_check() {
-        // AI Triage logic...
+        check_ajax_referer( 'gp_medical_nonce', 'nonce' );
+        $symptoms = sanitize_textarea_field($_POST['symptoms']);
+        $ai = GrowthPress_AI::get_instance();
+
+        $prompt = "As a medical triage assistant, analyze these symptoms: \"$symptoms\". Provide a preliminary assessment, potential urgency level, and suggest specific doctor types. Include a strong disclaimer that this is not a diagnosis.";
+        $result = $ai->call_ai($prompt, "Medical Triage Assistant");
+
+        if ( is_wp_error($result) ) wp_send_json_error($result->get_error_message());
+        wp_send_json_success($result);
     }
 
     public function generate_sample_data() {
