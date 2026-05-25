@@ -44,24 +44,55 @@ class GrowthPress_Content_Studio {
     }
 
     public function render_studio() {
+        $niche = get_option('growthpress_niche', 'business');
+        $prompt_library = array(
+            'dental-clinic' => array('Invisalign vs Braces', 'Emergency Dental Care', 'Pediatric Dentistry Tips', 'Smile Makeovers'),
+            'law-firm'      => array('Personal Injury Rights', 'Estate Planning 101', 'DUI Defense Strategies', 'Business Litigation'),
+            'contractor'    => array('Kitchen Remodel ROI', 'Outdoor Living Spaces', 'Foundation Repair Signs', 'Smart Home Upgrades'),
+            'roofing'       => array('Storm Damage Claims', 'Metal vs Shingle Roofs', 'Roof Life Extension', 'Emergency Leak Repair'),
+            'solar'         => array('Federal Tax Credits', 'Battery Backup Value', 'Solar for Off-Grid', 'Net Metering Explained'),
+            'accounting'    => array('Small Business Tax Prep', 'Audit Protection', 'Cash Flow Management', 'Virtual CFO Benefits'),
+            'medical'       => array('Telemedicine Benefits', 'Wellness Checklists', 'Sports Injury Recovery', 'Heart Health AI'),
+            'real-estate'   => array('Selling in a High-Rate Market', 'First-Time Buyer Guide', 'Investment Property ROI', 'Staging for Top Dollar'),
+            'coach'         => array('High-Performance Mindset', 'Scaling to 7 Figures', 'Overcoming Burnout', 'Executive Leadership'),
+            'consultant'    => array('Process Automation', 'Digital Transformation', 'Team Efficiency Boost', 'Market Entry Strategy')
+        );
+        $current_prompts = isset($prompt_library[$niche]) ? $prompt_library[$niche] : array('General Growth', 'Market Dominance', 'Client Acquisition');
         ?>
         <div class="wrap growthpress-studio">
             <h1>AI Content & Insights Studio</h1>
             <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
-                <div class="studio-input glass-card">
-                    <h3>Asset & Strategy Generation</h3>
-                    <select id="gp-content-type" style="width:100%;">
-                        <option value="blog">SEO Blog Post</option>
-                        <option value="campaign">Nurture Campaign</option>
-                        <option value="market">Market Insights & Angle of Attack</option>
-                        <option value="ad">Direct-Response Ads</option>
-                    </select>
-                    <p class="description">Use 'Market Insights' to find your competitive edge in the <?php echo get_option('growthpress_niche'); ?> niche.</p>
-                    <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:10px;">
-                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate Analysis</button>
+                <div class="studio-input-column" style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="studio-input glass-card">
+                        <h3>Asset & Strategy Generation</h3>
+                        <label>Content Type</label>
+                        <select id="gp-content-type" style="width:100%; margin-bottom:15px;">
+                            <option value="blog">SEO Blog Post</option>
+                            <option value="campaign">Nurture Campaign</option>
+                            <option value="market">Market Insights & Angle of Attack</option>
+                            <option value="ad">Direct-Response Ads</option>
+                        </select>
+                        <label>Target Topic / Location</label>
+                        <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:5px; margin-bottom:15px;">
+                        <button class="button button-primary" onclick="generateContent()" style="width:100%;">Generate High-Ticket Strategy</button>
+                    </div>
+
+                    <div class="studio-prompts glass-card">
+                        <h3>Recommended AI Topics</h3>
+                        <p class="description">Click a topic below to auto-fill the generator. These are optimized for the <strong><?php echo ucwords(str_replace('-', ' ', $niche)); ?></strong> niche.</p>
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+                            <?php foreach($current_prompts as $p): ?>
+                                <button type="button" class="button button-small" onclick="jQuery('#gp-content-topic').val('<?php echo esc_js($p); ?>')"><?php echo esc_html($p); ?></button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
-                <div class="studio-output glass-card">
-                    <div id="gp-studio-output">Results appear here...</div>
+
+                <div class="studio-output glass-card" style="min-height:400px;">
+                    <h3>Strategic Output</h3>
+                    <div id="gp-studio-output" style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid #e2e8f0; font-family:monospace; min-height:300px; max-height:600px; overflow-y:auto;">
+                        Your generated strategy or content will appear here...
+                    </div>
                 </div>
             </div>
         </div>

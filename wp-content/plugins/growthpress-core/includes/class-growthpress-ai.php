@@ -55,6 +55,9 @@ class GrowthPress_AI {
     public function generate_blog_post($t, $n) { return $this->call_ai("Blog about $t for $n", "SEO Expert"); }
     public function generate_ad_copy($s, $n) { return $this->call_ai("Ad for $s in $n", "Copywriter"); }
     public function generate_social_content($t) { return $this->call_ai("3 posts for $t", "Social Manager"); }
+    public function generate_proposal($client, $service, $niche) { return $this->call_ai("Generate a high-ticket $service proposal for $client in the $niche niche. Focus on ROI and transformation.", "Sales Closer"); }
+    public function generate_missed_call_reply($niche) { return "Hi, this is the AI Assistant for our $niche practice. We missed your call, but we are ready to help. What can we assist you with today?"; }
+    public function generate_niche_funnel($niche) { return $this->call_ai("Generate a 5-step sales funnel strategy for a $niche business.", "Funnel Architect"); }
     public function is_spam($m, $n, $e) { return false; }
 }
 GrowthPress_AI::get_instance();

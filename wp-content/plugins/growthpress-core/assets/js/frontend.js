@@ -18,6 +18,32 @@ function checkSymptoms() {
     });
 }
 
+// Quiz Logic
+window.nextStep = function(revenue) {
+    jQuery('#gp-quiz-step-1').fadeOut(400, function() {
+        jQuery('#gp-quiz-form').fadeIn();
+    });
+};
+
+// Form Logic
+jQuery(document).on('submit', '.gp-form', function(e) {
+    e.preventDefault();
+    var $form = jQuery(this);
+    var action = $form.data('action');
+    var formData = $form.serialize();
+
+    $.post(gp_ajax.ajaxurl, {
+        action: action,
+        lead_name: $form.find('[name="lead_name"]').val(),
+        lead_email: $form.find('[name="lead_email"]').val(),
+        lead_msg: $form.find('[name="lead_msg"]').val()
+    }, function(res) {
+        if (res.success) {
+            $form.html('<div class="success-msg">' + res.data + '</div>');
+        }
+    });
+});
+
 // Exit Intent Logic
 jQuery(document).on('mouseleave', function(e) {
     if (e.clientY < 0 && !localStorage.getItem('gp_exit_shown')) {

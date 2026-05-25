@@ -40,6 +40,7 @@ function growthpress_core_load_modules() {
         'admin/class-growthpress-strategy.php',
         'admin/class-growthpress-reviews.php',
         'admin/class-growthpress-proposals-admin.php',
+        'admin/class-growthpress-shortcodes.php',
     );
 
     foreach ( $files as $file ) {

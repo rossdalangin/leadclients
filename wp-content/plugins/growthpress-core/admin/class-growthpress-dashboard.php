@@ -54,12 +54,108 @@ class GrowthPress_Dashboard {
     }
 
     private function generate_niche_pages($n) {
-        $pages = array('Home' => '[gp_lead_form]', 'Services' => '[gp_booking_form]');
-        foreach($pages as $t => $c) { if(!get_page_by_title($t)) wp_insert_post(array('post_title'=>$t,'post_content'=>$c,'post_type'=>'page','post_status'=>'publish')); }
+        // Hero Content from Customizer
+        $hero_headline = get_theme_mod('gp_hero_headline', 'Transform Your Business with AI');
+        $hero_sub = get_theme_mod('gp_hero_subheadline', 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.');
+
+        // Niche-specific nuance for default pages
+        $niche_label = ucwords(str_replace('-', ' ', $n));
+
+        $home_content = "
+<!-- wp:group {\"tagName\":\"section\",\"className\":\"gp-hero\",\"layout\":{\"type\":\"constrained\"}} -->
+<section class=\"wp-block-group gp-hero\">
+    <div class=\"glass-card\" style=\"padding:60px; text-align:center;\">
+        <h1 style=\"font-size:3.5rem; margin-bottom:20px;\">{$hero_headline}</h1>
+        <p style=\"font-size:1.25rem; opacity:0.9; margin-bottom:40px;\">{$hero_sub}</p>
+        <div style=\"max-width:500px; margin:0 auto;\">
+            [gp_quiz_lead_form]
+        </div>
+    </div>
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {\"tagName\":\"section\",\"layout\":{\"type\":\"constrained\"}} -->
+<section class=\"wp-block-group\">
+    [gp_urgency_banner]
+</section>
+<!-- /wp:group -->";
+
+        // Services Page
+        $services_headline = get_theme_mod('gp_services_intro', 'Elite ' . $niche_label . ' Solutions');
+        $services_cta = get_theme_mod('gp_services_cta', 'Book a Discovery Call');
+
+        $services_content = "
+<h1>{$services_headline}</h1>
+<p>We provide industry-leading {$niche_label} services designed for high-impact results and long-term growth.</p>
+<!-- wp:columns -->
+<div class=\"wp-block-columns\">
+    <!-- wp:column -->
+    <div class=\"wp-block-column\">
+        <h3>Advanced AI Automation</h3>
+        <p>We leverage cutting-edge technology to streamline our {$niche_label} processes.</p>
+    </div>
+    <!-- /wp:column -->
+    <!-- wp:column -->
+    <div class=\"wp-block-column\">
+        <h3>High-Ticket Results</h3>
+        <p>Our methodology focuses on the highest ROI activities for your specific needs.</p>
+    </div>
+    <!-- /wp:column -->
+</div>
+<!-- /wp:columns -->
+<div class=\"glass-card\" style=\"margin-top:40px; padding:30px;\">
+    <h2>{$services_cta}</h2>
+    [gp_booking_form]
+</div>";
+
+        // Contact Page
+        $addr = get_theme_mod('gp_contact_address', '123 Business Growth Way, Silicon Valley, CA');
+        $phone = get_theme_mod('gp_contact_phone', '+1 (555) 000-GROW');
+        $email = get_theme_mod('gp_contact_email', 'hello@growthpress.ai');
+
+        $contact_content = "
+<div class=\"wp-block-columns\">
+    <div class=\"wp-block-column\">
+        <h2>Connect with Our Team</h2>
+        <p>Reach out to discuss how we can scale your operations.</p>
+        <p><strong>Address:</strong> {$addr}</p>
+        <p><strong>Phone:</strong> {$phone}</p>
+        <p><strong>Email:</strong> {$email}</p>
+    </div>
+    <div class=\"wp-block-column\">
+        [gp_lead_form]
+    </div>
+</div>";
+
+        $pages = array(
+            'Home'     => $home_content,
+            'Services' => $services_content,
+            'Contact'  => $contact_content
+        );
+
+        foreach($pages as $t => $c) {
+            $existing = get_page_by_path(sanitize_title($t), OBJECT, 'page');
+            if(!$existing) {
+                wp_insert_post(array(
+                    'post_title'   => $t,
+                    'post_content' => $c,
+                    'post_type'    => 'page',
+                    'post_status'  => 'publish'
+                ));
+            }
+        }
     }
 
     private function generate_niche_funnel($n) {
-        wp_insert_post(array('post_title'=>'AI Growth Guide','post_content'=>'[gp_lead_form]','post_type'=>'page','post_status'=>'publish'));
+        $title = ucwords(str_replace('-', ' ', $n)) . ' Growth Strategy';
+        if (!get_page_by_path(sanitize_title($title), OBJECT, 'page')) {
+            wp_insert_post(array(
+                'post_title'   => $title,
+                'post_content' => '<!-- wp:heading --><h2>Download Your Free AI-Powered Strategy</h2><!-- /wp:heading --><p>Enter your details below to get instant access to the guide.</p>[gp_lead_form]',
+                'post_type'    => 'page',
+                'post_status'  => 'publish'
+            ));
+        }
     }
 
     public function render_dashboard() {
