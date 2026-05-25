@@ -1,21 +1,19 @@
 # GrowthPress Business OS
 
-GrowthPress is a premium WordPress ecosystem designed to transform a standard website into a high-converting business operating system.
+GrowthPress is an AI-powered Business Operating System for WordPress, designed for high-ticket service providers. It consolidates CRM, Booking, Marketing Automation, and AI Intelligence into one unified platform.
 
-## Core Features
-- **AI-Powered CRM**: Automated lead scoring and sentiment analysis using OpenAI.
-- **Booking Engine**: Integrated appointment scheduling and management.
-- **Niche Modules**: Tailored solutions for Dental, Law, Contractors, Solar, Accounting, Medical, Real Estate, Coaches, and Consultants.
-- **SaaS Dashboard**: A modern, glassmorphism-inspired admin area for business owners to track growth.
+## 🚀 How it Works (The 3-Step Process)
+1. **Intelligent Capture**: A visitor fills out a quiz or form. AI immediately filters spam, scores the lead's urgency, and sends an automated follow-up.
+2. **Interactive Management**: You manage leads on a SaaS-style Kanban board. AI suggests "Next Steps" and closing tactics based on lead behavior.
+3. **Automated Closing**: Clients book appointments via the scheduling engine, access their private portal to view proposals, and pay deposits—all without manual intervention.
 
-## Quick Start
-1. Install and activate the **GrowthPress Theme**.
-2. Install and activate the **GrowthPress Core Plugin**.
-3. Add your OpenAI API key in the WordPress settings under `growthpress_openai_api_key`.
-4. Use the `[gp_lead_form]` shortcode to start capturing leads.
-5. Access the **GrowthPress** menu in the admin sidebar for your analytics dashboard.
+## 🛠️ Key Features
+- **AI Intelligence Hub**: Lead scoring, sentiment analysis, content generation, and medical/legal triage.
+- **Full Operations Suite**: Multi-staff booking, CRM Kanban, task management, and activity logging.
+- **Client Experience**: Private portals, secure document management, and automated review requests.
 
-## Technical Requirements
-- WordPress 6.0+
-- PHP 7.4+
-- OpenAI API Key (for AI features)
+## 📦 Quick Start
+1. Activate the **GrowthPress Theme** and **GrowthPress Core Plugin**.
+2. Go to **GrowthPress > Settings** and enter your **OpenAI API Key**.
+3. Use the **Niche Setup Wizard** on the dashboard to build your site structure in one click.
+4. View the **System Map** in `/docs/system-map.md` for a full visual flow.
