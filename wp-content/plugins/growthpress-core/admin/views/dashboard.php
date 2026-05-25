@@ -87,7 +87,7 @@
                         ✅ Connect OpenAI API
                     </div>
                     <div class="step <?php echo get_option('growthpress_niche') ? 'done' : ''; ?>" style="margin-bottom:10px; opacity: <?php echo get_option('growthpress_niche') ? '1' : '0.5'; ?>;">
-                        🚀 Initialize Niche Setup
+                        🚀 Initialize Niche Setup <?php if(get_option('growthpress_niche')): ?>— <a href="<?php echo home_url(); ?>" target="_blank" style="color:#2563EB;">View Site</a><?php endif; ?>
                     </div>
                     <div class="step" style="margin-bottom:10px; opacity: 0.5;">
                         📞 Setup Twilio SMS

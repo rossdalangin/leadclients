@@ -54,10 +54,13 @@ class GrowthPress_CRM {
         add_shortcode( 'gp_quiz_lead_form', array( $this, 'render_quiz_form' ) );
         add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
+        add_action( 'gp_async_lead_analysis', array( $this, 'process_async_analysis' ) );
     }
 
     public function render_lead_form() {
+        $nonce = wp_create_nonce('gp_lead_nonce');
         return '<form class="gp-form glass-card" data-action="gp_submit_lead">
+            <input type="hidden" name="nonce" value="' . $nonce . '">
             <input type="text" name="lead_name" placeholder="Full Name" required>
             <input type="email" name="lead_email" placeholder="Email Address" required>
             <textarea name="lead_msg" placeholder="Tell us about your needs..."></textarea>
@@ -81,6 +84,10 @@ class GrowthPress_CRM {
     }
 
     public function handle_lead_submission() {
+        if ( ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) {
+            wp_send_json_error('Security check failed.');
+        }
+
         $name = sanitize_text_field($_POST['lead_name']);
         $email = sanitize_email($_POST['lead_email']);
         $msg = sanitize_textarea_field($_POST['lead_msg']);
@@ -100,18 +107,22 @@ class GrowthPress_CRM {
     }
 
     public function trigger_lead_automations( $lead_id ) {
+        // Offload to async event to prevent frontend blocking
+        wp_schedule_single_event( time(), 'gp_async_lead_analysis', array($lead_id) );
+    }
+
+    public function process_async_analysis( $lead_id ) {
         $ai = GrowthPress_AI::get_instance();
         $lead = get_post($lead_id);
+        if ( ! $lead ) return;
 
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
         $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5);
 
-        // Cache AI scoring to prevent dashboard slowdowns
         $prob = $ai->predict_deal_probability($lead_id);
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
 
-        // Advanced Sentiment-Based Routing
         if ( isset($analysis['urgency']) && $analysis['urgency'] >= 9 ) {
             $staff = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
             if ( ! empty($staff) ) {

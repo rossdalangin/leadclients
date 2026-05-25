@@ -52,7 +52,14 @@ class GrowthPress_Roofing {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Emergency Leak Repair', 'post_type' => 'page', 'post_status' => 'publish'));
+        $services = array(
+            'Emergency Leak Repair' => 'Rapid response for critical roofing failures.',
+            'Full Roof Replacement' => 'Precision installation of premium shingle or metal systems.',
+            'Storm Damage Inspection' => 'Thorough assessment and insurance claim assistance.'
+        );
+        foreach($services as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Roofing();

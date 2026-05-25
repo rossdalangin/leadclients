@@ -54,7 +54,14 @@ class GrowthPress_Consultants {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Strategic Planning', 'post_type' => 'page', 'post_status' => 'publish'));
+        $plans = array(
+            'Strategic Planning' => '5-year roadmap for market dominance.',
+            'Efficiency Audit' => 'Analyzing operational bottlenecks and AI opportunities.',
+            'Market Entry Strategy' => 'Comprehensive analysis for launching in new territories.'
+        );
+        foreach($plans as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
     }
 }
 

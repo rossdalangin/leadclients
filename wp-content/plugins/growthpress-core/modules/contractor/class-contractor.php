@@ -63,7 +63,14 @@ class GrowthPress_Contractor {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Luxury Kitchen Remodel', 'post_type' => 'gp_project', 'post_status' => 'publish'));
+        $portfolio = array(
+            'Luxury Kitchen Remodel' => 'Total transformation with custom cabinetry and quartz surfaces.',
+            'Master Suite Expansion' => 'Added 500 sq ft and a spa-inspired bathroom.',
+            'Outdoor Living Space' => 'Custom deck and integrated outdoor kitchen.'
+        );
+        foreach($portfolio as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'gp_project', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Contractor();

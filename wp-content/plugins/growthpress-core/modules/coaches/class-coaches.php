@@ -17,8 +17,15 @@ class GrowthPress_Coaches {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Discovery Session', 'post_type' => 'page', 'post_status' => 'publish'));
-        wp_insert_post(array('post_title' => 'Scaling to 7 Figures Course', 'post_type' => 'gp_course', 'post_status' => 'publish'));
+        $sessions = array(
+            'High-Performance Discovery' => '90-minute deep dive into your business bottlenecks.',
+            'Executive Leadership Intensive' => 'Monthly coaching for C-suite professionals.',
+            'Mindset Mastery Workshop' => 'Group coaching focused on peak mental performance.'
+        );
+        foreach($sessions as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
+        wp_insert_post(array('post_title' => 'Scaling to 7 Figures Course', 'post_content' => 'The ultimate roadmap for consultants.', 'post_type' => 'gp_course', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Coaches();

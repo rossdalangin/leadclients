@@ -55,7 +55,14 @@ class GrowthPress_Accounting {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title'=>'Tax Strategy Session','post_type'=>'page','post_status'=>'publish'));
+        $services = array(
+            'Tax Strategy Session' => 'Comprehensive planning to minimize tax liability.',
+            'Fractional CFO Services' => 'Executive financial leadership for growing firms.',
+            'Audit Representation' => 'Professional defense and guidance during tax audits.'
+        );
+        foreach($services as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Accounting();

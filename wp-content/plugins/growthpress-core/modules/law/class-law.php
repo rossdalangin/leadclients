@@ -15,6 +15,7 @@ class GrowthPress_Law {
         add_action( 'save_post_gp_legal_case', array( $this, 'save_law_meta' ) );
         add_shortcode( 'gp_legal_intake', array( $this, 'render_legal_intake' ) );
         add_action( 'wp_ajax_gp_legal_triage', array( $this, 'handle_legal_triage' ) );
+        add_action( 'wp_ajax_nopriv_gp_legal_triage', array( $this, 'handle_legal_triage' ) );
     }
 
     public function register_law_cpts() {
@@ -84,7 +85,20 @@ class GrowthPress_Law {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Personal Injury: Case #102', 'post_type' => 'gp_legal_case', 'post_status' => 'publish'));
+        $cases = array(
+            'Personal Injury: Case #102' => 'Ongoing litigation for motor vehicle accident.',
+            'Corporate Merger: Project Alpha' => 'Drafting master service agreements and equity structures.',
+            'Estate Planning: Miller Family' => 'Setting up living trusts and healthcare directives.'
+        );
+        foreach($cases as $title => $desc) {
+            $id = wp_insert_post(array(
+                'post_title'   => $title,
+                'post_content' => $desc,
+                'post_type'    => 'gp_legal_case',
+                'post_status'  => 'publish'
+            ));
+            update_post_meta($id, '_gp_case_status', 'discovery');
+        }
     }
 }
 new GrowthPress_Law();

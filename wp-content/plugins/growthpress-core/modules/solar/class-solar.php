@@ -43,7 +43,14 @@ class GrowthPress_Solar {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title'=>'Residential 10kW System','post_type'=>'gp_project','post_status'=>'publish'));
+        $projects = array(
+            'Residential 10kW System' => 'Full shingle-roof installation with battery backup.',
+            'Commercial Warehouse Array' => '100kW flat-roof system for industrial energy independence.',
+            'Off-Grid Cabin Power' => 'Custom 4kW system with advanced solar storage.'
+        );
+        foreach($projects as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'gp_project', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Solar();

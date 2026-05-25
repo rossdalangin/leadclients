@@ -30,6 +30,8 @@ class GrowthPress_API {
 
     public function check_api_permission() {
         $auth_token = get_option('growthpress_api_token', '');
+        if ( empty($auth_token) ) return false;
+
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
         return ($header === "Bearer $auth_token");
     }

@@ -12,6 +12,7 @@ class GrowthPress_Medical {
     public function __construct() {
         add_shortcode( 'gp_symptom_checker', array( $this, 'render_symptom_checker' ) );
         add_action( 'wp_ajax_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
+        add_action( 'wp_ajax_nopriv_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
         add_action( 'gp_appointment_created', array( $this, 'generate_telemedicine_link' ) );
     }
 
@@ -48,7 +49,14 @@ class GrowthPress_Medical {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Family Wellness Clinic', 'post_type' => 'page', 'post_status' => 'publish'));
+        $clinics = array(
+            'Family Wellness Clinic' => 'Comprehensive care for patients of all ages.',
+            'Pediatric Excellence Hub' => 'Specialized care for infants, children, and adolescents.',
+            'Geriatric Health Partners' => 'Focused medical services for senior citizens.'
+        );
+        foreach($clinics as $t => $c) {
+            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Medical();

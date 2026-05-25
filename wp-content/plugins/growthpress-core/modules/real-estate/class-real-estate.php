@@ -49,7 +49,19 @@ class GrowthPress_RealEstate {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title'=>'Modern Penthouse','post_type'=>'gp_property','post_status'=>'publish'));
+        $props = array(
+            'Modern Penthouse' => 'Luxury living in the heart of downtown.',
+            'Suburban Family Estate' => 'Spacious 5-bedroom home with large backyard.',
+            'Oceanfront Villa' => 'Direct beach access and panoramic views.'
+        );
+        foreach($props as $title => $desc) {
+            wp_insert_post(array(
+                'post_title'   => $title,
+                'post_content' => $desc,
+                'post_type'    => 'gp_property',
+                'post_status'  => 'publish'
+            ));
+        }
     }
 }
 new GrowthPress_RealEstate();

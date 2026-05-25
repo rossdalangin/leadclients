@@ -58,8 +58,20 @@ class GrowthPress_Dashboard {
         $hero_headline = get_theme_mod('gp_hero_headline', 'Transform Your Business with AI');
         $hero_sub = get_theme_mod('gp_hero_subheadline', 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.');
 
-        // Niche-specific nuance for default pages
         $niche_label = ucwords(str_replace('-', ' ', $n));
+
+        // Industry-Specific Dynamic Elements
+        $niche_shortcodes = array(
+            'solar'       => '[gp_solar_calculator]',
+            'contractor'  => '[gp_contractor_estimator]',
+            'medical'     => '[gp_symptom_checker]',
+            'dental'      => '[gp_ai_faq]',
+            'law'         => '[gp_legal_intake]',
+            'accounting'  => '[gp_tax_estimator]',
+            'coaches'     => '[gp_coaching_assistant]',
+            'real-estate' => '[gp_location_switcher]'
+        );
+        $industry_hook = $niche_shortcodes[$n] ?? '[gp_urgency_banner]';
 
         $home_content = "
 <!-- wp:group {\"tagName\":\"section\",\"className\":\"gp-hero\",\"layout\":{\"type\":\"constrained\"}} -->
@@ -76,7 +88,21 @@ class GrowthPress_Dashboard {
 
 <!-- wp:group {\"tagName\":\"section\",\"layout\":{\"type\":\"constrained\"}} -->
 <section class=\"wp-block-group\">
-    [gp_urgency_banner]
+    <div class=\"glass-card\" style=\"padding:30px; margin-top:-40px; position:relative; z-index:10;\">
+        <h3>Why Leading Businesses Choose Our {$niche_label} OS</h3>
+        <div class=\"wp-block-columns\">
+            <div class=\"wp-block-column\"><h4>AI Automation</h4><p>We reduce manual labor by 40% using custom AI workflows.</p></div>
+            <div class=\"wp-block-column\"><h4>Instant Booking</h4><p>Book discovery calls in seconds with our integrated engine.</p></div>
+            <div class=\"wp-block-column\"><h4>Elite Conversion</h4><p>Psychologically optimized layouts designed for high-ticket sales.</p></div>
+        </div>
+    </div>
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {\"tagName\":\"section\",\"layout\":{\"type\":\"constrained\"}} -->
+<section class=\"wp-block-group\" style=\"margin-top:60px; text-align:center;\">
+    <h2>Market Insights for {$niche_label}</h2>
+    <div style=\"max-width:800px; margin:0 auto;\">{$industry_hook}</div>
 </section>
 <!-- /wp:group -->";
 
@@ -89,23 +115,42 @@ class GrowthPress_Dashboard {
 <p>We provide industry-leading {$niche_label} services designed for high-impact results and long-term growth.</p>
 <!-- wp:columns -->
 <div class=\"wp-block-columns\">
-    <!-- wp:column -->
     <div class=\"wp-block-column\">
         <h3>Advanced AI Automation</h3>
-        <p>We leverage cutting-edge technology to streamline our {$niche_label} processes.</p>
+        <p>We leverage cutting-edge technology to streamline our {$niche_label} processes and improve client outcomes.</p>
     </div>
-    <!-- /wp:column -->
-    <!-- wp:column -->
     <div class=\"wp-block-column\">
         <h3>High-Ticket Results</h3>
-        <p>Our methodology focuses on the highest ROI activities for your specific needs.</p>
+        <p>Our methodology focuses on the highest ROI activities, ensuring you dominate the local search market.</p>
     </div>
-    <!-- /wp:column -->
 </div>
 <!-- /wp:columns -->
-<div class=\"glass-card\" style=\"margin-top:40px; padding:30px;\">
-    <h2>{$services_cta}</h2>
-    [gp_booking_form]
+<div class=\"glass-card\" style=\"margin-top:40px; padding:40px; background:linear-gradient(135deg, #ffffff, #f1f5f9); border:2px solid #2563EB;\">
+    <div class=\"wp-block-columns\">
+        <div class=\"wp-block-column\" style=\"flex-basis:60%;\">
+            <h2>{$services_cta}</h2>
+            <p>Speak with our senior specialists to identify growth opportunities in your business.</p>
+            [gp_booking_form]
+        </div>
+        <div class=\"wp-block-column\">
+            <h4>What to Expect:</h4>
+            <ul>
+                <li>Custom Growth Roadmap</li>
+                <li>AI Automation Audit</li>
+                <li>Competitor Gap Analysis</li>
+            </ul>
+        </div>
+    </div>
+</div>";
+
+        // FAQ Page
+        $faq_content = "
+<div class=\"container\" style=\"max-width:800px;\">
+    <h1 style=\"text-align:center;\">Expert Insights & FAQ</h1>
+    <p style=\"text-align:center; opacity:0.7;\">Common questions about our {$niche_label} services and AI-powered growth strategies.</p>
+    <div style=\"margin-top:40px;\">
+        [gp_ai_faq]
+    </div>
 </div>";
 
         // Contact Page
@@ -117,19 +162,26 @@ class GrowthPress_Dashboard {
 <div class=\"wp-block-columns\">
     <div class=\"wp-block-column\">
         <h2>Connect with Our Team</h2>
-        <p>Reach out to discuss how we can scale your operations.</p>
+        <p>Reach out to discuss how we can scale your operations and implement AI automation.</p>
         <p><strong>Address:</strong> {$addr}</p>
         <p><strong>Phone:</strong> {$phone}</p>
         <p><strong>Email:</strong> {$email}</p>
+        <hr />
+        <h4>Service Coverage:</h4>
+        [gp_location_switcher]
     </div>
     <div class=\"wp-block-column\">
-        [gp_lead_form]
+        <div class=\"glass-card\">
+            <h3>Priority Inquiry</h3>
+            [gp_lead_form]
+        </div>
     </div>
 </div>";
 
         $pages = array(
             'Home'     => $home_content,
             'Services' => $services_content,
+            'FAQ'      => $faq_content,
             'Contact'  => $contact_content
         );
 

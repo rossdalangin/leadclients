@@ -52,7 +52,20 @@ class GrowthPress_Dental {
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title'=>'Advanced Dental Implants','post_content'=>'Natural results...','post_type'=>'gp_treatment','post_status'=>'publish'));
+        $data = array(
+            'Advanced Dental Implants' => 'Replace missing teeth with natural-looking, high-durability implants.',
+            'Invisalign Smile Design'  => 'Clear aligner therapy for a perfectly straight smile without braces.',
+            'Emergency Dental Care'    => '24/7 priority care for acute dental pain and injuries.',
+            'Teeth Whitening Elite'    => 'Professional medical-grade whitening for immediate results.'
+        );
+        foreach($data as $title => $content) {
+            wp_insert_post(array(
+                'post_title'   => $title,
+                'post_content' => $content,
+                'post_type'    => 'gp_treatment',
+                'post_status'  => 'publish'
+            ));
+        }
     }
 }
 new GrowthPress_Dental();
