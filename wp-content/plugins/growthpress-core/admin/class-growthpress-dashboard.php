@@ -65,11 +65,17 @@ class GrowthPress_Dashboard {
             $instance = new $class_name();
             if ( method_exists($instance, 'generate_sample_data') ) $instance->generate_sample_data();
         }
+
+        // Global sample data
+        $reputation = new GrowthPress_Reputation();
+        $reputation->generate_sample_data();
     }
 
     private function generate_niche_pages($n, $replace = false) {
+        $niche_label = ucwords(str_replace('-', ' ', $n));
+
         // Hero Content from Customizer
-        $hero_headline = get_theme_mod('gp_hero_headline', 'Transform Your Business with AI');
+        $hero_headline = get_theme_mod('gp_hero_headline', "Elite $niche_label Solutions Powered by AI");
         $hero_sub = get_theme_mod('gp_hero_subheadline', 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.');
 
         $niche_label = ucwords(str_replace('-', ' ', $n));
@@ -290,19 +296,20 @@ class GrowthPress_Dashboard {
 </div>";
 
         $pages = array(
-            'Home'         => $home_content,
-            'Services'     => $services_content,
-            'Pricing'      => $pricing_content,
-            'Case Studies' => $cases_content,
-            'FAQ'          => $faq_content,
-            'Reviews'      => $reviews_content,
-            'Our Mission'  => $mission_content,
-            'Book Now'     => $book_now_content,
-            'Thank You'    => $thank_you_content,
-            'Contact'      => $contact_content
+            'Home'         => array('content' => $home_content, 'desc' => "Transform your $niche_label business with our AI-powered operating system."),
+            'Services'     => array('content' => $services_content, 'desc' => "Explore our elite $niche_label services designed for high-ticket growth."),
+            'Pricing'      => array('content' => $pricing_content, 'desc' => "Transparent investment plans for your $niche_label firm."),
+            'Case Studies' => array('content' => $cases_content, 'desc' => "Real-world results and transformations for our $niche_label clients."),
+            'FAQ'          => array('content' => $faq_content, 'desc' => "Expert insights and frequently asked questions about $niche_label."),
+            'Reviews'      => array('content' => $reviews_content, 'desc' => "See what our satisfied $niche_label clients are saying."),
+            'Our Mission'  => array('content' => $mission_content, 'desc' => "Our commitment to excellence in the $niche_label industry."),
+            'Book Now'     => array('content' => $book_now_content, 'desc' => "Schedule your discovery session for $niche_label strategy."),
+            'Thank You'    => array('content' => $thank_you_content, 'desc' => "Thank you for contacting our $niche_label team."),
+            'Contact'      => array('content' => $contact_content, 'desc' => "Connect with our $niche_label specialists today.")
         );
 
-        foreach($pages as $t => $c) {
+        foreach($pages as $t => $data) {
+            $c = $data['content'];
             // Better collision detection: Search by title first
             $query = new WP_Query(array(
                 'post_type'              => 'page',
@@ -321,12 +328,14 @@ class GrowthPress_Dashboard {
                     wp_update_post(array(
                         'ID'           => $existing->ID,
                         'post_content' => $c,
+                        'post_excerpt' => $data['desc']
                     ));
                 }
             } else {
                 wp_insert_post(array(
                     'post_title'   => $t,
                     'post_content' => $c,
+                    'post_excerpt' => $data['desc'],
                     'post_type'    => 'page',
                     'post_status'  => 'publish'
                 ));

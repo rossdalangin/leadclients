@@ -88,20 +88,24 @@
                 <div class="roadmap-steps" style="font-size: 13px;">
                     <?php
                     $checks = array(
-                        'OpenAI API' => get_option('growthpress_openai_api_key'),
-                        'Niche OS'   => get_option('growthpress_niche'),
-                        'Custom Logo' => get_theme_mod('custom_logo'),
-                        'Lead Form'  => true // System default
+                        'OpenAI API'  => array('status' => get_option('growthpress_openai_api_key'), 'link' => admin_url('admin.php?page=growthpress-settings')),
+                        'Niche OS'    => array('status' => get_option('growthpress_niche'), 'link' => admin_url('admin.php?page=growthpress-dashboard')),
+                        'Custom Logo' => array('status' => get_theme_mod('custom_logo'), 'link' => admin_url('customize.php')),
+                        'Identity'    => array('status' => true, 'link' => admin_url('customize.php')),
+                        'Comms (SMS)' => array('status' => get_option('growthpress_twilio_sid'), 'link' => admin_url('admin.php?page=growthpress-settings'))
                     );
-                    foreach($checks as $label => $status): ?>
-                        <div class="step" style="margin-bottom:12px; display:flex; align-items:center; gap:10px; opacity: <?php echo $status ? '1' : '0.4'; ?>;">
-                            <span style="font-size:18px;"><?php echo $status ? '✅' : '⚪'; ?></span>
-                            <strong><?php echo $label; ?></strong>
+                    foreach($checks as $label => $data): ?>
+                        <div class="step" style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; opacity: <?php echo $data['status'] ? '1' : '0.4'; ?>;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:16px;"><?php echo $data['status'] ? '✅' : '⚪'; ?></span>
+                                <strong><?php echo $label; ?></strong>
+                            </div>
+                            <?php if(!$data['status']): ?><a href="<?php echo $data['link']; ?>" style="font-size:10px; color:#2563EB; text-decoration:none;">Setup</a><?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                     <?php if(get_option('growthpress_niche')): ?>
                         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-                        <a href="<?php echo home_url(); ?>" target="_blank" class="button button-primary button-small" style="width:100%; text-align:center;">Launch Live Site</a>
+                        <a href="<?php echo home_url(); ?>" target="_blank" class="button button-primary button-small" style="width:100%; text-align:center; display:block;">Preview Live Site</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -124,17 +128,40 @@
 
             <!-- Team performance -->
             <div class="glass-card">
-                <h3>Team Performance</h3>
-                <ul style="list-style:none; padding:0; font-size:13px;">
-                    <li style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <h3>Team Efficiency</h3>
+                <div class="team-stat" style="margin-bottom:20px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
                         <span>John Doe</span>
-                        <span style="font-weight:bold;">12 Closed</span>
-                    </li>
-                    <li style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span>12/15 Closed</span>
+                    </div>
+                    <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
+                        <div style="width:80%; height:100%; background:#2563EB;"></div>
+                    </div>
+                </div>
+                <div class="team-stat">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
                         <span>Jane Smith</span>
-                        <span style="font-weight:bold;">8 Closed</span>
-                    </li>
-                </ul>
+                        <span>8/15 Closed</span>
+                    </div>
+                    <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
+                        <div style="width:53%; height:100%; background:#10B981;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="glass-card" style="max-height:300px; overflow-y:auto; padding:25px;">
+                <h3 style="font-size:14px; position:sticky; top:0; background:white; padding-bottom:10px; margin-bottom:15px;">System Activity</h3>
+                <div style="font-size:11px;">
+                    <?php
+                    $logs = GrowthPress_Activity::get_logs();
+                    if($logs): foreach($logs as $log): ?>
+                        <div style="margin-bottom:12px; border-left:2px solid #e2e8f0; padding-left:10px;">
+                            <div style="opacity:0.6; font-size:9px;"><?php echo $log['time']; ?></div>
+                            <div style="color:#475569;"><?php echo esc_html($log['msg']); ?></div>
+                        </div>
+                    <?php endforeach; else: echo "Waiting for activity..."; endif; ?>
+                </div>
             </div>
         </div>
     </div>

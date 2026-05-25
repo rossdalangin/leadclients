@@ -73,6 +73,27 @@ jQuery(document).ready(function($) {
     }
 });
 
+// Luxury Animations & Reveals
+jQuery(document).ready(function($) {
+    var reveals = document.querySelectorAll('.reveal, .glass-card, .gp-hero');
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(function(r) {
+        r.style.opacity = 0;
+        r.style.transform = 'translateY(30px)';
+        r.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        observer.observe(r);
+    });
+});
+
 // Mobile Menu Toggle
 jQuery(document).ready(function($) {
     $('.site-header .container').append('<button class="menu-toggle" style="display:none; background:none; color:inherit; border:1px solid #ddd; padding:5px 10px; font-size:18px;">☰</button>');

@@ -104,6 +104,20 @@ class GrowthPress_Settings {
                         </td>
                     </tr>
 
+                    <tr class="section-header"><th colspan="2"><h3>System Health & Connectivity</h3></th></tr>
+                    <tr>
+                        <th scope="row"><label>Engine Status</label></th>
+                        <td>
+                            <?php $ai_key = get_option('growthpress_openai_api_key'); ?>
+                            <span class="status-indicator <?php echo $ai_key ? 'active' : 'inactive'; ?>" style="display:inline-block; width:10px; height:10px; border-radius:50%; background: <?php echo $ai_key ? '#10B981' : '#EF4444'; ?>; margin-right:5px;"></span>
+                            <strong>OpenAI:</strong> <?php echo $ai_key ? 'Connected' : 'Missing Key'; ?>
+                            <br>
+                            <?php $tw_sid = get_option('growthpress_twilio_sid'); ?>
+                            <span class="status-indicator <?php echo $tw_sid ? 'active' : 'inactive'; ?>" style="display:inline-block; width:10px; height:10px; border-radius:50%; background: <?php echo $tw_sid ? '#10B981' : '#F59E0B'; ?>; margin-right:5px;"></span>
+                            <strong>Twilio:</strong> <?php echo $tw_sid ? 'Active' : 'Optional (SMS Disabled)'; ?>
+                        </td>
+                    </tr>
+
                     <tr class="section-header"><th colspan="2"><h3>SMS & Communication</h3></th></tr>
                     <tr>
                         <th scope="row"><label>Twilio SID</label></th>
@@ -127,6 +141,14 @@ class GrowthPress_Settings {
 
             <div id="tab-docs" class="tab-content" style="display:none; max-width:900px; margin-top:20px;">
                 <div class="glass-card">
+                    <h3>🚀 Launch Readiness Roadmap</h3>
+                    <div class="roadmap-ui" style="display:flex; gap:10px; margin-bottom:30px; text-align:center;">
+                        <div style="flex:1; padding:10px; background:#f0f9ff; border-radius:8px; border:1px solid #bae6fd;"><strong>1</strong><br><small>Connect API</small></div>
+                        <div style="flex:1; padding:10px; background:#f0f9ff; border-radius:8px; border:1px solid #bae6fd;"><strong>2</strong><br><small>Run Wizard</small></div>
+                        <div style="flex:1; padding:10px; background:#f0f9ff; border-radius:8px; border:1px solid #bae6fd;"><strong>3</strong><br><small>Set Brand</small></div>
+                        <div style="flex:1; padding:10px; background:#f0f9ff; border-radius:8px; border:1px solid #bae6fd;"><strong>4</strong><br><small>Go Live</small></div>
+                    </div>
+
                     <h3>Getting Started with GrowthPress</h3>
                     <p>GrowthPress is designed to be your business's "brain". Here is how to maximize its potential:</p>
 
@@ -155,20 +177,35 @@ class GrowthPress_Settings {
                         <p>All GrowthPress components are <strong>mobile-first</strong>. We recommend testing your "Booking" page on a smartphone to see the optimized "Glassmorphism" interface in action.</p>
                     </div>
 
+                    <div class="doc-section" style="margin-bottom:25px;">
+                        <h4>5. Automations & System Processes</h4>
+                        <p>GrowthPress runs the following autonomous processes to scale your business:</p>
+                        <ul style="font-size:13px; color:#475569;">
+                            <li><strong>Lead Triage:</strong> Immediate sentiment analysis and urgency scoring (0-100) on all new inquiries.</li>
+                            <li><strong>Smart Routing:</strong> Leads scoring 80+ are instantly flagged for priority handling.</li>
+                            <li><strong>Abandoned Follow-up:</strong> Automated re-engagement for leads stuck in "New" stage for >24 hours.</li>
+                            <li><strong>Meeting Automation:</strong> Dynamic generation of secure telemedicine or Zoom links upon booking.</li>
+                            <li><strong>Sync & Regen:</strong> One-click ecosystem refresh to keep your site pages aligned with Customizer branding.</li>
+                        </ul>
+                    </div>
+
+                    <div class="doc-section" style="margin-bottom:25px;">
+                        <h4>5. High-Ticket Sales Playbook</h4>
+                        <p>Success in high-ticket niches requires <strong>speed-to-lead</strong>. When the AI alerts you of a "Hot" lead (Score 80+):</p>
+                        <ul style="font-size:13px;">
+                            <li><strong>Call within 5 mins:</strong> The AI sentiment analysis will tell you their pain point. Mention it immediately.</li>
+                            <li><strong>Use the Kanban:</strong> Drag leads to 'Booked' as soon as the discovery call is set to trigger automation.</li>
+                            <li><strong>Proposals:</strong> Use the AI Proposal generator in the Client Portal to send a professional quote before you hang up.</li>
+                        </ul>
+                    </div>
+
                     <div class="doc-section">
-                        <h4>5. Niche-Specific Next Steps</h4>
-                        <div style="background:#f1f5f9; padding:15px; border-radius:8px; font-size:13px;">
-                            <?php
-                            $niche = get_option('growthpress_niche', 'business');
-                            $next_steps = array(
-                                'dental'    => "Upload before/after photos to the 'Treatments' post type to populate your Smile Gallery.",
-                                'law'       => "Use the 'Legal Intake' shortcode to qualify leads before booking a consultation.",
-                                'solar'     => "Check the 'ROI Estimator' on your homepage to ensure it matches your local utility rates.",
-                                'contractor'=> "Add your service area ZIP codes in the Locations menu to enable smart lead routing."
-                            );
-                            echo $next_steps[$niche] ?? "Initialize your OS in the Dashboard to see industry-specific recommendations.";
-                            ?>
-                        </div>
+                        <h4>6. Troubleshooting & Support</h4>
+                        <ul style="font-size:13px;">
+                            <li><strong>AI not responding?</strong> Check your OpenAI API key and credit balance.</li>
+                            <li><strong>Pages not syncing?</strong> Use the "Regenerate Core Assets" button in the Maintenance tab.</li>
+                            <li><strong>SMS not sending?</strong> Ensure your Twilio SID and Token are correct and your account is active.</li>
+                        </ul>
                     </div>
                 </div>
             </div>

@@ -31,6 +31,21 @@ class GrowthPress_Reputation {
         GrowthPress_Activity::log( "Review request sent to $email for appointment #$appointment_id" );
     }
 
+    public function generate_sample_data() {
+        $niche = get_option('growthpress_niche', 'business');
+        $reviews = array(
+            "The AI triage saved us 10 hours a week in discovery calls. Total game changer." => "Alex Johnson",
+            "Professional, fast, and the client portal is exactly what our high-ticket clients expected." => "Sarah Miller",
+            "Best investment we've made in our tech stack this year. Highly recommended." => "David Chen"
+        );
+        foreach($reviews as $content => $author) {
+            if ( ! get_page_by_path( sanitize_title($author), OBJECT, 'gp_review' ) ) {
+                $id = wp_insert_post(array('post_title' => $author, 'post_content' => $content, 'post_type' => 'gp_review', 'post_status' => 'publish'));
+                update_post_meta($id, '_gp_rating', 5);
+            }
+        }
+    }
+
     public function render_review_feed() {
         $reviews = get_posts( array( 'post_type' => 'gp_review', 'posts_per_page' => 5 ) );
         ob_start(); ?>

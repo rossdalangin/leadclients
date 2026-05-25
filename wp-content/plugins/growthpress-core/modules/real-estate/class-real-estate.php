@@ -51,10 +51,16 @@ class GrowthPress_RealEstate {
     }
 
     public function handle_property_match() {
-        $lead_id = intval($_POST['lead_id'] ?? 0);
-        if ( ! $lead_id ) wp_send_json_error('Invalid Lead');
+        $intent = sanitize_textarea_field($_POST['intent'] ?? '');
+        $all_props = get_posts(array('post_type' => 'gp_property', 'posts_per_page' => 10));
 
-        $result = $this->suggest_properties_for_lead($lead_id);
+        $prop_list = '';
+        foreach($all_props as $p) $prop_list .= "- {$p->post_title}: {$p->post_excerpt}\n";
+
+        $ai = GrowthPress_AI::get_instance();
+        $prompt = "A buyer is looking for: \"$intent\". Based on these properties: \n$prop_list\n which one is the best fit and why? Return a professional recommendation.";
+
+        $result = $ai->call_ai($prompt, "Real Estate Matchmaker");
         wp_send_json_success($result);
     }
 

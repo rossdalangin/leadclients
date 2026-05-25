@@ -38,6 +38,7 @@ class GrowthPress_Content_Studio {
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
             case 'campaign': $result = $ai->generate_email_campaign($topic, $niche); break;
             case 'market': $result = $ai->generate_market_insights($topic, $niche); break;
+            case 'sales': $result = $ai->call_ai("Generate high-ticket discovery call talk tracks, power questions, and objection handling for a $niche firm regarding \"$topic\".", "AI Sales Coach"); break;
             default: $result = 'Invalid.';
         }
 
@@ -75,6 +76,7 @@ class GrowthPress_Content_Studio {
                             <option value="blog">SEO Blog Post</option>
                             <option value="campaign">Nurture Campaign</option>
                             <option value="market">Market Insights & Angle of Attack</option>
+                            <option value="sales">AI Sales Assistant (Talk Tracks)</option>
                             <option value="ad">Direct-Response Ads</option>
                         </select>
                         <label>Target Topic / Location</label>
