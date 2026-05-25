@@ -23,9 +23,13 @@ class GrowthPress_Coaches {
             'Mindset Mastery Workshop' => 'Group coaching focused on peak mental performance.'
         );
         foreach($sessions as $t => $c) {
-            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
+                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+            }
         }
-        wp_insert_post(array('post_title' => 'Scaling to 7 Figures Course', 'post_content' => 'The ultimate roadmap for consultants.', 'post_type' => 'gp_course', 'post_status' => 'publish'));
+        if ( ! get_page_by_path( 'scaling-to-7-figures-course', OBJECT, 'gp_course' ) ) {
+            wp_insert_post(array('post_title' => 'Scaling to 7 Figures Course', 'post_content' => 'The ultimate roadmap for consultants.', 'post_type' => 'gp_course', 'post_status' => 'publish'));
+        }
     }
 }
 new GrowthPress_Coaches();

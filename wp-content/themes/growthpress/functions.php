@@ -142,16 +142,25 @@ function growthpress_customize_register( $wp_customize ) {
         'priority' => 100,
     ) );
 
+    $wp_customize->add_setting( 'gp_regen_home', array( 'default' => true ) );
+    $wp_customize->add_control( 'gp_regen_home', array( 'label' => 'Include Home Page', 'section' => 'growthpress_maintenance', 'type' => 'checkbox' ) );
+
+    $wp_customize->add_setting( 'gp_regen_services', array( 'default' => true ) );
+    $wp_customize->add_control( 'gp_regen_services', array( 'label' => 'Include Services Page', 'section' => 'growthpress_maintenance', 'type' => 'checkbox' ) );
+
+    $wp_customize->add_setting( 'gp_regen_pricing', array( 'default' => true ) );
+    $wp_customize->add_control( 'gp_regen_pricing', array( 'label' => 'Include Pricing Page', 'section' => 'growthpress_maintenance', 'type' => 'checkbox' ) );
+
     $wp_customize->add_setting( 'gp_regenerate_trigger', array( 'default' => '' ) );
     $wp_customize->add_control( new WP_Customize_Control( $wp_customize, 'gp_regenerate_trigger', array(
         'label' => 'Sync Ecosystem',
-        'description' => 'Warning: This updates Home, Services, Pricing, and Contact pages with your latest Customizer settings.',
+        'description' => 'Updates selected core pages with your latest settings.',
         'section' => 'growthpress_maintenance',
         'type' => 'button',
         'input_attrs' => array(
-            'value' => 'Regenerate Business Pages',
-            'class' => 'button button-secondary',
-            'onclick' => 'if(confirm("Regenerate core pages now?")){ jQuery.post(ajaxurl, {action:"gp_regenerate_pages", gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}); }',
+            'value' => 'Apply Updates & Sync',
+            'class' => 'button button-primary',
+            'onclick' => 'if(confirm("Regenerate selected core pages now?")){ jQuery.post(ajaxurl, {action:"gp_regenerate_pages", gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}); }',
         ),
     ) ) );
 }

@@ -55,7 +55,9 @@ class GrowthPress_Medical {
             'Geriatric Health Partners' => 'Focused medical services for senior citizens.'
         );
         foreach($clinics as $t => $c) {
-            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
+                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
+            }
         }
     }
 }

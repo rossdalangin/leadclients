@@ -91,13 +91,15 @@ class GrowthPress_Law {
             'Estate Planning: Miller Family' => 'Setting up living trusts and healthcare directives.'
         );
         foreach($cases as $title => $desc) {
-            $id = wp_insert_post(array(
-                'post_title'   => $title,
-                'post_content' => $desc,
-                'post_type'    => 'gp_legal_case',
-                'post_status'  => 'publish'
-            ));
-            update_post_meta($id, '_gp_case_status', 'discovery');
+            if ( ! get_page_by_path( sanitize_title($title), OBJECT, 'gp_legal_case' ) ) {
+                $id = wp_insert_post(array(
+                    'post_title'   => $title,
+                    'post_content' => $desc,
+                    'post_type'    => 'gp_legal_case',
+                    'post_status'  => 'publish'
+                ));
+                update_post_meta($id, '_gp_case_status', 'discovery');
+            }
         }
     }
 }

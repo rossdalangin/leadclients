@@ -78,12 +78,14 @@ class GrowthPress_RealEstate {
             'Oceanfront Villa' => 'Direct beach access and panoramic views.'
         );
         foreach($props as $title => $desc) {
-            wp_insert_post(array(
-                'post_title'   => $title,
-                'post_content' => $desc,
-                'post_type'    => 'gp_property',
-                'post_status'  => 'publish'
-            ));
+            if ( ! get_page_by_path( sanitize_title($title), OBJECT, 'gp_property' ) ) {
+                wp_insert_post(array(
+                    'post_title'   => $title,
+                    'post_content' => $desc,
+                    'post_type'    => 'gp_property',
+                    'post_status'  => 'publish'
+                ));
+            }
         }
     }
 }

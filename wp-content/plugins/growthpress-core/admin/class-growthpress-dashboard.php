@@ -251,18 +251,72 @@ class GrowthPress_Dashboard {
     </div>
 </div>";
 
+        // Thank You Page
+        $thank_you_content = "
+<div class=\"container\" style=\"text-align:center; padding:100px 0;\">
+    <div style=\"font-size:5rem; margin-bottom:20px;\">✅</div>
+    <h1>Thank You!</h1>
+    <p>Your inquiry has been received. Our AI is currently analyzing your request and one of our specialists will reach out shortly.</p>
+    <div style=\"margin-top:40px;\">
+        <a href=\"" . home_url() . "\" class=\"button\">Return Home</a>
+    </div>
+</div>";
+
+        // Reviews Page
+        $reviews_content = "
+<div class=\"container\">
+    <h1>What Our Clients Say</h1>
+    <p>Join the hundreds of {$niche_label} businesses using GrowthPress to scale.</p>
+    <div style=\"margin-top:40px;\">
+        [gp_review_feed]
+    </div>
+</div>";
+
+        // Mission/Authority Page
+        $mission_content = "
+<div class=\"container\" style=\"max-width:800px;\">
+    <h1>Our Mission & Commitment</h1>
+    <p>At our {$niche_label} firm, we believe in combining deep industry expertise with cutting-edge technology to deliver unparalleled results for our clients.</p>
+    <h3>The GrowthPress Standard</h3>
+    <p>We leverage the GrowthPress Operating System to ensure maximum efficiency, transparency, and ROI for every project we undertake.</p>
+</div>";
+
+        // Book Now Page
+        $book_now_content = "
+<div class=\"container\" style=\"max-width:600px; text-align:center;\">
+    <h1>Book Your Discovery Session</h1>
+    <p>Select a time that works for you and get your AI-powered growth roadmap.</p>
+    [gp_booking_form]
+</div>";
+
         $pages = array(
             'Home'         => $home_content,
             'Services'     => $services_content,
             'Pricing'      => $pricing_content,
             'Case Studies' => $cases_content,
             'FAQ'          => $faq_content,
+            'Reviews'      => $reviews_content,
+            'Our Mission'  => $mission_content,
+            'Book Now'     => $book_now_content,
+            'Thank You'    => $thank_you_content,
             'Contact'      => $contact_content
         );
 
         foreach($pages as $t => $c) {
-            $existing = get_page_by_path(sanitize_title($t), OBJECT, 'page');
-            if ( $existing ) {
+            // Better collision detection: Search by title first
+            $query = new WP_Query(array(
+                'post_type'              => 'page',
+                'title'                  => $t,
+                'post_status'            => array('publish', 'draft', 'pending', 'private'),
+                'posts_per_page'         => 1,
+                'no_found_rows'          => true,
+                'ignore_sticky_posts'    => true,
+                'update_post_term_cache' => false,
+                'update_post_meta_cache' => false,
+            ));
+
+            if ( $query->have_posts() ) {
+                $existing = $query->posts[0];
                 if ( $replace ) {
                     wp_update_post(array(
                         'ID'           => $existing->ID,
@@ -277,6 +331,7 @@ class GrowthPress_Dashboard {
                     'post_status'  => 'publish'
                 ));
             }
+            wp_reset_postdata();
         }
     }
 

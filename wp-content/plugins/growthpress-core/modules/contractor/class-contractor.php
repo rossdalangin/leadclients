@@ -69,7 +69,9 @@ class GrowthPress_Contractor {
             'Outdoor Living Space' => 'Custom deck and integrated outdoor kitchen.'
         );
         foreach($portfolio as $t => $c) {
-            wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'gp_project', 'post_status' => 'publish'));
+            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'gp_project' ) ) {
+                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'gp_project', 'post_status' => 'publish'));
+            }
         }
     }
 }

@@ -59,12 +59,14 @@ class GrowthPress_Dental {
             'Teeth Whitening Elite'    => 'Professional medical-grade whitening for immediate results.'
         );
         foreach($data as $title => $content) {
-            wp_insert_post(array(
-                'post_title'   => $title,
-                'post_content' => $content,
-                'post_type'    => 'gp_treatment',
-                'post_status'  => 'publish'
-            ));
+            if ( ! get_page_by_path( sanitize_title($title), OBJECT, 'gp_treatment' ) ) {
+                wp_insert_post(array(
+                    'post_title'   => $title,
+                    'post_content' => $content,
+                    'post_type'    => 'gp_treatment',
+                    'post_status'  => 'publish'
+                ));
+            }
         }
     }
 }
