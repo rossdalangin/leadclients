@@ -24,7 +24,7 @@ class GrowthPress_API {
         register_rest_route( 'growthpress/v1', '/missed-call', array(
             'methods'  => 'POST',
             'callback' => array( $this, 'handle_missed_call' ),
-            'permission_callback' => '__return_true', // Twilio uses signature validation
+            'permission_callback' => array( $this, 'check_api_permission' ),
         ) );
     }
 
@@ -48,9 +48,16 @@ class GrowthPress_API {
 
     public function create_lead( $request ) {
         $params = $request->get_params();
-        $lead_id = wp_insert_post( array( 'post_title' => $params['name'], 'post_type' => 'gp_lead', 'post_status' => 'publish' ) );
+        $name = isset($params['name']) ? sanitize_text_field($params['name']) : 'New API Lead';
+        $email = isset($params['email']) ? sanitize_email($params['email']) : '';
+
+        $lead_id = wp_insert_post( array(
+            'post_title' => $name,
+            'post_type' => 'gp_lead',
+            'post_status' => 'publish'
+        ) );
         if ($lead_id) {
-            update_post_meta($lead_id, '_lead_email', $params['email']);
+            if ($email) update_post_meta($lead_id, '_lead_email', $email);
             do_action('gp_lead_captured', $lead_id);
             return new WP_REST_Response( array('id' => $lead_id), 201 );
         }

@@ -96,14 +96,6 @@ class GrowthPress_Content_Studio {
                 </div>
             </div>
         </div>
-        <script>
-        function generateContent() {
-            jQuery('#gp-studio-output').html('AI Strategist is calculating...');
-            jQuery.post(ajaxurl, { action:'gp_generate_content', content_type:jQuery('#gp-content-type').val(), topic:jQuery('#gp-content-topic').val(), gp_nonce:gp_admin.nonce }, function(res) {
-                if(res.success) jQuery('#gp-studio-output').html('<pre style="white-space:pre-wrap;">' + res.data + '</pre>');
-            });
-        }
-        </script>
         <?php
     }
 }

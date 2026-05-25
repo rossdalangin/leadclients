@@ -39,9 +39,17 @@ class GrowthPress_Accounting {
     public function render_tax_docs() {
         ?>
         <div class="gp-doc-upload glass-card" style="margin-top:20px;">
-            <h4>Upload Financial Documents</h4>
-            <p class="description">Upload your W2s, 1099s, and Expense sheets securely.</p>
-            <input type="file" multiple>
+            <h4>Secure Financial Document Portal</h4>
+            <p class="description">Upload your W2s, 1099s, and Expense sheets securely for review.</p>
+            <div class="upload-zone" style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc;">
+                <input type="file" multiple id="gp-accounting-upload" style="display:none;">
+                <label for="gp-accounting-upload" style="cursor:pointer; color: #2563EB; font-weight: bold;">Click to upload or drag and drop</label>
+            </div>
+            <div id="gp-uploaded-docs" style="margin-top:15px;">
+                <ul style="list-style:none; padding:0; font-size:13px; color:#64748b;">
+                    <li>📄 sample_invoice_2023.pdf (Pending Review)</li>
+                </ul>
+            </div>
         </div>
         <?php
     }

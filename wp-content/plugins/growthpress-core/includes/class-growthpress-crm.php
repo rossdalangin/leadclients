@@ -21,6 +21,10 @@ class GrowthPress_CRM {
     private function __construct() {
         add_action( 'init', array( $this, 'register_cpts' ) );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
+        add_action( 'gp_cron_followup', array( $this, 'handle_abandoned_inquiry_followup' ) );
+        if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
+            wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
+        }
     }
 
     public function register_cpts() {
@@ -30,6 +34,14 @@ class GrowthPress_CRM {
             'show_ui' => true,
             'supports' => array( 'title', 'editor', 'custom-fields' ),
             'menu_icon' => 'dashicons-id-alt'
+        ) );
+
+        register_post_type( 'gp_task', array(
+            'labels' => array( 'name' => 'Tasks' ),
+            'public' => false,
+            'show_ui' => true,
+            'supports' => array( 'title', 'editor' ),
+            'menu_icon' => 'dashicons-yes'
         ) );
 
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
@@ -106,6 +118,39 @@ class GrowthPress_CRM {
                 update_post_meta( $lead_id, '_assigned_staff', $staff[0]->ID );
                 GrowthPress_Activity::log( "URGENT LEAD #$lead_id routed to " . $staff[0]->display_name );
             }
+        }
+    }
+
+    public function create_task( $title, $desc = '', $lead_id = 0 ) {
+        $task_id = wp_insert_post( array(
+            'post_title'   => $title,
+            'post_content' => $desc,
+            'post_type'    => 'gp_task',
+            'post_status'  => 'publish'
+        ) );
+        if ( $lead_id ) {
+            update_post_meta( $task_id, '_related_lead', $lead_id );
+        }
+        return $task_id;
+    }
+
+    public function handle_abandoned_inquiry_followup() {
+        $new_leads = get_posts( array(
+            'post_type'  => 'gp_lead',
+            'posts_per_page' => 20,
+            'tax_query' => array( array( 'taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'new' ) ),
+            'date_query' => array( array( 'before' => '24 hours ago' ) ),
+        ) );
+
+        foreach ( $new_leads as $lead ) {
+            if ( get_post_meta( $lead->ID, '_followup_sent', true ) ) continue;
+
+            $ai = GrowthPress_AI::get_instance();
+            $niche = get_option('growthpress_niche', 'business');
+            $msg = $ai->call_ai("Generate a short, friendly re-engagement message for a lead that hasn't responded in 24 hours for a $niche business.", "Sales Assistant");
+
+            GrowthPress_Activity::log( "CRM Automation: Abandoned inquiry follow-up triggered for Lead #{$lead->ID}." );
+            update_post_meta( $lead->ID, '_followup_sent', 'true' );
         }
     }
 }

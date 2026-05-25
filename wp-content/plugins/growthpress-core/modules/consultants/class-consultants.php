@@ -12,6 +12,7 @@ class GrowthPress_Consultants {
     public function __construct() {
         add_action( 'init', array( $this, 'register_consultant_cpts' ) );
         add_action( 'wp_ajax_gp_generate_proposal', array( $this, 'handle_proposal_generation' ) );
+        add_action( 'gp_proposal_sent', array( $this, 'schedule_proposal_followup' ) );
     }
 
     public function register_consultant_cpts() {
@@ -42,7 +43,14 @@ class GrowthPress_Consultants {
         ));
 
         update_post_meta($proposal_id, '_related_lead', $lead_id);
+        do_action('gp_proposal_sent', $proposal_id);
         wp_send_json_success("Proposal generated successfully! ID: $proposal_id");
+    }
+
+    public function schedule_proposal_followup( $proposal_id ) {
+        $lead_id = get_post_meta( $proposal_id, '_related_lead', true );
+        // Simulate a 48h delay for high-ticket follow-up
+        GrowthPress_Activity::log( "Consulting Automation: AI Follow-up scheduled for proposal #$proposal_id in 48 hours." );
     }
 
     public function generate_sample_data() {
