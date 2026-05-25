@@ -20,6 +20,10 @@ class GrowthPress_SEO {
             echo '<script type="application/ld+json">' . json_encode( $schema ) . '</script>';
         }
         echo '<meta name="growthpress-os" content="active">';
+        if ( is_singular() ) {
+            echo '<meta name="description" content="' . wp_trim_words( get_the_excerpt(), 25 ) . '">';
+            echo '<link rel="canonical" href="' . get_permalink() . '">';
+        }
     }
 
     public function render_breadcrumbs() {

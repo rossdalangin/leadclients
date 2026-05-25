@@ -83,22 +83,43 @@
             </div>
 
             <!-- Success Roadmap -->
-            <div class="glass-card" style="border-left: 4px solid #F59E0B;">
-                <h3>Success Roadmap</h3>
+            <div class="glass-card" style="border-left: 6px solid #2563EB;">
+                <h3>🚀 Launch Readiness</h3>
                 <div class="roadmap-steps" style="font-size: 13px;">
-                    <div class="step <?php echo get_option('growthpress_openai_api_key') ? 'done' : ''; ?>" style="margin-bottom:10px; opacity: <?php echo get_option('growthpress_openai_api_key') ? '1' : '0.5'; ?>;">
-                        ✅ Connect OpenAI API
-                    </div>
-                    <div class="step <?php echo get_option('growthpress_niche') ? 'done' : ''; ?>" style="margin-bottom:10px; opacity: <?php echo get_option('growthpress_niche') ? '1' : '0.5'; ?>;">
-                        🚀 Initialize Niche Setup <?php if(get_option('growthpress_niche')): ?>— <a href="<?php echo home_url(); ?>" target="_blank" style="color:#2563EB;">View Site</a><?php endif; ?>
-                    </div>
-                    <div class="step" style="margin-bottom:10px; opacity: 0.5;">
-                        📞 Setup Twilio SMS
-                    </div>
-                    <div class="step" style="margin-bottom:10px; opacity: 0.5;">
-                        📧 Launch 1st AI Campaign
-                    </div>
+                    <?php
+                    $checks = array(
+                        'OpenAI API' => get_option('growthpress_openai_api_key'),
+                        'Niche OS'   => get_option('growthpress_niche'),
+                        'Custom Logo' => get_theme_mod('custom_logo'),
+                        'Lead Form'  => true // System default
+                    );
+                    foreach($checks as $label => $status): ?>
+                        <div class="step" style="margin-bottom:12px; display:flex; align-items:center; gap:10px; opacity: <?php echo $status ? '1' : '0.4'; ?>;">
+                            <span style="font-size:18px;"><?php echo $status ? '✅' : '⚪'; ?></span>
+                            <strong><?php echo $label; ?></strong>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if(get_option('growthpress_niche')): ?>
+                        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+                        <a href="<?php echo home_url(); ?>" target="_blank" class="button button-primary button-small" style="width:100%; text-align:center;">Launch Live Site</a>
+                    <?php endif; ?>
                 </div>
+            </div>
+
+            <!-- Pro Tips -->
+            <div class="glass-card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color:white;">
+                <h3 style="color:white; font-size:14px; text-transform:uppercase; letter-spacing:1px; opacity:0.7;">Industry Pro Tip</h3>
+                <?php
+                $niche = get_option('growthpress_niche', 'business');
+                $tips = array(
+                    'dental'    => "Use the 'Smile Gallery' post type to showcase transformation. High-ticket dental leads buy based on visual outcomes.",
+                    'law'       => "Urgency is key. Ensure your 'Secure Legal Intake' shortcode is above the fold on your Contact page.",
+                    'solar'     => "The ROI Estimator is your best lead magnet. Leads who see savings convert 4x faster.",
+                    'medical'   => "The symptom checker creates trust. Use it to route patients to the correct booking calendar instantly."
+                );
+                $tip = $tips[$niche] ?? "Use the AI Content Studio weekly to target long-tail keywords in your local area.";
+                ?>
+                <p style="color:rgba(255,255,255,0.9); font-size:14px; line-height:1.6; margin-top:10px;"><?php echo $tip; ?></p>
             </div>
 
             <!-- Team performance -->

@@ -1,12 +1,26 @@
-function calculateSolarROI() {
-    var bill = document.getElementById('monthly_bill').value;
-    var resultDiv = document.getElementById('gp-result');
+window.runSolarCalc = function() {
+    var bill = jQuery('#gp-bill').val();
+    var resultDiv = jQuery('#solar-results');
     if (bill) {
-        var yearlySavings = bill * 12 * 0.8;
-        var paybackYears = 15000 / (bill * 12);
-        resultDiv.innerHTML = "<p>Estimated Yearly Savings: $" + yearlySavings.toFixed(2) + "</p><p>Payback Period: " + paybackYears.toFixed(1) + " years</p>";
+        var yearlySavings = bill * 12 * 0.85;
+        var paybackYears = 18000 / (bill * 12);
+        resultDiv.html("<div class='glass-card' style='margin-top:20px; border-color:#10B981;'><h4>Analysis Complete</h4><p>Estimated Yearly Savings: <strong>$" + Math.round(yearlySavings).toLocaleString() + "</strong></p><p>Payback Period: <strong>" + paybackYears.toFixed(1) + " years</strong></p><p style='font-size:12px; opacity:0.7;'>*Estimated based on 30% Federal Tax Credit.</p></div>");
     }
-}
+};
+
+window.calcRoofEstimate = function() {
+    var squares = jQuery('#gp-roof-squares').val();
+    var material = jQuery('#gp-roof-material').val();
+    var pitch = jQuery('#gp-roof-pitch').val();
+
+    var basePrice = material === 'metal' ? 1200 : (material === 'premium' ? 600 : 400);
+    var pitchMultiplier = pitch === 'steep' ? 1.3 : 1.0;
+
+    var total = squares * basePrice * pitchMultiplier;
+    if(squares) {
+        jQuery('#roof-estimate-result').html("<div class='glass-card' style='margin-top:20px; border-color:#2563EB;'><h4>Preliminary Estimate</h4><p>Total Project Investment: <strong>$" + Math.round(total).toLocaleString() + "</strong></p><p style='font-size:12px; opacity:0.7;'>Final pricing subject to on-site inspection.</p></div>");
+    }
+};
 
 function checkSymptoms() {
     var symptoms = document.getElementById('symptoms').value;
@@ -57,6 +71,20 @@ jQuery(document).ready(function($) {
             page: window.location.pathname
         });
     }
+});
+
+// Mobile Menu Toggle
+jQuery(document).ready(function($) {
+    $('.site-header .container').append('<button class="menu-toggle" style="display:none; background:none; color:inherit; border:1px solid #ddd; padding:5px 10px; font-size:18px;">☰</button>');
+
+    if (window.innerWidth < 768) {
+        $('.menu-toggle').show();
+        $('.main-navigation').hide();
+    }
+
+    $('.menu-toggle').on('click', function() {
+        $('.main-navigation').slideToggle();
+    });
 });
 
 // Exit Intent Logic
