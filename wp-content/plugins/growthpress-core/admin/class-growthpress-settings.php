@@ -78,6 +78,24 @@ class GrowthPress_Settings {
                         </td>
                     </tr>
 
+                    <tr class="section-header"><th colspan="2"><h3>Maintenance & Reset</h3></th></tr>
+                    <tr>
+                        <th scope="row"><label>Regenerate Core Assets</label></th>
+                        <td>
+                            <button type="button" class="button" onclick="regenerateOS()">Regenerate Pages & Sample Data</button>
+                            <p class="description">Updates existing core pages (Home, Services, etc.) with fresh Customizer content and adds new demo CPT records. Does not delete existing user content.</p>
+                            <script>
+                            function regenerateOS() {
+                                if(!confirm("This will overwrite existing core page content with updated settings. Continue?")) return;
+                                jQuery.post(ajaxurl, { action: 'gp_regenerate_pages', gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>' }, function(res) {
+                                    alert(res.data);
+                                    location.reload();
+                                });
+                            }
+                            </script>
+                        </td>
+                    </tr>
+
                     <tr class="section-header"><th colspan="2"><h3>SMS & Communication</h3></th></tr>
                     <tr>
                         <th scope="row"><label>Twilio SID</label></th>

@@ -13,6 +13,8 @@ class GrowthPress_RealEstate {
         add_action( 'init', array( $this, 'register_property_cpt' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_property_meta_boxes' ) );
         add_action( 'admin_head', array( $this, 'add_property_help_tabs' ) );
+        add_action( 'wp_ajax_gp_property_match', array( $this, 'handle_property_match' ) );
+        add_action( 'wp_ajax_nopriv_gp_property_match', array( $this, 'handle_property_match' ) );
     }
 
     public function register_property_cpt() {
@@ -46,6 +48,14 @@ class GrowthPress_RealEstate {
             'title'   => 'AI Matchmaking',
             'content' => '<p>The AI Matchmaker scans your property descriptions and meta data to suggest listings to leads based on their specific lifestyle intent.</p>',
         ) );
+    }
+
+    public function handle_property_match() {
+        $lead_id = intval($_POST['lead_id'] ?? 0);
+        if ( ! $lead_id ) wp_send_json_error('Invalid Lead');
+
+        $result = $this->suggest_properties_for_lead($lead_id);
+        wp_send_json_success($result);
     }
 
     public function suggest_properties_for_lead( $lead_id ) {

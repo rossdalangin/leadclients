@@ -101,6 +101,11 @@ class GrowthPress_CRM {
         $email = sanitize_email($_POST['lead_email']);
         $msg = sanitize_textarea_field($_POST['lead_msg']);
 
+        $ai = GrowthPress_AI::get_instance();
+        if ( $ai->is_spam($msg, $name, $email) ) {
+            wp_send_json_error("Inquiry flagged as spam. Please try again with valid information.");
+        }
+
         $lead_id = wp_insert_post(array(
             'post_title' => $name,
             'post_content' => $msg,

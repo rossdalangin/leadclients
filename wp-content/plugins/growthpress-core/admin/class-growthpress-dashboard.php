@@ -13,6 +13,7 @@ class GrowthPress_Dashboard {
         add_action( 'admin_menu', array( $this, 'add_dashboard_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_dashboard_assets' ) );
         add_action( 'wp_ajax_gp_setup_niche', array( $this, 'handle_niche_setup' ) );
+        add_action( 'wp_ajax_gp_regenerate_pages', array( $this, 'handle_page_regeneration' ) );
         add_action( 'wp_ajax_gp_update_lead_stage', array( $this, 'handle_lead_stage_update' ) );
     }
 
@@ -44,16 +45,29 @@ class GrowthPress_Dashboard {
         $niche = sanitize_text_field($_POST['niche']);
         $this->generate_niche_pages($niche);
         $this->generate_niche_funnel($niche);
+        $this->run_niche_sample_data($niche);
+        update_option( 'growthpress_niche', $niche );
+        wp_send_json_success();
+    }
+
+    public function handle_page_regeneration() {
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $niche = get_option('growthpress_niche', 'business');
+        $this->generate_niche_pages($niche, true);
+        $this->generate_niche_funnel($niche);
+        $this->run_niche_sample_data($niche);
+        wp_send_json_success("Pages and sample data regenerated for " . ucwords($niche));
+    }
+
+    private function run_niche_sample_data($niche) {
         $class_name = 'GrowthPress_' . str_replace(' ', '', ucwords(str_replace('-', ' ', $niche)));
         if ( class_exists($class_name) ) {
             $instance = new $class_name();
             if ( method_exists($instance, 'generate_sample_data') ) $instance->generate_sample_data();
         }
-        update_option( 'growthpress_niche', $niche );
-        wp_send_json_success();
     }
 
-    private function generate_niche_pages($n) {
+    private function generate_niche_pages($n, $replace = false) {
         // Hero Content from Customizer
         $hero_headline = get_theme_mod('gp_hero_headline', 'Transform Your Business with AI');
         $hero_sub = get_theme_mod('gp_hero_subheadline', 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.');
@@ -248,7 +262,14 @@ class GrowthPress_Dashboard {
 
         foreach($pages as $t => $c) {
             $existing = get_page_by_path(sanitize_title($t), OBJECT, 'page');
-            if(!$existing) {
+            if ( $existing ) {
+                if ( $replace ) {
+                    wp_update_post(array(
+                        'ID'           => $existing->ID,
+                        'post_content' => $c,
+                    ));
+                }
+            } else {
                 wp_insert_post(array(
                     'post_title'   => $t,
                     'post_content' => $c,

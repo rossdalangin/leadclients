@@ -53,4 +53,12 @@ You can use the following shortcodes to add system features to any page:
 
 ---
 
+## 🔄 Sync & Regeneration
+If you update your global settings (e.g., Change of Address, New Primary Color, or Updated Hero Headlines), you can instantly sync your core pages:
+1. Go to **GrowthPress > Settings** and click **"Regenerate Core Assets"**.
+2. OR open the **Customizer** and navigate to the **"OS Maintenance & Sync"** section.
+3. **Behavior**: This will update existing pages (Home, Services, etc.) with the new data while preserving your Custom Post Types and user-created content.
+
+---
+
 *For technical support or deep customization, refer to the documentation in the `/docs` folder.*

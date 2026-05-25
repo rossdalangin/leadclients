@@ -134,6 +134,26 @@ function growthpress_customize_register( $wp_customize ) {
         'section' => 'growthpress_contact',
         'type' => 'email',
     ) );
+
+    // Ecosystem Maintenance Section
+    $wp_customize->add_section( 'growthpress_maintenance', array(
+        'title' => 'OS Maintenance & Sync',
+        'description' => 'Regenerate your business pages to match current Customizer and Setting values.',
+        'priority' => 100,
+    ) );
+
+    $wp_customize->add_setting( 'gp_regenerate_trigger', array( 'default' => '' ) );
+    $wp_customize->add_control( new WP_Customize_Control( $wp_customize, 'gp_regenerate_trigger', array(
+        'label' => 'Sync Ecosystem',
+        'description' => 'Warning: This updates Home, Services, Pricing, and Contact pages with your latest Customizer settings.',
+        'section' => 'growthpress_maintenance',
+        'type' => 'button',
+        'input_attrs' => array(
+            'value' => 'Regenerate Business Pages',
+            'class' => 'button button-secondary',
+            'onclick' => 'if(confirm("Regenerate core pages now?")){ jQuery.post(ajaxurl, {action:"gp_regenerate_pages", gp_nonce:"'.wp_create_nonce("gp_admin_nonce").'"}); }',
+        ),
+    ) ) );
 }
 add_action( 'customize_register', 'growthpress_customize_register' );
 

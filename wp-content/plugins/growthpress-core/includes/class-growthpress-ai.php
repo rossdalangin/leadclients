@@ -90,6 +90,10 @@ class GrowthPress_AI {
         return $this->call_ai("Act as an energy consultant. Given this usage data/question: \"$usage\", explain the ROI of switching to solar and federal tax credit benefits.", "Solar Expert");
     }
 
-    public function is_spam($m, $n, $e) { return false; }
+    public function is_spam($m, $n, $e) {
+        $prompt = "Analyze this lead submission. Content: \"$m\", Name: \"$n\", Email: \"$e\". Is this likely automated spam or a legitimate high-ticket inquiry? Return ONLY 'SPAM' or 'LEGIT'.";
+        $res = $this->call_ai($prompt, "Security Filter");
+        return (trim($res) === 'SPAM');
+    }
 }
 GrowthPress_AI::get_instance();
