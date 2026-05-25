@@ -26,7 +26,7 @@ class GrowthPress_Builder {
     }
 
     public function register_bricks_category( $i18n ) {
-        $i18n['growthpress'] = 'GrowthPress OS';
+        $i18n['growthpress'] = 'GrowthPress OS Elements';
         return $i18n;
     }
 
@@ -37,7 +37,7 @@ class GrowthPress_Builder {
         register_block_pattern( 'growthpress/hero', array(
             'title' => 'GP Hero Section',
             'categories' => array( 'growthpress' ),
-            'content' => '<!-- wp:group {"className":"gp-hero glass-card"} --><div class="wp-block-group gp-hero glass-card"><h1>Scale Your Business with AI</h1><!-- wp:shortcode -->[gp_lead_form]<!-- /wp:shortcode --></div><!-- /wp:group -->'
+            'content' => '<!-- wp:group {"className":"gp-hero glass-card"} --><div class="wp-block-group gp-hero glass-card"><h1>Scale with AI</h1><!-- wp:shortcode -->[gp_lead_form]<!-- /wp:shortcode --></div><!-- /wp:group -->'
         ) );
     }
 }

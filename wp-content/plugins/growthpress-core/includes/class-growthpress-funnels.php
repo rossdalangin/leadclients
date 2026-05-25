@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Funnel Management Class
+ * GrowthPress Funnel Management Class - A/B Testing Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +23,16 @@ class GrowthPress_Funnels {
         ) );
     }
 
-    public function get_funnel_steps( $funnel_id ) {
-        return get_post_meta( $funnel_id, '_funnel_steps', true );
+    public function track_variation_hit( $funnel_id, $variation = 'A' ) {
+        $hits = get_post_meta( $funnel_id, "_hits_$variation", true ) ?: 0;
+        update_post_meta( $funnel_id, "_hits_$variation", ++$hits );
+    }
+
+    public function get_performance( $funnel_id ) {
+        return array(
+            'A' => get_post_meta( $funnel_id, '_hits_A', true ) ?: 0,
+            'B' => get_post_meta( $funnel_id, '_hits_B', true ) ?: 0,
+        );
     }
 }
 
