@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Qualification Enhanced
+ * GrowthPress CRM Core Class - AI Insights Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,87 +20,47 @@ class GrowthPress_CRM {
 
     private function __construct() {
         add_action( 'init', array( $this, 'register_cpts' ) );
+        add_action( 'add_meta_boxes', array( $this, 'add_lead_meta_boxes' ) );
         add_action( 'gp_lead_captured', array( $this, 'trigger_lead_automations' ) );
-        add_shortcode( 'gp_quiz_lead_form', array( $this, 'render_quiz_form' ) );
-        add_action( 'wp_ajax_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
-        add_action( 'wp_ajax_nopriv_gp_submit_lead', array( $this, 'handle_lead_submission' ) );
     }
 
     public function register_cpts() {
-        register_post_type( 'gp_lead', array( 'labels' => array( 'name' => 'Leads' ), 'public' => false, 'show_ui' => true, 'supports' => array( 'title', 'editor', 'custom-fields' ) ) );
+        register_post_type( 'gp_lead', array(
+            'labels'      => array( 'name' => 'Leads', 'singular_name' => 'Lead' ),
+            'public'      => false, 'show_ui' => true, 'menu_icon' => 'dashicons-groups',
+            'supports'    => array( 'title', 'editor', 'custom-fields' ),
+        ) );
     }
 
-    public function render_quiz_form() {
-        $nonce = wp_create_nonce('gp_lead_nonce');
-        $niche = get_option('growthpress_niche', 'business');
-        ob_start(); ?>
-        <div class="gp-quiz-form glass-card" id="gp-ai-quiz">
-            <input type="hidden" name="gp_nonce" value="<?php echo $nonce; ?>">
-            <div id="quiz-step-1">
-                <h3>Let's see if we're a match...</h3>
-                <p>What's your biggest challenge right now?</p>
-                <button type="button" onclick="nextQuizStep(2, 'Growth')">Scaling Revenue</button>
-                <button type="button" onclick="nextQuizStep(2, 'Efficiency')">Saving Time</button>
+    public function add_lead_meta_boxes() {
+        add_meta_box( 'gp_ai_sales_insights', '🧠 AI Sales Intelligence', array( $this, 'render_ai_insights' ), 'gp_lead', 'normal', 'high' );
+    }
+
+    public function render_ai_insights( $post ) {
+        $ai = GrowthPress_AI::get_instance();
+        $prob = $ai->predict_deal_probability($post->ID);
+        $tactics = $ai->suggest_closing_tactics($post->ID);
+        $history = get_post_meta($post->ID, '_behavior_history', true) ?: '[]';
+        ?>
+        <div class="gp-insights-box">
+            <div style="display:flex; gap:20px; margin-bottom:20px;">
+                <div class="glass-card" style="flex:1; text-align:center;">
+                    <div style="font-size:12px; color:#666;">Closing Probability</div>
+                    <div style="font-size:32px; font-weight:bold; color:#10B981;"><?php echo $prob; ?>%</div>
+                </div>
+                <div class="glass-card" style="flex:2;">
+                    <h4>Suggested Closing Tactics</h4>
+                    <pre style="white-space:pre-wrap; font-size:12px;"><?php echo esc_html($tactics); ?></pre>
+                </div>
             </div>
-            <div id="quiz-step-2" style="display:none;">
-                <h3>Almost there!</h3>
-                <input type="text" id="lead-name" placeholder="Name" required>
-                <input type="email" id="lead-email" placeholder="Email" required>
-                <button type="button" onclick="submitAIQuiz()">Get My Free AI Strategy</button>
+            <h4>Prospect Behavior History</h4>
+            <div style="background:#f8fafc; padding:10px; border-radius:8px; font-size:11px; max-height:100px; overflow-y:auto;">
+                <?php foreach(json_decode($history, true) as $h) echo "<div>Viewed: {$h['url']} at " . date('Y-m-d H:i', $h['time']/1000) . "</div>"; ?>
             </div>
         </div>
-        <script>
-        var quizData = { intent: '' };
-        function nextQuizStep(s, val) {
-            if(val) quizData.intent = val;
-            jQuery('#gp-ai-quiz > div').hide();
-            jQuery('#quiz-step-' + s).show();
-        }
-        function submitAIQuiz() {
-            var data = {
-                action: 'gp_submit_lead',
-                lead_name: jQuery('#lead-name').val(),
-                lead_email: jQuery('#lead-email').val(),
-                lead_message: 'Intent: ' + quizData.intent + ' for <?php echo $niche; ?> niche.',
-                gp_nonce: jQuery('input[name="gp_nonce"]').val()
-            };
-            jQuery.post(gp_ajax.ajaxurl, data, function(res) {
-                if(res.success) jQuery('#gp-ai-quiz').html('<h3>Analysis Complete! Check your email for your custom roadmap.</h3>');
-            });
-        }
-        </script>
         <?php
-        return ob_get_clean();
     }
 
-    public function trigger_lead_automations( $lead_id ) {
-        $ai = GrowthPress_AI::get_instance();
-        $lead = get_post($lead_id);
-
-        // Qualification Logic
-        $analysis = $ai->analyze_sentiment($lead->post_content);
-        update_post_meta($lead_id, '_gp_ai_qualification', $analysis);
-
-        // Automated Tagging based on high-ticket criteria
-        if (strpos($analysis, '10') !== false) {
-            wp_set_post_terms($lead_id, 'High Priority', 'gp_lead_tag');
-        }
-    }
-
-    public function handle_lead_submission() {
-        if ( ! check_ajax_referer( 'gp_lead_nonce', 'gp_nonce', false ) ) wp_send_json_error();
-        $lead_id = wp_insert_post( array(
-            'post_title' => sanitize_text_field($_POST['lead_name']),
-            'post_content' => sanitize_textarea_field($_POST['lead_message']),
-            'post_type' => 'gp_lead',
-            'post_status' => 'publish'
-        ) );
-        if ($lead_id) {
-            update_post_meta($lead_id, '_lead_email', sanitize_email($_POST['lead_email']));
-            do_action('gp_lead_captured', $lead_id);
-            wp_send_json_success();
-        }
-        wp_send_json_error();
-    }
+    public function trigger_lead_automations($id) {}
 }
 GrowthPress_CRM::get_instance();

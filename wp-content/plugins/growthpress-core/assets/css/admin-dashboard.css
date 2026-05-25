@@ -1,57 +1,62 @@
-.growthpress-dashboard {
+.growthpress-dashboard, .growthpress-studio, .growthpress-settings {
     padding: 30px;
-    background: #f0f2f5;
+    background: #f1f5f9;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px -10px rgba(31, 38, 135, 0.08);
 }
+
+.dashboard-header h1 { font-weight: 900; color: #1e293b; font-size: 2rem; margin: 0; }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    margin-bottom: 35px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
 }
 
-.stat-card .value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #2563EB;
-    margin: 10px 0;
+.kanban-board {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
 }
 
 .kanban-col {
-    background: rgba(229, 231, 235, 0.5);
+    background: rgba(203, 213, 225, 0.3);
+    border-radius: 16px;
     padding: 20px;
-    border-radius: 12px;
-    min-width: 280px;
+    min-width: 300px;
 }
 
 .kanban-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 4px solid #2563EB;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    cursor: grab;
+    border-left: 5px solid #2563EB;
 }
 
-.kanban-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-}
-
-.ai-next-step {
-    background: #eff6ff;
-    padding: 8px;
-    border-radius: 6px;
-    margin-top: 10px;
+.status-badge {
+    background: #e2e8f0;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 20px;
     font-size: 11px;
-    color: #1e40af;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
 }
