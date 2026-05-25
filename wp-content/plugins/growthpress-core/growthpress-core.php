@@ -38,6 +38,7 @@ function growthpress_core_load_modules() {
         'admin/class-growthpress-settings.php',
         'admin/class-growthpress-reports.php',
         'admin/class-growthpress-strategy.php',
+        'admin/class-growthpress-reviews.php',
     );
 
     foreach ( $files as $file ) {

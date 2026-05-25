@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Content Studio - Campaign Enhanced
+ * GrowthPress AI Content Studio - Market Insights Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,10 +36,9 @@ class GrowthPress_Content_Studio {
             case 'blog': $result = $ai->generate_blog_post($topic, $niche); break;
             case 'social': $result = $ai->generate_social_content($topic); break;
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
-            case 'campaign': $result = $ai->call_ai("Generate a 5-day Email and SMS nurture sequence for a $niche lead interested in \"$topic\". Include catchy subject lines and clear CTAs.", "Marketing Automation Specialist"); break;
-            case 'sales': $result = $ai->call_ai("Discovery script for $niche: $topic", "Sales Coach"); break;
-            case 'headline': $result = $ai->call_ai("5 headlines and 3 CTAs for $niche regarding \"$topic\".", "Copywriter"); break;
-            default: $result = 'Invalid type.';
+            case 'campaign': $result = $ai->call_ai("Generate 5-day email sequence for $topic in $niche.", "Automation Pro"); break;
+            case 'market': $result = $ai->call_ai("Generate a competitor analysis and 'Angle of Attack' sales strategy for a $niche business in the area of \"$topic\". Identify common weaknesses in the market.", "Market Strategist"); break;
+            default: $result = 'Invalid.';
         }
         wp_send_json_success($result);
     }
@@ -47,21 +46,19 @@ class GrowthPress_Content_Studio {
     public function render_studio() {
         ?>
         <div class="wrap growthpress-studio">
-            <h1>AI Content & Marketing Studio</h1>
+            <h1>AI Content & Insights Studio</h1>
             <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
                 <div class="studio-input glass-card">
-                    <h3>Asset Generation</h3>
+                    <h3>Asset & Strategy Generation</h3>
                     <select id="gp-content-type" style="width:100%;">
                         <option value="blog">SEO Blog Post</option>
-                        <option value="campaign">5-Day Nurture Campaign (Email/SMS)</option>
-                        <option value="social">Social Media Bundle</option>
+                        <option value="campaign">Nurture Campaign</option>
+                        <option value="market">Market Insights & Angle of Attack</option>
                         <option value="ad">Direct-Response Ads</option>
-                        <option value="headline">Headlines & CTAs</option>
-                        <option value="sales">Sales Scripts</option>
                     </select>
-                    <p class="description">Select 'Nurture Campaign' to generate a full follow-up sequence for your <?php echo get_option('growthpress_niche'); ?> leads.</p>
-                    <input type="text" id="gp-content-topic" placeholder="e.g. Roof Replacement" style="width:100%; margin-top:10px;">
-                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate with AI</button>
+                    <p class="description">Use 'Market Insights' to find your competitive edge in the <?php echo get_option('growthpress_niche'); ?> niche.</p>
+                    <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:10px;">
+                    <button class="button button-primary" onclick="generateContent()" style="margin-top:15px;">Generate Analysis</button>
                 </div>
                 <div class="studio-output glass-card">
                     <div id="gp-studio-output">Results appear here...</div>
@@ -70,7 +67,7 @@ class GrowthPress_Content_Studio {
         </div>
         <script>
         function generateContent() {
-            jQuery('#gp-studio-output').html('Thinking...');
+            jQuery('#gp-studio-output').html('AI Strategist is calculating...');
             jQuery.post(ajaxurl, { action:'gp_generate_content', content_type:jQuery('#gp-content-type').val(), topic:jQuery('#gp-content-topic').val(), gp_nonce:gp_admin.nonce }, function(res) {
                 if(res.success) jQuery('#gp-studio-output').html('<pre style="white-space:pre-wrap;">' + res.data + '</pre>');
             });

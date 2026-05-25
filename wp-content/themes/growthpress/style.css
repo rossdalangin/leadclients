@@ -12,60 +12,71 @@ Text Domain: growthpress
     --secondary: #1E293B;
     --accent: #10B981;
     --text: #334155;
-    --glass: rgba(255, 255, 255, 0.7);
-    --glass-dark: rgba(30, 41, 59, 0.05);
+    --glass: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.4);
 }
 
 body {
     font-family: 'Inter', sans-serif;
     color: var(--text);
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     line-height: 1.7;
     margin: 0;
-    -webkit-font-smoothing: antialiased;
 }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 25px; }
 
-/* Ultra Glassmorphism */
-.glass-card {
+/* Global Glassmorphism Component */
+.glass-card, .gp-estimator, .gp-solar-calc, .gp-symptom-checker, .gp-ai-faq {
     background: var(--glass);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.08);
+    padding: 35px;
+    box-shadow: 0 10px 40px -10px rgba(31, 38, 135, 0.1);
+    margin-bottom: 30px;
 }
 
-/* Premium Spacing & Hierarchy */
-.section-padding { padding: 100px 0; }
-.mb-20 { margin-bottom: 20px; }
-.mb-40 { margin-bottom: 40px; }
+/* Typography Harmony */
+h1, h2, h3, h4 { color: var(--secondary); letter-spacing: -0.015em; font-weight: 800; margin-top: 0; }
+h1 { font-size: 3.25rem; line-height: 1.1; }
+h3 { font-size: 1.75rem; margin-bottom: 15px; }
 
-/* Typography */
-h1, h2, h3 { color: var(--secondary); letter-spacing: -0.02em; font-weight: 800; }
-h1 { font-size: 3.5rem; line-height: 1.1; }
-h2 { font-size: 2.5rem; }
+/* Forms & Interactive Inputs */
+input, select, textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    font-family: inherit;
+    font-size: 15px;
+}
 
-/* Trust Bar */
-.gp-trust-bar { display: flex; justify-content: center; gap: 50px; padding: 60px 0; opacity: 0.7; }
-.gp-trust-bar img { height: 40px; grayscale: 100%; }
-
-/* Buttons */
-.gp-btn {
-    display: inline-block;
-    padding: 18px 35px;
+button, .gp-btn {
+    background: var(--primary);
+    color: white;
+    padding: 16px 30px;
+    border: none;
     border-radius: 12px;
     font-weight: 700;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
 }
 
-.gp-btn-primary { background: var(--primary); color: white; box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
-.gp-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(37, 99, 235, 0.3); }
+button:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(37, 99, 235, 0.3); }
 
-/* Customizer integration */
-:root { --primary: <?php echo get_theme_mod('growthpress_primary_color', '#2563EB'); ?>; }
+/* Header & Nav */
+.site-header { padding: 25px 0; background: white; border-bottom: 1px solid #e2e8f0; }
+.main-navigation ul { list-style: none; display: flex; gap: 30px; margin: 0; }
+.main-navigation a { text-decoration: none; color: var(--text); font-weight: 600; font-size: 15px; }
+
+/* Multi-Location Widget */
+.gp-location-selector { margin-bottom: 20px; }
+
+/* Component Specific Fixes */
+.gp-ai-chat-bubble { z-index: 10001; }
+#gp-faq-chat-box { font-size: 14px; color: #475569; }
