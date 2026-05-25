@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Dental Clinic Module - Ultra Polished
+ * GrowthPress Dental Clinic Module - Help Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +12,7 @@ class GrowthPress_Dental {
     public function __construct() {
         add_action( 'init', array( $this, 'register_dental_cpts' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_dental_meta_boxes' ) );
+        add_action( 'admin_head', array( $this, 'add_dental_help_tabs' ) );
     }
 
     public function register_dental_cpts() {
@@ -20,39 +21,38 @@ class GrowthPress_Dental {
             'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-heart',
             'supports'    => array( 'title', 'editor', 'thumbnail' ),
         ) );
-        register_post_type( 'gp_smile_gallery', array(
-            'labels'      => array( 'name' => 'Smile Gallery', 'singular_name' => 'Smile Case' ),
-            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-format-gallery',
-            'supports'    => array( 'title', 'editor', 'thumbnail' ),
-        ) );
     }
 
     public function add_dental_meta_boxes() {
-        add_meta_box( 'gp_dental_help', 'Dental OS Instructions', array( $this, 'render_help_box' ), 'gp_treatment', 'side', 'high' );
-        add_meta_box( 'gp_smile_help', 'Gallery Best Practices', array( $this, 'render_smile_help' ), 'gp_smile_gallery', 'side', 'high' );
+        add_meta_box( 'gp_dental_settings', 'Niche Configuration', array( $this, 'render_dental_meta' ), 'gp_treatment', 'side', 'default' );
     }
 
-    public function render_help_box() {
+    public function render_dental_meta( $post ) {
         ?>
-        <div class="gp-help-context">
-            <p><strong>Treatment Pages:</strong> These are high-authority landing pages.</p>
-            <p><em>Example:</em> "Advanced Dental Implants" should focus on benefits (comfort, longevity) rather than just technical specs.</p>
-            <p><strong>SEO Tip:</strong> Include "Dentist in [City]" in the H2 tags.</p>
+        <div class="gp-meta-field">
+            <label>Authority Focus</label>
+            <select name="gp_auth_type" style="width:100%;">
+                <option value="cosmetic">Cosmetic Dentistry</option>
+                <option value="restorative">Restorative Care</option>
+            </select>
+            <p class="description">Help: Choose 'Cosmetic' for Veneers/Invisalign to trigger premium UI elements.</p>
         </div>
         <?php
     }
 
-    public function render_smile_help() {
-        ?>
-        <div class="gp-help-context">
-            <p><strong>Conversion Rule:</strong> Always use high-resolution "Before & After" photos.</p>
-            <p><em>Note:</em> Ensure you have patient consent forms uploaded to the secure documents portal.</p>
-        </div>
-        <?php
+    public function add_dental_help_tabs() {
+        $screen = get_current_screen();
+        if ( $screen->post_type !== 'gp_treatment' ) return;
+
+        $screen->add_help_tab( array(
+            'id'      => 'gp_dental_overview',
+            'title'   => 'Treatment Mastery',
+            'content' => '<p>Mastering treatment pages: Use high-ticket keywords like "painless", "life-changing", and "expert care". Ensure every page has a [gp_booking_form] shortcode.</p>',
+        ) );
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title'=>'Full Mouth Reconstruction','post_content'=>'Comprehensive restorative care.','post_type'=>'gp_treatment','post_status'=>'publish'));
+        wp_insert_post(array('post_title'=>'Advanced Dental Implants','post_content'=>'Natural results...','post_type'=>'gp_treatment','post_status'=>'publish'));
     }
 }
 new GrowthPress_Dental();

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Real Estate Module - Admin UI Enhanced
+ * GrowthPress Real Estate Module - Help Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,8 +12,7 @@ class GrowthPress_RealEstate {
     public function __construct() {
         add_action( 'init', array( $this, 'register_property_cpt' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_property_meta_boxes' ) );
-        add_action( 'save_post_gp_property', array( $this, 'save_property_meta' ) );
-        add_action( 'wp_ajax_gp_property_match', array( $this, 'handle_property_match' ) );
+        add_action( 'admin_head', array( $this, 'add_property_help_tabs' ) );
     }
 
     public function register_property_cpt() {
@@ -25,46 +24,32 @@ class GrowthPress_RealEstate {
     }
 
     public function add_property_meta_boxes() {
-        add_meta_box( 'gp_property_details', 'Property Configuration & AI Matchmaking', array( $this, 'render_property_details' ), 'gp_property', 'normal', 'high' );
+        add_meta_box( 'gp_prop_config', 'AI Asset Configuration', array( $this, 'render_prop_meta' ), 'gp_property', 'side' );
     }
 
-    public function render_property_details( $post ) {
-        $price = get_post_meta($post->ID, '_gp_property_price', true);
-        $tour = get_post_meta($post->ID, '_gp_virtual_tour', true);
+    public function render_prop_meta( $post ) {
         ?>
-        <div class="gp-meta-box">
-            <p class="description">Configure the property details used for AI matching and frontend display.</p>
-            <table class="form-table">
-                <tr>
-                    <th><label>Listing Price ($)</label></th>
-                    <td>
-                        <input type="number" name="gp_property_price" value="<?php echo esc_attr($price); ?>" class="regular-text" placeholder="e.g. 450000">
-                        <p class="help-text" style="font-size:11px; color:#666;">Example: Enter 500000 for a $500k listing.</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label>Virtual Tour URL</label></th>
-                    <td>
-                        <input type="url" name="gp_virtual_tour" value="<?php echo esc_attr($tour); ?>" class="large-text" placeholder="https://my.matterport.com/show/?m=...">
-                        <p class="help-text" style="font-size:11px; color:#666;">Note: Supports Matterport, YouTube, or Vimeo embeds.</p>
-                    </td>
-                </tr>
-            </table>
+        <div class="gp-meta-field">
+            <label>Virtual Tour (Matterport/YouTube)</label>
+            <input type="url" name="gp_virtual_tour" style="width:100%;" placeholder="https://...">
+            <p class="description">Example: https://my.matterport.com/show/?m=XXXXXXXXX</p>
         </div>
         <?php
     }
 
-    public function save_property_meta( $post_id ) {
-        if ( isset($_POST['gp_property_price']) ) update_post_meta($post_id, '_gp_property_price', sanitize_text_field($_POST['gp_property_price']));
-        if ( isset($_POST['gp_virtual_tour']) ) update_post_meta($post_id, '_gp_virtual_tour', esc_url_raw($_POST['gp_virtual_tour']));
-    }
+    public function add_property_help_tabs() {
+        $screen = get_current_screen();
+        if ( $screen->post_type !== 'gp_property' ) return;
 
-    public function handle_property_match() {
-        // AI matching logic...
+        $screen->add_help_tab( array(
+            'id'      => 'gp_re_ai',
+            'title'   => 'AI Matchmaking',
+            'content' => '<p>The AI Matchmaker scans your property descriptions and meta data to suggest listings to leads based on their specific lifestyle intent.</p>',
+        ) );
     }
 
     public function generate_sample_data() {
-        wp_insert_post(array('post_title' => 'Sunset Hills Estate', 'post_type' => 'gp_property', 'post_status' => 'publish'));
+        wp_insert_post(array('post_title'=>'Modern Penthouse','post_type'=>'gp_property','post_status'=>'publish'));
     }
 }
 new GrowthPress_RealEstate();
