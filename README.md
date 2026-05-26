@@ -1,64 +1,48 @@
-# GrowthPress Business OS: Configuration & Deployment Guide
+# GrowthPress: The Definitive AI Business Operating System
 
-GrowthPress is an enterprise-grade AI-powered Business Operating System for WordPress. Follow these instructions to configure the system for maximum growth and conversion.
+GrowthPress is a world-class, enterprise-grade AI ecosystem that transforms WordPress into a high-performance business operating system. Designed for agencies and high-ticket service businesses, it consolidates lead generation, CRM, automation, and operations into one unified platform.
 
-## 🛠️ Step 1: Core System Deployment
-1. **Environment**: Ensure you are running WordPress 6.0+ with PHP 7.4+.
-2. **Installation**:
-   - Upload and activate the `growthpress` theme.
-   - Upload and activate the `growthpress-core` plugin.
-3. **Identity & Branding**:
-   - Navigate to `Appearance > Customize`.
-   - **Global Branding**: Set your Primary Brand Color (affects buttons, AI chat, and highlights).
-   - **Logo**: Upload your high-resolution business logo.
-   - **Hero Content**: Define your primary headline and subheadline for the homepage.
+## 🚀 The One-Click Launch
+1. **Activate**: Theme `growthpress` and Plugin `growthpress-core`.
+2. **Initialize**: Go to the **Dashboard**, select your niche (Solar, Law, Dental, etc.), and click **"Initialize OS"**.
+3. **Calibrate**: Connect your OpenAI and Twilio keys in **Settings**.
+4. **Brand**: Set your identity in `Appearance > Customize`.
 
-## 🤖 Step 2: AI & Automation Configuration
-Navigate to `GrowthPress > Settings` to connect your intelligence engines.
+## 🧠 Core Intelligence Hub
+- **AI Triage**: Real-time sentiment, urgency, and intent analysis of every lead.
+- **Predictive Sales**: AI deal probability scoring and autonomous action planning.
+- **AI Content Studio**: Instant generation of SEO blogs, social suites, and lead magnets.
+- **Conversational Assistant**: Niche-aware AI chat bubble with intent-based booking triggers.
 
-### A. OpenAI Intelligence (Required)
-- **API Key**: Input your secret key from [platform.openai.com](https://platform.openai.com).
-- **Functionality**: This powers Lead Sentiment analysis, the AI Content Studio, and the Floating Assistant.
-- **Lead Scoring**: Set your "Hot Lead Threshold" (Standard: 80). Leads scoring above this will trigger priority notifications.
+## 📊 CRM & Sales Pipeline
+- **Visual Kanban**: Drag-and-drop lead stage management.
+- **Strategic Briefs**: AI-generated discovery questions and closing tactics for every lead.
+- **Proposal Engine**: One-click high-ticket proposal generation with secure portal acceptance.
+- **ROI Analytics**: Real-time data on conversion rates, pipeline value, and lead sources.
 
-### B. Twilio & SMS (Optional)
-- **SID / Token**: Input your Twilio credentials.
-- **Functionality**: Enables automated SMS appointment reminders and missed-call follow-ups.
+## 🛠️ Industry-Specific Mastery
+Tailored logic and tools for 10 niches:
+- **Dental**: Insurance verifier and Smile Transformation galleries.
+- **Law Firm**: Secure legal intake and case lifecycle tracking.
+- **Solar**: Precision ROI calculators and $0-down financing inquiries.
+- **Contractors**: Precision roofing/renovation estimators and project trackers.
+- **Accounting**: Tax savings estimators and secure document portals.
+- **Medical**: AI health triage and telemedicine integration.
+- **Real Estate**: AI Property Matchmaker based on lifestyle intent.
+- **Coaches/Consultants**: Webinar registration and authority content libraries.
 
-### C. WhatsApp Business (Optional)
-- **API Key**: Input your Meta/WhatsApp developer key.
-- **Functionality**: High-ticket client communication and proposal notifications.
-
-## 🚀 Step 3: Niche Initialization (One-Click)
-1. Navigate to the **GrowthPress Dashboard** in your WP Admin.
-2. In the **OS Launch Wizard**, select your specific industry (e.g., Law Firm, Solar Company).
-3. Click **"Initialize OS"**.
-4. **What Happens**: The system will automatically generate:
-   - Optimized **Home, Services, FAQ, Pricing,** and **Contact** pages.
-   - Industry-specific **Calculators, Triage Forms,** and **Shortcodes**.
-   - Realistic **Sample Data** (Leads, Cases, Projects) to populate your CRM immediately.
-
-## 📊 Step 4: CRM & Team Onboarding
-1. **User Setup**: Add your team members as WordPress users (Roles: Editor or Author).
-2. **Permissions**: Go to `GrowthPress > Settings` and define which roles have access to the Kanban board.
-3. **Lead Routing**: Ensure your Multi-Location settings (if applicable) have correct ZIP codes to route leads to the nearest branch.
-
-## 🔧 Step 5: Advanced Shortcode Deployment
-You can use the following shortcodes to add system features to any page:
-- `[gp_lead_form]`: The primary high-converting intake form.
-- `[gp_quiz_lead_form]`: Multi-step qualification quiz.
-- `[gp_booking_form]`: Staff-aware appointment scheduling.
-- `[gp_ai_faq]`: Conversational AI knowledge base.
-- `[gp_client_portal]`: Secure area for client document management.
+## 🛡️ Security & Performance
+- **Enterprise Ready**: Bearer token REST API, WP Nonces, and capability-based authorization.
+- **Blazing Fast**: Asynchronous AI processing and mobile-first glassmorphism design.
+- **SEO Optimized**: Automated JSON-LD Schema and dynamic title/meta management.
 
 ---
 
-## 🔄 Sync & Regeneration
-If you update your global settings (e.g., Change of Address, New Primary Color, or Updated Hero Headlines), you can instantly sync your core pages:
-1. Go to **GrowthPress > Settings** and click **"Regenerate Core Assets"**.
-2. OR open the **Customizer** and navigate to the **"OS Maintenance & Sync"** section. Here you can selectively choose which pages to refresh.
-3. **Behavior**: This will update existing pages (Home, Services, etc.) with the new data while preserving your Custom Post Types and user-created content. The system uses robust title-based collision detection to ensure no duplicate pages are created.
+### 📂 Documentation Library
+For deeper configuration, refer to our specialized guides in the `/docs` folder:
+- `architecture.md`: Lead lifecycle and database mapping.
+- `api-specification.md`: Secure integration endpoints.
+- `design-system.md`: Visual guidelines and luxury UI specs.
+- `marketing/toolkit/`: Sales scripts, pitch decks, and monetization roadmaps.
 
----
-
-*For technical support or deep customization, refer to the documentation in the `/docs` folder.*
+*GrowthPress: Capturing the leads your competitors are ignoring.*
