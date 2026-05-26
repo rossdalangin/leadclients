@@ -199,6 +199,7 @@ class GrowthPress_CRM {
     }
 
     public function add_crm_meta_boxes() {
+        add_meta_box( 'gp_lead_nudges', '🧠 Behavioral Sales Nudges', array( $this, 'render_nudge_meta' ), 'gp_lead', 'side', 'high' );
         add_meta_box( 'gp_lead_insights', 'AI Sales Insights', array( $this, 'render_insights_meta' ), 'gp_lead', 'normal', 'high' );
         add_meta_box( 'gp_lead_notes', 'Internal Team Notes', array( $this, 'render_notes_meta' ), 'gp_lead', 'normal', 'default' );
         add_meta_box( 'gp_lead_tasks', 'Related Tasks', array( $this, 'render_tasks_meta' ), 'gp_lead', 'normal', 'default' );
@@ -328,6 +329,26 @@ class GrowthPress_CRM {
                 }
                 </script>
             </div>
+        </div>
+        <?php
+    }
+
+    public function render_nudge_meta( $post ) {
+        $niche = get_option('growthpress_niche', 'business');
+        $nudges = array(
+            'dental'      => array('Highlight "Painless" treatments immediately.', 'Mention Invisalign if they are < 40 years old.', 'Social Proof: Mention our 500+ five-star reviews.'),
+            'law'         => array('Emphasize urgency: "Statute of limitations may apply".', 'Position as the "Aggressive Advocate".', 'Mention past settlement successes.'),
+            'solar'       => array('Anchor the price against 25 years of utility inflation.', 'Highlight the 30% Tax Credit ending soon.', 'Focus on "Energy Independence".'),
+            'contractor'  => array('Showcase the quartz upgrade as a limited-time bonus.', 'Emphasize "Licensed & Insured" for trust.', 'Mention the 10-year labor warranty.')
+        );
+        $active_nudges = $nudges[$niche] ?? array('Focus on transformation, not price.', 'Use the "Feel-Felt-Found" objection handling.', 'Always secure the next discovery call.');
+        ?>
+        <div class="gp-nudges">
+            <ul style="margin:0; padding-left:15px; font-size:12px; color:#1e293b;">
+                <?php foreach($active_nudges as $n): ?>
+                    <li style="margin-bottom:10px;">⚡ <?php echo esc_html($n); ?></li>
+                <?php endforeach; ?>
+            </ul>
         </div>
         <?php
     }

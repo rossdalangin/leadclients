@@ -39,6 +39,7 @@ class GrowthPress_Content_Studio {
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
             case 'campaign': $result = $ai->generate_email_campaign($topic, $niche); break;
             case 'headlines': $result = $ai->call_ai("Generate 5 high-converting headlines and 3 compelling Call-To-Action (CTA) variations for \"$topic\" in the $niche industry. Use behavioral psychology and power words.", "CRO Expert"); break;
+            case 'conversion': $result = $ai->call_ai("Act as a conversion rate optimization (CRO) expert. Analyze the $niche landing page for \"$topic\" and suggest 5 high-impact changes to improve lead capture and trust. Include psychological reasonings.", "CRO Specialist"); break;
             case 'leadmagnet': $result = $ai->call_ai("Generate a comprehensive high-ticket lead magnet (Ebook/Guide) outline and opening chapter for \"$topic\" in the $niche niche. Focus on extreme value and authority building.", "Lead Magnet Architect"); break;
             case 'market': $result = $ai->generate_market_insights($topic, $niche); break;
             case 'sales': $result = $ai->call_ai("Generate high-ticket discovery call talk tracks, power questions, and objection handling for a $niche firm regarding \"$topic\".", "AI Sales Coach"); break;
@@ -81,6 +82,7 @@ class GrowthPress_Content_Studio {
                             <option value="market">Market Insights & Angle of Attack</option>
                             <option value="sales">AI Sales Assistant (Talk Tracks)</option>
                             <option value="headlines">AI Headline & CTA Optimizer</option>
+                            <option value="conversion">AI Conversion Suggestions</option>
                             <option value="ad">Direct-Response Ads</option>
                             <option value="social">Omnichannel Social Suite</option>
                             <option value="leadmagnet">AI Lead Magnet (Ebook/Guide)</option>

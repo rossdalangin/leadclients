@@ -74,12 +74,42 @@ class GrowthPress_Dashboard {
         $reputation->generate_sample_data();
     }
 
+    private function get_industry_copy($n) {
+        $data = array(
+            'solar' => array(
+                'home_h1' => 'Power Your Home with Intelligent Solar Solutions',
+                'home_sub' => 'Lock in lower energy costs and maximize your ROI with our AI-optimized solar systems.',
+                'service_h1' => 'Solar Engineering & Installation',
+                'service_p' => 'We provide full-service solar deployments, from custom engineering to federal tax credit optimization.'
+            ),
+            'dental' => array(
+                'home_h1' => 'Elite Dental Care Powered by Precision AI',
+                'home_sub' => 'Experience a new standard of dental wellness with our advanced triage and patient-first approach.',
+                'service_h1' => 'Advanced Cosmetic & Restorative Dentistry',
+                'service_p' => 'From Invisalign to full-mouth restoration, our specialists deliver life-changing results.'
+            ),
+            'law' => array(
+                'home_h1' => 'High-Stakes Legal Representation for Modern Firms',
+                'home_sub' => 'Our firm combines deep legal expertise with AI-driven case management to secure the results you deserve.',
+                'service_h1' => 'Strategic Litigation & Corporate Counsel',
+                'service_p' => 'Protecting your interests with aggressive representation and sophisticated legal strategy.'
+            )
+        );
+        return $data[$n] ?? array(
+            'home_h1' => 'Elite Solutions Powered by Business Intelligence',
+            'home_sub' => 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.',
+            'service_h1' => 'Strategic Services for High-Growth Firms',
+            'service_p' => 'We provide industry-leading services designed for high-impact results and long-term growth.'
+        );
+    }
+
     private function generate_niche_pages($n, $replace = false) {
         $niche_label = ucwords(str_replace('-', ' ', $n));
+        $copy = $this->get_industry_copy($n);
 
         // Hero Content from Customizer
-        $hero_headline = get_theme_mod('gp_hero_headline', "Elite $niche_label Solutions Powered by AI");
-        $hero_sub = get_theme_mod('gp_hero_subheadline', 'Consolidate your CRM, Booking, and Marketing into one unified Operating System.');
+        $hero_headline = get_theme_mod('gp_hero_headline', $copy['home_h1']);
+        $hero_sub = get_theme_mod('gp_hero_subheadline', $copy['home_sub']);
 
         $niche_label = ucwords(str_replace('-', ' ', $n));
 
@@ -130,12 +160,12 @@ class GrowthPress_Dashboard {
 <!-- /wp:group -->";
 
         // Services Page
-        $services_headline = get_theme_mod('gp_services_intro', 'Elite ' . $niche_label . ' Solutions');
+        $services_headline = get_theme_mod('gp_services_intro', $copy['service_h1']);
         $services_cta = get_theme_mod('gp_services_cta', 'Book a Discovery Call');
 
         $services_content = "
 <h1>{$services_headline}</h1>
-<p>We provide industry-leading {$niche_label} services designed for high-impact results and long-term growth.</p>
+<p>{$copy['service_p']}</p>
 <!-- wp:columns -->
 <div class=\"wp-block-columns\">
     <div class=\"wp-block-column\">
