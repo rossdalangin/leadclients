@@ -96,11 +96,21 @@ class GrowthPress_Content_Studio {
                 </div>
 
                 <div class="studio-output glass-card" style="min-height:400px;">
-                    <h3>Strategic Output</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="margin:0;">Strategic Output</h3>
+                        <button class="button button-small" onclick="copyStudioOutput()">Copy to Clipboard</button>
+                    </div>
                     <div id="gp-studio-output" style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid #e2e8f0; font-family:monospace; min-height:300px; max-height:600px; overflow-y:auto;">
                         Your generated strategy or content will appear here...
                     </div>
                 </div>
+                <script>
+                function copyStudioOutput() {
+                    var content = jQuery('#gp-studio-output').text();
+                    navigator.clipboard.writeText(content);
+                    alert("Output copied to clipboard!");
+                }
+                </script>
             </div>
         </div>
         <?php

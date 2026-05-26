@@ -17,12 +17,16 @@ class GrowthPress_SEO {
     public function inject_meta() {
         $schema = $this->generate_schema();
         if ( ! empty( $schema ) ) {
-            echo '<script type="application/ld+json">' . json_encode( $schema ) . '</script>';
+            echo "\n" . '<!-- GrowthPress SEO --><script type="application/ld+json">' . json_encode( $schema ) . '</script>' . "\n";
         }
-        echo '<meta name="growthpress-os" content="active">';
+        echo '<meta name="growthpress-os" content="active">' . "\n";
+
         if ( is_singular() ) {
-            echo '<meta name="description" content="' . wp_trim_words( get_the_excerpt(), 25 ) . '">';
-            echo '<link rel="canonical" href="' . get_permalink() . '">';
+            $excerpt = get_the_excerpt();
+            if ( $excerpt ) {
+                echo '<meta name="description" content="' . esc_attr( wp_trim_words( $excerpt, 25 ) ) . '">' . "\n";
+            }
+            echo '<link rel="canonical" href="' . esc_url( get_permalink() ) . '">' . "\n";
         }
     }
 
@@ -40,7 +44,24 @@ class GrowthPress_SEO {
         $niche = get_option( 'growthpress_niche', 'ProfessionalService' );
         $type_map = array( 'dental' => 'Dentist', 'medical' => 'MedicalClinic', 'law' => 'LegalService', 'contractor' => 'HomeAndConstructionBusiness', 'real-estate' => 'RealEstateAgent' );
         $schema_type = $type_map[$niche] ?? 'LocalBusiness';
-        return array( '@context' => 'https://schema.org', '@type' => $schema_type, 'name' => get_bloginfo( 'name' ), 'url' => get_home_url() );
+
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@type' => $schema_type,
+            'name' => get_bloginfo( 'name' ),
+            'url' => get_home_url()
+        );
+
+        if ( is_singular('gp_location') ) {
+            global $post;
+            $schema['address'] = array(
+                '@type' => 'PostalAddress',
+                'streetAddress' => get_post_meta($post->ID, '_gp_address', true)
+            );
+            $schema['telephone'] = get_post_meta($post->ID, '_gp_phone', true);
+        }
+
+        return $schema;
     }
 }
 new GrowthPress_SEO();

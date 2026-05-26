@@ -184,7 +184,9 @@ class GrowthPress_CRM {
         $prob = get_post_meta($post->ID, '_gp_ai_probability', true) ?: 50;
         $intent = get_post_meta($post->ID, '_gp_lead_intent_score', true) ?: 'Medium';
         $ai = GrowthPress_AI::get_instance();
+
         $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$post->post_content}\"", "Sales Closer");
+        $suggested_reply = $ai->call_ai("Generate a professional, high-ticket personalized email reply for this lead inquiry: \"{$post->post_content}\". Mention their specific concern.", "Executive Assistant");
         ?>
         <div class="gp-insights-box">
             <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
@@ -198,7 +200,22 @@ class GrowthPress_CRM {
                 </div>
             </div>
             <h4>AI Suggested Closing Strategy:</h4>
-            <div style="background:#f8fafc; padding:15px; border-radius:8px; font-size:13px;"><?php echo nl2br(esc_html($closing_tips)); ?></div>
+            <div style="background:#f8fafc; padding:15px; border-radius:8px; font-size:13px; margin-bottom:20px;"><?php echo nl2br(esc_html($closing_tips)); ?></div>
+
+            <h4>Suggested AI Response:</h4>
+            <div style="position:relative;">
+                <textarea id="gp-ai-reply-text" style="width:100%; height:120px; font-size:12px; background:#f0f9ff; border:1px solid #bae6fd; padding:10px; border-radius:8px;"><?php echo esc_textarea($suggested_reply); ?></textarea>
+                <button type="button" class="button button-small" onclick="copyReply()" style="margin-top:5px;">Copy to Clipboard</button>
+            </div>
+            <script>
+            function copyReply() {
+                var copyText = document.getElementById("gp-ai-reply-text");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(copyText.value);
+                alert("Response copied!");
+            }
+            </script>
         </div>
         <?php
     }
