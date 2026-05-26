@@ -1,6 +1,10 @@
 <div class="wrap growthpress-dashboard">
     <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-        <h1><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> OS</h1>
+        <?php $dash_logo = get_option('growthpress_dashboard_logo'); if($dash_logo): ?>
+            <img src="<?php echo esc_url($dash_logo); ?>" style="max-height:40px;">
+        <?php else: ?>
+            <h1><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> OS</h1>
+        <?php endif; ?>
         <div style="display:flex; gap:10px; align-items:center;">
             <button class="button" onclick="exportLeads()">Export CSV</button>
             <div class="ai-status" style="background:#10B981; color:white; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:bold;">AI ACTIVE</div>
@@ -149,10 +153,16 @@
                 <?php
                 $niche = get_option('growthpress_niche', 'business');
                 $tips = array(
-                    'dental'    => "Use the 'Smile Gallery' post type to showcase transformation. High-ticket dental leads buy based on visual outcomes.",
-                    'law'       => "Urgency is key. Ensure your 'Secure Legal Intake' shortcode is above the fold on your Contact page.",
-                    'solar'     => "The ROI Estimator is your best lead magnet. Leads who see savings convert 4x faster.",
-                    'medical'   => "The symptom checker creates trust. Use it to route patients to the correct booking calendar instantly."
+                    'dental'      => "Use the 'Smile Gallery' post type to showcase transformation. High-ticket dental leads buy based on visual outcomes.",
+                    'law'         => "Urgency is key. Ensure your 'Secure Legal Intake' shortcode is above the fold on your Contact page.",
+                    'solar'       => "The ROI Estimator is your best lead magnet. Leads who see savings convert 4x faster.",
+                    'medical'     => "The symptom checker creates trust. Use it to route patients to the correct booking calendar instantly.",
+                    'contractor'  => "Before/After project galleries are your #1 closer. Sync your Portfolio CPT with the 'Case Studies' page for maximum authority.",
+                    'roofing'     => "Focus on 'Storm Damage' keywords in your local area. Use the ROI/Estimate tool to lock in the lead before they call insurance.",
+                    'accounting'  => "Position your 'Secure Tax Portal' as a premium differentiator. Clients pay more for security and organization.",
+                    'real-estate' => "Use the AI Property Matchmaker daily. Sending personalized matches to old leads is the fastest way to reactivate them.",
+                    'coaches'     => "Webinars convert 3x better than cold calls. Use the [gp_webinar_registration] shortcode on your 'Free Strategy' page.",
+                    'consultants' => "Your 'Authority Content' library is your sales team. Generate 5 blog posts on competitor gaps using the Studio."
                 );
                 $tip = $tips[$niche] ?? "Use the AI Content Studio weekly to target long-tail keywords in your local area.";
                 ?>
@@ -201,6 +211,19 @@
                         </div>
                     </div>
                 <?php endforeach; else: echo "No staff active yet."; endif; ?>
+            </div>
+
+            <!-- Team Tasks -->
+            <div class="glass-card" style="max-height:300px; overflow-y:auto;">
+                <h3 style="font-size:14px;">My Active Tasks</h3>
+                <?php
+                $my_tasks = get_posts(array('post_type' => 'gp_task', 'meta_key' => '_assigned_user', 'meta_value' => get_current_user_id(), 'posts_per_page' => 5));
+                if($my_tasks): foreach($my_tasks as $mt): ?>
+                    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0; font-size:11px;">
+                        <strong><?php echo esc_html($mt->post_title); ?></strong>
+                        <p style="margin:5px 0 0;"><?php echo wp_trim_words($mt->post_content, 10); ?></p>
+                    </div>
+                <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.6;'>No tasks assigned to you.</p>"; endif; ?>
             </div>
 
             <!-- Activity Feed -->

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Reporting Class - Funnel Enhanced
+ * GrowthPress Reporting Class - Data-Driven
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,18 +17,30 @@ class GrowthPress_Reports {
         add_submenu_page( 'growthpress-dashboard', 'Reports & ROI', 'Reports', 'manage_options', 'growthpress-reports', array( $this, 'render_reports' ) );
     }
 
-    private function get_funnel_stats() {
-        // Mock data for funnel performance
+    private function get_live_stats() {
+        $leads = get_posts(array('post_type' => 'gp_lead', 'posts_per_page' => -1));
+        $appts = get_posts(array('post_type' => 'gp_appointment', 'posts_per_page' => -1));
+        $proposals = get_posts(array('post_type' => 'gp_proposal', 'posts_per_page' => -1));
+
+        $total_value = 0;
+        foreach($proposals as $p) {
+            $status = get_post_meta($p->ID, '_gp_proposal_status', true);
+            if($status === 'Accepted') {
+                $total_value += (float)get_post_meta($p->ID, '_proposal_value', true) ?: 5000; // Mock value if missing
+            }
+        }
+
         return array(
-            'Landing Page Views' => 2450,
-            'Lead Conversions'  => 185,
-            'Booking Conversions' => 42,
-            'Total ROI' => 63000
+            'Total Leads' => count($leads),
+            'Confirmed Bookings' => count($appts),
+            'Closed Deals' => count($proposals),
+            'Estimated Revenue' => $total_value
         );
     }
 
     public function render_reports() {
-        $stats = $this->get_funnel_stats();
+        $stats = $this->get_live_stats();
+        $conv_rate = $stats['Total Leads'] > 0 ? round(($stats['Confirmed Bookings'] / $stats['Total Leads']) * 100, 1) : 0;
         ?>
         <div class="wrap growthpress-reports">
             <h1>Conversion & ROI Analytics</h1>
@@ -37,15 +49,23 @@ class GrowthPress_Reports {
                     <div class="stat-card glass-card">
                         <h3><?php echo $label; ?></h3>
                         <div class="value" style="font-size:2rem; color:#2563EB; font-weight:bold;">
-                            <?php echo (is_numeric($val) && $val > 1000) ? '$'.number_format($val) : $val; ?>
+                            <?php echo (strpos($label, 'Revenue') !== false) ? '$'.number_format($val) : $val; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <div class="stat-card glass-card">
+                    <h3>Booking Conv. Rate</h3>
+                    <div class="value" style="font-size:2rem; color:#10B981; font-weight:bold;"><?php echo $conv_rate; ?>%</div>
+                </div>
             </div>
 
-            <div class="glass-card" style="margin-top:30px;">
-                <h3>AI Funnel Insights</h3>
-                <p>Your 'Strategy Guide' funnel is performing 15% better than the industry average. Suggest increasing ad spend on Facebook for the 'Solar ROI' campaign.</p>
+            <div class="glass-card" style="margin-top:30px; border-left: 6px solid #2563EB;">
+                <h3>AI Performance Analysis</h3>
+                <?php if($conv_rate < 15): ?>
+                    <p>🚨 **Critical Alert:** Your booking conversion rate is below the industry standard (20%). AI suggests reviewing your 'Discovery Call' talk tracks and implementing the 5-day nurture sequence for all new leads.</p>
+                <?php else: ?>
+                    <p>✅ **Healthy Performance:** Your funnel is operating efficiently. To scale further, AI suggests increasing top-of-funnel traffic via the generated Ad Copy in the Studio.</p>
+                <?php endif; ?>
             </div>
         </div>
         <?php

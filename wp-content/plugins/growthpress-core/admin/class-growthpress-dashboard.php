@@ -307,6 +307,7 @@ class GrowthPress_Dashboard {
             'Reviews'      => array('content' => $reviews_content, 'desc' => "See what our satisfied $niche_label clients are saying."),
             'Our Mission'  => array('content' => $mission_content, 'desc' => "Our commitment to excellence in the $niche_label industry."),
             'Book Now'     => array('content' => $book_now_content, 'desc' => "Schedule your discovery session for $niche_label strategy."),
+            'Knowledge Base' => array('content' => "<h1>$niche_label Authority Library</h1><p>Expert resources and guides to help you navigate your $niche_label journey.</p>[gp_breadcrumbs]", 'desc' => "Expert resources and educational guides for $niche_label."),
             'Thank You'    => array('content' => $thank_you_content, 'desc' => "Thank you for contacting our $niche_label team."),
             'Contact'      => array('content' => $contact_content, 'desc' => "Connect with our $niche_label specialists today.")
         );

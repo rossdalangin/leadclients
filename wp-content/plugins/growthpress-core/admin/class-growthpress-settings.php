@@ -23,7 +23,8 @@ class GrowthPress_Settings {
             'growthpress_openai_api_key', 'growthpress_niche', 'growthpress_api_token',
             'growthpress_brand_name', 'growthpress_primary_color', 'growthpress_hot_threshold',
             'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_whatsapp_key',
-            'growthpress_google_maps_key', 'growthpress_stripe_key', 'growthpress_stripe_secret'
+            'growthpress_google_maps_key', 'growthpress_stripe_key', 'growthpress_stripe_secret',
+            'growthpress_license_key', 'growthpress_dashboard_logo'
         );
         foreach($keys as $k) register_setting( 'growthpress_settings_group', $k );
         add_action( 'wp_ajax_gp_test_connectivity', array( $this, 'test_connectivity' ) );
@@ -66,6 +67,20 @@ class GrowthPress_Settings {
                         <td>
                             <input type="text" name="growthpress_brand_name" value="<?php echo esc_attr( get_option('growthpress_brand_name', 'GrowthPress') ); ?>" class="regular-text">
                             <p class="description">Example: "Elite Dental Group". This rebrands the admin dashboard and AI Assistant.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>Dashboard Logo URL</label></th>
+                        <td>
+                            <input type="text" name="growthpress_dashboard_logo" value="<?php echo esc_attr( get_option('growthpress_dashboard_logo') ); ?>" class="regular-text">
+                            <p class="description">URL to a custom logo for the Executive Dashboard.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>License Activation</label></th>
+                        <td>
+                            <input type="password" name="growthpress_license_key" value="<?php echo esc_attr( get_option('growthpress_license_key') ); ?>" class="regular-text">
+                            <p class="description">Enter your Enterprise or Agency license key to unlock unlimited AI Triage.</p>
                         </td>
                     </tr>
                     <tr>

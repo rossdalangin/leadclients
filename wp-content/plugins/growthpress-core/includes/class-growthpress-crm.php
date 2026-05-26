@@ -45,8 +45,16 @@ class GrowthPress_CRM {
             'labels' => array( 'name' => 'Tasks' ),
             'public' => false,
             'show_ui' => true,
-            'supports' => array( 'title', 'editor' ),
+            'supports' => array( 'title', 'editor', 'custom-fields' ),
             'menu_icon' => 'dashicons-yes'
+        ) );
+
+        register_post_type( 'gp_kb', array(
+            'labels' => array( 'name' => 'Knowledge Base', 'singular_name' => 'Article' ),
+            'public' => true,
+            'show_ui' => true,
+            'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+            'menu_icon' => 'dashicons-book-alt'
         ) );
 
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
