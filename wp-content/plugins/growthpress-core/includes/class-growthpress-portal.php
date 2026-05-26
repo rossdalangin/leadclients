@@ -13,6 +13,14 @@ class GrowthPress_Portal {
         add_shortcode( 'gp_client_portal', array( $this, 'render_portal' ) );
         add_action( 'wp_ajax_gp_accept_proposal', array( $this, 'handle_proposal_acceptance' ) );
         add_action( 'gp_proposal_accepted', array( $this, 'trigger_post_acceptance_logic' ) );
+        add_action( 'wp_ajax_gp_request_reschedule', array( $this, 'handle_reschedule_request' ) );
+    }
+
+    public function handle_reschedule_request() {
+        $appt_id = intval($_POST['appointment_id']);
+        update_post_meta($appt_id, '_reschedule_requested', '1');
+        GrowthPress_Activity::log( "Client requested reschedule for Appointment #$appt_id." );
+        wp_send_json_success('Request sent to staff.');
     }
 
     public function trigger_post_acceptance_logic( $proposal_id ) {
@@ -90,9 +98,12 @@ class GrowthPress_Portal {
                         <div class="glass-card" style="margin-bottom:10px;">
                             <strong><?php echo esc_html($a->post_title); ?></strong><br>
                             <small>Scheduled: <?php echo $date; ?></small>
-                            <?php if($link): ?>
-                                <br><a href="<?php echo esc_url($link); ?>" class="button button-small" style="margin-top:10px;">Join Meeting</a>
-                            <?php endif; ?>
+                            <div style="margin-top:10px; display:flex; gap:10px;">
+                                <?php if($link): ?>
+                                    <a href="<?php echo esc_url($link); ?>" class="button button-small">Join Meeting</a>
+                                <?php endif; ?>
+                                <button class="button button-small" style="background:#1E293B;" onclick="requestReschedule(<?php echo $a->ID; ?>)">Reschedule</button>
+                            </div>
                         </div>
                     <?php endforeach; else: echo "<p>No upcoming appointments.</p>"; endif; ?>
                 </div>
@@ -109,6 +120,11 @@ class GrowthPress_Portal {
                         alert("Proposal Accepted! We have created a project kickoff task.");
                         location.reload();
                     }
+                });
+            }
+            function requestReschedule(id) {
+                jQuery.post(gp_ajax.ajaxurl, { action: 'gp_request_reschedule', appointment_id: id }, function(res) {
+                    if(res.success) alert("Your reschedule request has been sent to our team.");
                 });
             }
         </script>

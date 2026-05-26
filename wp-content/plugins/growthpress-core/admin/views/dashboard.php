@@ -65,6 +65,11 @@
                         <span style="font-size:12px; color:#666;">Conv. Rate</span>
                         <div style="font-size:24px; font-weight:bold; color:#F59E0B;"><?php echo $conv_rate; ?>%</div>
                     </div>
+                    <div class="stat" style="flex:1;">
+                        <span style="font-size:12px; color:#666;">Pipeline Value</span>
+                        <?php $pipe_val = GrowthPress_Proposals::get_instance()->get_pipeline_value(); ?>
+                        <div style="font-size:24px; font-weight:bold; color:#7c3aed;">$<?php echo number_format($pipe_val); ?></div>
+                    </div>
                 </div>
                 <canvas id="gp-main-chart" height="100"></canvas>
             </div>

@@ -88,16 +88,27 @@ class GrowthPress_CRM {
     }
 
     public function render_quiz_form() {
+        $niche = get_option('growthpress_niche', 'business');
+        $questions = array(
+            'solar'       => array('q' => 'What is your average monthly energy bill?', 'opts' => array('$50-$150', '$150-$300', '$300+')),
+            'dental'      => array('q' => 'What type of treatment are you interested in?', 'opts' => array('Cosmetic/Invisalign', 'Routine/Checkup', 'Emergency')),
+            'law'         => array('q' => 'How urgent is your legal matter?', 'opts' => array('Immediate', 'This Month', 'Just Researching')),
+            'contractor'  => array('q' => 'What is your estimated project budget?', 'opts' => array('$5k-$15k', '$15k-$50k', '$50k+')),
+            'accounting'  => array('q' => 'What is your annual business revenue?', 'opts' => array('< $250k', '$250k-$1M', '$1M+')),
+        );
+        $data = $questions[$niche] ?? array('q' => 'What is your primary goal?', 'opts' => array('Rapid Growth', 'Process Automation', 'Lead Generation'));
+
+        $opts_html = '';
+        foreach($data['opts'] as $o) $opts_html .= '<button onclick="nextStep(\''.esc_js($o).'\')" style="margin-bottom:10px;">'.esc_html($o).'</button>';
+
         return '<div class="gp-quiz-container glass-card">
-            <h3>Quick Qualification Quiz</h3>
+            <h3>'.ucwords($niche).' Qualification Quiz</h3>
             <div id="gp-quiz-step-1">
-                <p>What is your current monthly revenue?</p>
-                <button onclick="nextStep(1)">$0 - $10k</button>
-                <button onclick="nextStep(2)">$10k - $50k</button>
-                <button onclick="nextStep(3)">$50k+</button>
+                <p>'.esc_html($data['q']).'</p>
+                <div style="display:flex; flex-direction:column;">'.$opts_html.'</div>
             </div>
             <div id="gp-quiz-form" style="display:none;">
-                ' . $this->render_lead_form() . '
+                '.$this->render_lead_form().'
             </div>
         </div>';
     }
@@ -296,11 +307,27 @@ class GrowthPress_CRM {
             <?php endif; ?>
 
             <?php if($reactivation): ?>
-                <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:15px; border-radius:12px;">
+            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:15px; border-radius:12px; margin-bottom:20px;">
                     <h4 style="margin-top:0; color:#be185d;">⚡ AI Reactivation Campaign:</h4>
                     <div style="font-size:12px; line-height:1.6; color:#9d174d;"><?php echo nl2br(esc_html($reactivation)); ?></div>
                 </div>
             <?php endif; ?>
+
+            <div class="gp-strategic-actions" style="margin-top:25px;">
+                <button type="button" class="button button-primary button-hero" onclick="generateAIProposal(<?php echo $post->ID; ?>)" style="width:100%; text-align:center;">Generate AI Strategic Proposal</button>
+                <script>
+                function generateAIProposal(leadId) {
+                    if(!confirm("Generate high-ticket AI proposal for this lead?")) return;
+                    jQuery.post(ajaxurl, {
+                        action: 'gp_generate_ai_proposal',
+                        lead_id: leadId,
+                        gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+                    }, function(res) {
+                        alert(res.data);
+                    });
+                }
+                </script>
+            </div>
         </div>
         <?php
     }
