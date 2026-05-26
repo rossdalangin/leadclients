@@ -54,7 +54,7 @@ class GrowthPress_Content_Studio {
         $niche = get_option('growthpress_niche', 'business');
         $prompt_library = array(
             'dental'        => array('Invisalign vs Braces', 'Emergency Dental Care', 'Pediatric Dentistry Tips', 'Smile Makeovers'),
-            'law-firm'      => array('Personal Injury Rights', 'Estate Planning 101', 'DUI Defense Strategies', 'Business Litigation'),
+            'law'           => array('Personal Injury Rights', 'Estate Planning 101', 'DUI Defense Strategies', 'Business Litigation'),
             'contractor'    => array('Kitchen Remodel ROI', 'Outdoor Living Spaces', 'Foundation Repair Signs', 'Smart Home Upgrades'),
             'roofing'       => array('Storm Damage Claims', 'Metal vs Shingle Roofs', 'Roof Life Extension', 'Emergency Leak Repair'),
             'solar'         => array('Federal Tax Credits', 'Battery Backup Value', 'Solar for Off-Grid', 'Net Metering Explained'),

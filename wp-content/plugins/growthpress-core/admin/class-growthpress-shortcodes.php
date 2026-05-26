@@ -55,6 +55,20 @@ class GrowthPress_Shortcode_Ref {
                 'example' => '[gp_solar_calculator]'
             ),
             array(
+                'tag'   => '[gp_solar_financing]',
+                'title' => 'Solar Financing Form',
+                'desc'  => 'Secure inquiry form for $0-down solar financing eligibility.',
+                'usage' => 'Place on Solar pricing or financing pages.',
+                'example' => '[gp_solar_financing]'
+            ),
+            array(
+                'tag'   => '[gp_dental_insurance_form]',
+                'title' => 'Dental Insurance Verifier',
+                'desc'  => 'Frontend tool for patients to check insurance coverage instantly.',
+                'usage' => 'Place on Dental intake or pricing pages.',
+                'example' => '[gp_dental_insurance_form]'
+            ),
+            array(
                 'tag'   => '[gp_contractor_estimator]',
                 'title' => 'Construction Cost Estimator',
                 'desc'  => 'Precision labor and material calculator for renovation niches.',

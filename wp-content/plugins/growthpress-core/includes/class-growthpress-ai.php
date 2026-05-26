@@ -66,12 +66,20 @@ class GrowthPress_AI {
         return $this->call_ai($prompt, "Lead Assistant");
     }
 
-    public function generate_blog_post($t, $n) { return $this->call_ai("Write a 1000-word SEO-optimized blog post about \"$t\" specifically for a $n. Include H2s, H3s, and a conversion-focused conclusion.", "SEO Content Expert"); }
-    public function generate_ad_copy($s, $n) { return $this->call_ai("Create 3 variations of high-converting direct-response ad copy (Facebook/Google) for \"$s\" in the $n niche.", "Direct-Response Copywriter"); }
-    public function generate_social_content($t) { return $this->call_ai("Generate a week of social media content (5 posts) about \"$t\". Include hooks and call-to-actions.", "Social Media Strategist"); }
-    public function generate_email_campaign($topic, $niche) { return $this->call_ai("Generate a 5-day high-ticket email nurture sequence for \"$topic\" in the $niche niche. Focus on building authority and booking a call.", "Email Marketing Specialist"); }
-    public function generate_market_insights($topic, $niche) { return $this->call_ai("Analyze the market for \"$topic\" in the $niche industry. Identify competitor weaknesses and provide a 'Market Angle of Attack'.", "Market Strategist"); }
-    public function generate_proposal($client, $service, $niche) { return $this->call_ai("Generate a high-ticket $service proposal for $client in the $niche niche. Focus on ROI and transformation.", "Sales Closer"); }
+    public function get_system_persona($niche = 'business') {
+        $brand = get_option('growthpress_brand_name', 'GrowthPress');
+        return "You are the AI Operating Brain for $brand, a world-class $niche growth agency.
+        Your mission is to maximize lead generation, automate high-ticket sales, and provide elite strategic advice.
+        You use behavioral psychology, direct-response principles, and deep industry data to help clients dominate their local market.
+        Never provide generic advice; always focus on transformation, ROI, and closing deals.";
+    }
+
+    public function generate_blog_post($t, $n) { return $this->call_ai("Write a 1000-word SEO-optimized blog post about \"$t\" specifically for a $n. Include H2s, H3s, and a conversion-focused conclusion.", $this->get_system_persona($n)); }
+    public function generate_ad_copy($s, $n) { return $this->call_ai("Create 3 variations of high-converting direct-response ad copy (Facebook/Google) for \"$s\" in the $n niche.", $this->get_system_persona($n)); }
+    public function generate_social_content($t) { return $this->call_ai("Generate a week of social media content (5 posts) about \"$t\". Include hooks and call-to-actions.", $this->get_system_persona()); }
+    public function generate_email_campaign($topic, $niche) { return $this->call_ai("Generate a 5-day high-ticket email nurture sequence for \"$topic\" in the $niche niche. Focus on building authority and booking a call.", $this->get_system_persona($niche)); }
+    public function generate_market_insights($topic, $niche) { return $this->call_ai("Analyze the market for \"$topic\" in the $niche industry. Identify competitor weaknesses and provide a 'Market Angle of Attack'.", $this->get_system_persona($niche)); }
+    public function generate_proposal($client, $service, $niche) { return $this->call_ai("Generate a high-ticket $service proposal for $client in the $niche niche. Focus on ROI and transformation.", $this->get_system_persona($niche)); }
     public function generate_missed_call_reply($niche) { return "Hi, this is the AI Assistant for our $niche practice. We missed your call, but we are ready to help. What can we assist you with today?"; }
     public function generate_niche_funnel($niche) { return $this->call_ai("Generate a 5-step sales funnel strategy for a $niche business.", "Funnel Architect"); }
 

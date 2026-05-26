@@ -13,6 +13,7 @@ class GrowthPress_Dental {
         add_action( 'init', array( $this, 'register_dental_cpts' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_dental_meta_boxes' ) );
         add_action( 'admin_head', array( $this, 'add_dental_help_tabs' ) );
+        add_shortcode( 'gp_dental_insurance_form', array( $this, 'render_insurance_form' ) );
     }
 
     public function register_dental_cpts() {
@@ -33,6 +34,16 @@ class GrowthPress_Dental {
         add_meta_box( 'gp_dental_settings', 'Niche Configuration', array( $this, 'render_dental_meta' ), 'gp_treatment', 'side', 'default' );
     }
 
+    public function render_insurance_form() {
+        return '<div class="glass-card">
+            <h4>Insurance Verification</h4>
+            <p class="description">Check if we accept your provider instantly.</p>
+            <input type="text" placeholder="Insurance Provider (e.g. Delta Dental)" style="width:100%; margin-bottom:10px;">
+            <input type="text" placeholder="Member ID" style="width:100%; margin-bottom:10px;">
+            <button class="button">Verify Coverage</button>
+        </div>';
+    }
+
     public function render_dental_meta( $post ) {
         ?>
         <div class="gp-meta-field">
@@ -48,7 +59,7 @@ class GrowthPress_Dental {
 
     public function add_dental_help_tabs() {
         $screen = get_current_screen();
-        if ( $screen->post_type !== 'gp_treatment' ) return;
+        if ( ! $screen || $screen->post_type !== 'gp_treatment' ) return;
 
         $screen->add_help_tab( array(
             'id'      => 'gp_dental_overview',

@@ -14,11 +14,27 @@ class GrowthPress_Medical {
         add_action( 'wp_ajax_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
         add_action( 'wp_ajax_nopriv_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
         add_action( 'gp_appointment_created', array( $this, 'generate_telemedicine_link' ) );
+        add_action( 'gp_client_portal_dashboard', array( $this, 'render_medical_portal' ) );
     }
 
     public function generate_telemedicine_link( $appointment_id ) {
         $meeting_link = "https://telehealth.growthpress.io/room/" . wp_generate_password(8, false);
         update_post_meta( $appointment_id, '_gp_telemedicine_link', $meeting_link );
+    }
+
+    public function render_medical_portal() {
+        ?>
+        <div class="gp-medical-portal glass-card" style="margin-top:20px;">
+            <h4>Secure Medical Records</h4>
+            <p class="description">Access your lab results and medical history securely.</p>
+            <div style="background:#f0f9ff; padding:15px; border-radius:8px; border:1px solid #bae6fd; font-size:13px;">
+                <strong>Latest Result:</strong> Blood Panel (Oct 2023) - <a href="#">Download PDF</a>
+            </div>
+            <div style="margin-top:15px;">
+                <button class="button button-small">Request Records Transfer</button>
+            </div>
+        </div>
+        <?php
     }
 
     public function render_symptom_checker() {
