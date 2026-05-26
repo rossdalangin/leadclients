@@ -26,6 +26,20 @@ class GrowthPress_Settings {
             'growthpress_google_maps_key', 'growthpress_stripe_key', 'growthpress_stripe_secret'
         );
         foreach($keys as $k) register_setting( 'growthpress_settings_group', $k );
+        add_action( 'wp_ajax_gp_test_connectivity', array( $this, 'test_connectivity' ) );
+    }
+
+    public function test_connectivity() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+
+        $ai = GrowthPress_AI::get_instance();
+        $res = $ai->call_ai("Ping", "Health Check");
+
+        if ( is_wp_error($res) ) {
+            wp_send_json_error( $res->get_error_message() );
+        }
+
+        wp_send_json_success( "Connection successful! AI Engine is online and responsive." );
     }
 
     public function render_settings() {
@@ -110,12 +124,20 @@ class GrowthPress_Settings {
                         <th scope="row"><label>Engine Status</label></th>
                         <td>
                             <?php $ai_key = get_option('growthpress_openai_api_key'); ?>
-                            <span class="status-indicator <?php echo $ai_key ? 'active' : 'inactive'; ?>" style="display:inline-block; width:10px; height:10px; border-radius:50%; background: <?php echo $ai_key ? '#10B981' : '#EF4444'; ?>; margin-right:5px;"></span>
-                            <strong>OpenAI:</strong> <?php echo $ai_key ? 'Connected' : 'Missing Key'; ?>
-                            <br>
-                            <?php $tw_sid = get_option('growthpress_twilio_sid'); ?>
-                            <span class="status-indicator <?php echo $tw_sid ? 'active' : 'inactive'; ?>" style="display:inline-block; width:10px; height:10px; border-radius:50%; background: <?php echo $tw_sid ? '#10B981' : '#F59E0B'; ?>; margin-right:5px;"></span>
-                            <strong>Twilio:</strong> <?php echo $tw_sid ? 'Active' : 'Optional (SMS Disabled)'; ?>
+                            <div style="margin-bottom:10px;">
+                                <span class="status-indicator <?php echo $ai_key ? 'active' : 'inactive'; ?>" style="display:inline-block; width:10px; height:10px; border-radius:50%; background: <?php echo $ai_key ? '#10B981' : '#EF4444'; ?>; margin-right:5px;"></span>
+                                <strong>OpenAI:</strong> <?php echo $ai_key ? 'Connected' : 'Missing Key'; ?>
+                            </div>
+                            <button type="button" class="button button-small" onclick="testAI()">Test AI Connection</button>
+                            <div id="ai-test-res" style="margin-top:5px; font-size:11px;"></div>
+                            <script>
+                            function testAI() {
+                                jQuery('#ai-test-res').text('Pinging...');
+                                jQuery.post(ajaxurl, { action: 'gp_test_connectivity' }, function(res) {
+                                    jQuery('#ai-test-res').text(res.data).css('color', res.success ? '#10B981' : '#EF4444');
+                                });
+                            }
+                            </script>
                         </td>
                     </tr>
 

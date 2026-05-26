@@ -162,24 +162,25 @@
             <!-- Team performance -->
             <div class="glass-card">
                 <h3>Team Efficiency</h3>
-                <div class="team-stat" style="margin-bottom:20px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
-                        <span>John Doe</span>
-                        <span>12/15 Closed</span>
+                <?php
+                $users = get_users( array( 'role__in' => array('administrator', 'editor', 'author'), 'number' => 5 ) );
+                if($users): foreach($users as $u):
+                    $assigned_leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_assigned_staff', 'meta_value' => $u->ID, 'posts_per_page' => -1 ) );
+                    $closed_leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_assigned_staff', 'meta_value' => $u->ID, 'tax_query' => array( array( 'taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'closed' ) ), 'posts_per_page' => -1 ) );
+                    $count_all = count($assigned_leads);
+                    $count_closed = count($closed_leads);
+                    $perc = $count_all > 0 ? round(($count_closed / $count_all) * 100) : 0;
+                    ?>
+                    <div class="team-stat" style="margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+                            <span><?php echo esc_html($u->display_name); ?></span>
+                            <span><?php echo $count_closed; ?>/<?php echo $count_all; ?> Closed</span>
+                        </div>
+                        <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
+                            <div style="width:<?php echo $perc; ?>%; height:100%; background:<?php echo $perc > 70 ? '#10B981' : '#2563EB'; ?>;"></div>
+                        </div>
                     </div>
-                    <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
-                        <div style="width:80%; height:100%; background:#2563EB;"></div>
-                    </div>
-                </div>
-                <div class="team-stat">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
-                        <span>Jane Smith</span>
-                        <span>8/15 Closed</span>
-                    </div>
-                    <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
-                        <div style="width:53%; height:100%; background:#10B981;"></div>
-                    </div>
-                </div>
+                <?php endforeach; else: echo "No staff active yet."; endif; ?>
             </div>
 
             <!-- Activity Feed -->

@@ -26,6 +26,7 @@ class GrowthPress_CRM {
         add_action( 'wp_ajax_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
         add_action( 'wp_ajax_nopriv_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
         add_action( 'wp_ajax_gp_export_leads', array( $this, 'handle_lead_export' ) );
+        add_action( 'wp_ajax_gp_add_lead_note', array( $this, 'handle_add_note' ) );
         if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
             wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
         }
@@ -164,12 +165,57 @@ class GrowthPress_CRM {
             $this->create_task( "Action Plan for " . $lead->post_title, $action_plan, $lead_id );
             GrowthPress_Activity::log( "Autonomous Action Plan generated for Lead #$lead_id." );
         }
+
+        // Cache additional insights
+        $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$lead->post_content}\"", "Sales Closer");
+        if ( ! is_wp_error($closing_tips) ) update_post_meta($lead_id, '_gp_ai_closing_tips', $closing_tips);
+
+        $suggested_reply = $ai->call_ai("Generate a professional, high-ticket personalized email reply for this lead inquiry: \"{$lead->post_content}\". Mention their specific concern.", "Executive Assistant");
+        if ( ! is_wp_error($suggested_reply) ) update_post_meta($lead_id, '_gp_ai_suggested_reply', $suggested_reply);
+
+        $discovery_questions = $ai->call_ai("Based on this inquiry: \"{$lead->post_content}\", generate 4 deep-dive discovery questions for the first call to qualify them for a high-ticket service.", "Lead Qualifier");
+        if ( ! is_wp_error($discovery_questions) ) update_post_meta($lead_id, '_gp_ai_discovery_questions', $discovery_questions);
     }
 
     public function add_crm_meta_boxes() {
         add_meta_box( 'gp_lead_insights', 'AI Sales Insights', array( $this, 'render_insights_meta' ), 'gp_lead', 'normal', 'high' );
-        add_meta_box( 'gp_lead_tasks', 'Related Tasks & Notes', array( $this, 'render_tasks_meta' ), 'gp_lead', 'normal', 'default' );
+        add_meta_box( 'gp_lead_notes', 'Internal Team Notes', array( $this, 'render_notes_meta' ), 'gp_lead', 'normal', 'default' );
+        add_meta_box( 'gp_lead_tasks', 'Related Tasks', array( $this, 'render_tasks_meta' ), 'gp_lead', 'normal', 'default' );
         add_meta_box( 'gp_lead_behavior', 'Lead Behavioral Log', array( $this, 'render_behavior_meta' ), 'gp_lead', 'side' );
+    }
+
+    public function render_notes_meta( $post ) {
+        $notes = get_post_meta($post->ID, '_gp_internal_notes', true) ?: array();
+        ?>
+        <div class="gp-notes-container">
+            <div id="gp-notes-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
+                <?php if($notes): foreach(array_reverse($notes) as $note): ?>
+                    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
+                        <div style="font-size:11px; color:#64748b; margin-bottom:5px;">
+                            <strong><?php echo esc_html($note['user']); ?></strong> @ <?php echo $note['time']; ?>
+                        </div>
+                        <div style="font-size:13px;"><?php echo nl2br(esc_html($note['text'])); ?></div>
+                    </div>
+                <?php endforeach; else: echo "No internal notes yet."; endif; ?>
+            </div>
+            <textarea id="gp-new-note" style="width:100%; height:60px;" placeholder="Add a team note..."></textarea>
+            <button type="button" class="button" onclick="addGPNote(<?php echo $post->ID; ?>)">Add Note</button>
+        </div>
+        <script>
+        function addGPNote(leadId) {
+            var text = jQuery('#gp-new-note').val();
+            if(!text) return;
+            jQuery.post(ajaxurl, {
+                action: 'gp_add_lead_note',
+                lead_id: leadId,
+                note: text,
+                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
+            }, function(res) {
+                if(res.success) location.reload();
+            });
+        }
+        </script>
+        <?php
     }
 
     public function render_tasks_meta( $post ) {
@@ -191,11 +237,10 @@ class GrowthPress_CRM {
     public function render_insights_meta( $post ) {
         $prob = get_post_meta($post->ID, '_gp_ai_probability', true) ?: 50;
         $intent = get_post_meta($post->ID, '_gp_lead_intent_score', true) ?: 'Medium';
-        $ai = GrowthPress_AI::get_instance();
 
-        $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$post->post_content}\"", "Sales Closer");
-        $suggested_reply = $ai->call_ai("Generate a professional, high-ticket personalized email reply for this lead inquiry: \"{$post->post_content}\". Mention their specific concern.", "Executive Assistant");
-        $discovery_questions = $ai->call_ai("Based on this inquiry: \"{$post->post_content}\", generate 4 deep-dive discovery questions for the first call to qualify them for a high-ticket service.", "Lead Qualifier");
+        $closing_tips = get_post_meta($post->ID, '_gp_ai_closing_tips', true) ?: 'Analyzing closing tactics... (Refresh in a moment)';
+        $suggested_reply = get_post_meta($post->ID, '_gp_ai_suggested_reply', true) ?: 'Generating suggested response...';
+        $discovery_questions = get_post_meta($post->ID, '_gp_ai_discovery_questions', true) ?: 'Preparing discovery questions...';
         ?>
         <div class="gp-insights-box">
             <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
@@ -266,6 +311,26 @@ class GrowthPress_CRM {
         }
         fclose($output);
         exit;
+    }
+
+    public function handle_add_note() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+
+        $lead_id = intval($_POST['lead_id']);
+        $text = sanitize_textarea_field($_POST['note']);
+        $user = wp_get_current_user()->display_name;
+
+        $notes = get_post_meta($lead_id, '_gp_internal_notes', true) ?: array();
+        $notes[] = array(
+            'user' => $user,
+            'time' => current_time('mysql'),
+            'text' => $text
+        );
+
+        update_post_meta($lead_id, '_gp_internal_notes', $notes);
+        GrowthPress_Activity::log( "Note added to Lead #$lead_id by $user" );
+        wp_send_json_success();
     }
 
     public function handle_behavior_logging() {
