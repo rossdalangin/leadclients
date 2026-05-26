@@ -24,6 +24,7 @@ class GrowthPress_Booking {
         add_shortcode( 'gp_booking_form', array( $this, 'render_booking_form' ) );
         add_action( 'wp_ajax_gp_submit_booking', array( $this, 'handle_booking_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_booking', array( $this, 'handle_booking_submission' ) );
+        add_action( 'wp_ajax_gp_cancel_appointment', array( $this, 'handle_cancellation' ) );
     }
 
     public function register_booking_cpt() {
@@ -90,6 +91,14 @@ class GrowthPress_Booking {
         </script>
         <?php
         return ob_get_clean();
+    }
+
+    public function handle_cancellation() {
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $id = intval($_POST['appointment_id']);
+        wp_update_post( array( 'ID' => $id, 'post_status' => 'trash' ) );
+        GrowthPress_Activity::log( "Appointment #$id cancelled by user/admin." );
+        wp_send_json_success();
     }
 
     public function handle_booking_submission() {

@@ -46,11 +46,18 @@ body {
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    .glass-card { padding: 25px; border-radius: 16px; }
-    .main-navigation ul { display: none; } /* Add mobile menu toggle logic in production */
+    h1 { font-size: 2.25rem; line-height: 1.1; }
+    h2 { font-size: 1.8rem; }
+    .glass-card { padding: 25px; border-radius: 16px; margin-bottom: 25px; }
+    .main-navigation ul { display: none; }
     .wp-block-columns { flex-direction: column !important; }
+    .container { padding: 0 15px; }
 }
+
+/* Accessibility */
+:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+.skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px; z-index: 100; transition: top 0.2s; }
+.skip-link:focus { top: 0; }
 
 /* Accessibility & Readability */
 p { font-size: 1.05rem; line-height: 1.8; color: #475569; }

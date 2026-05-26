@@ -13,6 +13,7 @@ class GrowthPress_Contractor {
         add_action( 'init', array( $this, 'register_contractor_cpts' ) );
         add_shortcode( 'gp_contractor_estimator', array( $this, 'render_estimator' ) );
         add_shortcode( 'gp_service_area', array( $this, 'render_service_area' ) );
+        add_shortcode( 'gp_project_tracker', array( $this, 'render_project_tracker' ) );
     }
 
     public function register_contractor_cpts() {
@@ -26,6 +27,11 @@ class GrowthPress_Contractor {
     public function render_service_area() {
         $area = get_option('gp_contractor_zip_codes', '90210, 90211, 90212');
         return '<div class="gp-map-box glass-card"><h3>Our Service Area</h3><p>We provide expert services in the following areas: ' . esc_html($area) . '</p><div id="gp-mock-map" style="background:#e2e8f0; height:200px; display:flex; align-items:center; justify-content:center; border-radius:8px;">[Interactive Map Integration]</div></div>';
+    }
+
+    public function render_project_tracker() {
+        if ( ! is_user_logged_in() ) return '<p>Login to track your project.</p>';
+        return '<div class="glass-card"><h3>Project Progress Tracker</h3><div style="height:10px; background:#f1f5f9; border-radius:5px; margin:20px 0;"><div style="width:65%; height:100%; background:#2563EB; border-radius:5px;"></div></div><p style="font-size:12px;">Stage: <strong>Active Construction (65% Complete)</strong></p></div>';
     }
 
     public function render_estimator() {

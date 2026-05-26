@@ -1,10 +1,14 @@
 window.runSolarCalc = function() {
     var bill = jQuery('#gp-bill').val();
+    var size = jQuery('#gp-solar-size').val() || 10;
     var resultDiv = jQuery('#solar-results');
     if (bill) {
         var yearlySavings = bill * 12 * 0.85;
-        var paybackYears = 18000 / (bill * 12);
-        resultDiv.html("<div class='glass-card' style='margin-top:20px; border-color:#10B981;'><h4>Analysis Complete</h4><p>Estimated Yearly Savings: <strong>$" + Math.round(yearlySavings).toLocaleString() + "</strong></p><p>Payback Period: <strong>" + paybackYears.toFixed(1) + " years</strong></p><p style='font-size:12px; opacity:0.7;'>*Estimated based on 30% Federal Tax Credit.</p></div>");
+        var systemCost = size * 3000; // $3k per kW
+        var loanPayment = (systemCost * 0.7) / 120; // 10 year mock loan
+        var paybackYears = systemCost / (bill * 12);
+
+        resultDiv.html("<div class='glass-card' style='margin-top:20px; border-color:#10B981;'><h4>Advanced Solar Analysis</h4><p>Yearly Savings: <strong>$" + Math.round(yearlySavings).toLocaleString() + "</strong></p><p>Payback: <strong>" + paybackYears.toFixed(1) + " yrs</strong></p><p>Est. Loan Payment: <strong>$" + Math.round(loanPayment) + "/mo</strong></p></div>");
     }
 };
 

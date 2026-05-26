@@ -358,8 +358,14 @@ class GrowthPress_Dashboard {
 
     public function render_dashboard() {
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+        $appointments = get_posts( array( 'post_type' => 'gp_appointment', 'posts_per_page' => -1 ) );
         $stages = array( 'new' => 'New Leads', 'qualified' => 'Qualified', 'booked' => 'Booked', 'closed' => 'Closed' );
         $ai = GrowthPress_AI::get_instance();
+
+        // Calculate actual stats
+        $lead_count_30d = count($leads); // Simple count for now
+        $booking_count = count($appointments);
+        $conv_rate = $lead_count_30d > 0 ? round(($booking_count / $lead_count_30d) * 100) : 0;
 
         $view_file = GROWTHPRESS_CORE_PATH . 'admin/views/dashboard.php';
         if ( file_exists( $view_file ) ) {

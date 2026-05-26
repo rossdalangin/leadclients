@@ -2,7 +2,12 @@
 class GrowthPress_Coaches {
     public function __construct() {
         add_shortcode( 'gp_coaching_assistant', array( $this, 'render_ai_coach' ) );
+        add_shortcode( 'gp_webinar_registration', array( $this, 'render_webinar_form' ) );
         add_action( 'init', array( $this, 'register_course_cpt' ) );
+    }
+
+    public function render_webinar_form() {
+        return '<div class="glass-card" style="text-align:center;"><h3>Live Masterclass: Scaling Your Impact</h3><p>Join our next live webinar on the future of AI in coaching.</p><button class="button">Register Seat</button></div>';
     }
 
     public function register_course_cpt() {

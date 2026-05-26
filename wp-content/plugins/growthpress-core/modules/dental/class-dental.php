@@ -21,6 +21,12 @@ class GrowthPress_Dental {
             'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-heart',
             'supports'    => array( 'title', 'editor', 'thumbnail' ),
         ) );
+
+        register_post_type( 'gp_smile_case', array(
+            'labels'      => array( 'name' => 'Smile Gallery', 'singular_name' => 'Smile Case' ),
+            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-format-image',
+            'supports'    => array( 'title', 'editor', 'thumbnail' ),
+        ) );
     }
 
     public function add_dental_meta_boxes() {
@@ -52,6 +58,9 @@ class GrowthPress_Dental {
     }
 
     public function generate_sample_data() {
+        if ( ! get_page_by_path( 'full-mouth-restoration', OBJECT, 'gp_smile_case' ) ) {
+            wp_insert_post(array('post_title' => 'Full Mouth Restoration', 'post_content' => 'Before & After transformation.', 'post_type' => 'gp_smile_case', 'post_status' => 'publish'));
+        }
         $data = array(
             'Advanced Dental Implants' => 'Replace missing teeth with natural-looking, high-durability implants.',
             'Invisalign Smile Design'  => 'Clear aligner therapy for a perfectly straight smile without braces.',

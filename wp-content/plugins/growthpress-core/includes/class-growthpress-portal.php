@@ -59,16 +59,56 @@ class GrowthPress_Portal {
 
                 <div id="proposals" style="margin-top:30px;">
                     <h3>Active Proposals</h3>
-                    <?php foreach($proposals as $prop): ?>
-                        <div class="proposal"><?php echo esc_html($prop->post_title); ?> <button onclick="acceptProposal(<?php echo $prop->ID; ?>)">View</button></div>
+                    <?php foreach($proposals as $prop):
+                        $prop_status = get_post_meta($prop->ID, '_gp_proposal_status', true) ?: 'Pending'; ?>
+                        <div class="glass-card" style="margin-bottom:15px; border-left: 4px solid <?php echo $prop_status === 'Accepted' ? '#10B981' : '#2563EB'; ?>;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <strong><?php echo esc_html($prop->post_title); ?></strong>
+                                    <div style="font-size:11px; opacity:0.7;">Status: <?php echo $prop_status; ?></div>
+                                </div>
+                                <?php if($prop_status !== 'Accepted'): ?>
+                                    <button class="button button-small" onclick="viewProposal(<?php echo $prop->ID; ?>)">Review & Accept</button>
+                                <?php endif; ?>
+                            </div>
+                            <div id="prop-body-<?php echo $prop->ID; ?>" style="display:none; margin-top:20px; font-size:13px; border-top:1px solid #eee; padding-top:15px;">
+                                <?php echo apply_filters('the_content', $prop->post_content); ?>
+                                <hr>
+                                <button class="button" onclick="acceptProposal(<?php echo $prop->ID; ?>)">Confirm & Accept Proposal</button>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
+                </div>
+
+                <div id="appointments" style="margin-top:30px;">
+                    <h3>Upcoming Appointments</h3>
+                    <?php
+                    $appts = get_posts( array( 'post_type' => 'gp_appointment', 'meta_key' => '_lead_email', 'meta_value' => $email ) );
+                    if($appts): foreach($appts as $a):
+                        $date = get_post_meta($a->ID, '_appointment_date', true);
+                        $link = get_post_meta($a->ID, '_gp_telemedicine_link', true); ?>
+                        <div class="glass-card" style="margin-bottom:10px;">
+                            <strong><?php echo esc_html($a->post_title); ?></strong><br>
+                            <small>Scheduled: <?php echo $date; ?></small>
+                            <?php if($link): ?>
+                                <br><a href="<?php echo esc_url($link); ?>" class="button button-small" style="margin-top:10px;">Join Meeting</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; else: echo "<p>No upcoming appointments.</p>"; endif; ?>
                 </div>
             </div>
         </div>
         <script>
+            function viewProposal(id) {
+                jQuery('#prop-body-' + id).slideToggle();
+            }
             function acceptProposal(id) {
+                if(!confirm("By accepting this proposal, you agree to the terms and conditions. Continue?")) return;
                 jQuery.post(gp_ajax.ajaxurl, { action: 'gp_accept_proposal', proposal_id: id }, function(res) {
-                    if(res.success) location.reload();
+                    if(res.success) {
+                        alert("Proposal Accepted! We have created a project kickoff task.");
+                        location.reload();
+                    }
                 });
             }
         </script>

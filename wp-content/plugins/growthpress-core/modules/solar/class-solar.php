@@ -32,10 +32,17 @@ class GrowthPress_Solar {
     public function render_calculator() {
         ob_start(); ?>
         <div class="gp-solar-calc glass-card">
-            <h3>Solar ROI Estimator</h3>
-            <p>Calculate your 25-year energy savings instantly.</p>
-            <input type="number" id="gp-bill" placeholder="Average Monthly Bill ($)">
-            <button onclick="runSolarCalc()">See Savings</button>
+            <h3>Solar ROI & Financing Estimator</h3>
+            <p>See your 25-year savings and monthly loan payment.</p>
+            <div class="form-group">
+                <label>Average Monthly Utility Bill ($)</label>
+                <input type="number" id="gp-bill" placeholder="e.g. 150">
+            </div>
+            <div class="form-group">
+                <label>Desired System Size (kW)</label>
+                <input type="number" id="gp-solar-size" value="10">
+            </div>
+            <button onclick="runSolarCalc()">Generate ROI Report</button>
             <div id="solar-results"></div>
         </div>
         <?php

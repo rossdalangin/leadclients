@@ -199,8 +199,17 @@ class GrowthPress_Settings {
                         </ul>
                     </div>
 
+                    <div class="doc-section" style="margin-bottom:25px;">
+                        <h4>6. Technical System Audit</h4>
+                        <div style="font-size:12px; border:1px solid #e2e8f0; padding:10px; border-radius:8px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>PHP Version</span> <span><?php echo PHP_VERSION; ?> (OK)</span></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>WP Version</span> <span><?php echo get_bloginfo('version'); ?> (OK)</span></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Memory Limit</span> <span><?php echo ini_get('memory_limit'); ?></span></div>
+                        </div>
+                    </div>
+
                     <div class="doc-section">
-                        <h4>6. Troubleshooting & Support</h4>
+                        <h4>7. Troubleshooting & Support</h4>
                         <ul style="font-size:13px;">
                             <li><strong>AI not responding?</strong> Check your OpenAI API key and credit balance.</li>
                             <li><strong>Pages not syncing?</strong> Use the "Regenerate Core Assets" button in the Maintenance tab.</li>

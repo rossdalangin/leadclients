@@ -25,6 +25,7 @@ class GrowthPress_CRM {
         add_action( 'add_meta_boxes', array( $this, 'add_crm_meta_boxes' ) );
         add_action( 'wp_ajax_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
         add_action( 'wp_ajax_nopriv_gp_log_behavior', array( $this, 'handle_behavior_logging' ) );
+        add_action( 'wp_ajax_gp_export_leads', array( $this, 'handle_lead_export' ) );
         if ( ! wp_next_scheduled( 'gp_cron_followup' ) ) {
             wp_schedule_event( time(), 'hourly', 'gp_cron_followup' );
         }
@@ -137,6 +138,10 @@ class GrowthPress_CRM {
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
 
+        // Lead Intent Scoring
+        $intent_score = ($prob > 80) ? 'High' : ($prob > 40 ? 'Medium' : 'Low');
+        update_post_meta($lead_id, '_gp_lead_intent_score', $intent_score);
+
         // Auto-tagging based on content analysis
         $tag_prompt = "Categorize this lead inquiry: \"{$lead->post_content}\" as either 'Residential', 'Commercial', or 'Enterprise'. Return ONLY the word.";
         $tag = $ai->call_ai($tag_prompt, "Lead Classifier");
@@ -177,6 +182,7 @@ class GrowthPress_CRM {
 
     public function render_insights_meta( $post ) {
         $prob = get_post_meta($post->ID, '_gp_ai_probability', true) ?: 50;
+        $intent = get_post_meta($post->ID, '_gp_lead_intent_score', true) ?: 'Medium';
         $ai = GrowthPress_AI::get_instance();
         $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$post->post_content}\"", "Sales Closer");
         ?>
@@ -185,6 +191,10 @@ class GrowthPress_CRM {
                 <div style="text-align:center; padding:15px; border-radius:12px; background:#f0f9ff; border:1px solid #bae6fd;">
                     <div style="font-size:24px; font-weight:800; color:#2563EB;"><?php echo $prob; ?>%</div>
                     <div style="font-size:10px; text-transform:uppercase; opacity:0.7;">Deal Probability</div>
+                </div>
+                <div style="text-align:center; padding:15px; border-radius:12px; background:#fefce8; border:1px solid #fef08a;">
+                    <div style="font-size:24px; font-weight:800; color:#a16207;"><?php echo $intent; ?></div>
+                    <div style="font-size:10px; text-transform:uppercase; opacity:0.7;">Lead Intent</div>
                 </div>
             </div>
             <h4>AI Suggested Closing Strategy:</h4>
@@ -205,6 +215,25 @@ class GrowthPress_CRM {
             <?php endforeach; else: echo "No behavior tracked yet."; endif; ?>
         </div>
         <?php
+    }
+
+    public function handle_lead_export() {
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="growthpress_leads_export.csv"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, array('Lead Name', 'Email', 'Date', 'Stage'));
+
+        foreach ( $leads as $l ) {
+            $email = get_post_meta($l->ID, '_lead_email', true);
+            $stage = wp_get_object_terms( $l->ID, 'gp_lead_stage', array('fields' => 'names') );
+            fputcsv($output, array($l->post_title, $email, $l->post_date, implode(', ', $stage)));
+        }
+        fclose($output);
+        exit;
     }
 
     public function handle_behavior_logging() {

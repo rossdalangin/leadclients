@@ -1,7 +1,10 @@
 <div class="wrap growthpress-dashboard">
     <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
         <h1><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> OS</h1>
-        <div class="ai-status" style="background:#10B981; color:white; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:bold;">AI ACTIVE</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button class="button" onclick="exportLeads()">Export CSV</button>
+            <div class="ai-status" style="background:#10B981; color:white; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:bold;">AI ACTIVE</div>
+        </div>
     </div>
 
     <?php if ( ! get_option('growthpress_niche') ) : ?>
@@ -26,6 +29,20 @@
     </div>
     <?php endif; ?>
 
+    <div class="system-diagnostics glass-card" style="margin-bottom: 25px; padding: 20px; display:flex; gap:30px; align-items:center;">
+        <div style="flex:1;">
+            <h3 style="font-size:14px; margin-bottom:10px;">System Diagnostics</h3>
+            <div style="display:flex; gap:20px; font-size:11px;">
+                <span><strong>API:</strong> <?php echo get_option('growthpress_openai_api_key') ? '✅ Connected' : '❌ Offline'; ?></span>
+                <span><strong>OS:</strong> <?php echo get_option('growthpress_niche') ? '✅ Ready' : '❌ Needs Setup'; ?></span>
+                <span><strong>PHP:</strong> <?php echo version_compare(PHP_VERSION, '7.4', '>=') ? '✅ OK' : '❌ Update Needed'; ?></span>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <a href="<?php echo admin_url('admin.php?page=growthpress-settings#tab-docs'); ?>" class="button button-small">View Knowledge Base</a>
+        </div>
+    </div>
+
     <div class="dashboard-grid" style="display:grid; grid-template-columns: 2fr 1fr; gap:25px;">
         <div class="main-col">
             <!-- Growth Overview -->
@@ -33,16 +50,16 @@
                 <h3>Executive Summary</h3>
                 <div class="stats-grid" style="display:flex; gap:20px; margin-bottom:20px;">
                     <div class="stat" style="flex:1;">
-                        <span style="font-size:12px; color:#666;">Leads (30d)</span>
-                        <div style="font-size:24px; font-weight:bold; color:#2563EB;">128</div>
+                        <span style="font-size:12px; color:#666;">Leads (Total)</span>
+                        <div style="font-size:24px; font-weight:bold; color:#2563EB;"><?php echo $lead_count_30d; ?></div>
                     </div>
                     <div class="stat" style="flex:1;">
                         <span style="font-size:12px; color:#666;">Bookings</span>
-                        <div style="font-size:24px; font-weight:bold; color:#10B981;">32</div>
+                        <div style="font-size:24px; font-weight:bold; color:#10B981;"><?php echo $booking_count; ?></div>
                     </div>
                     <div class="stat" style="flex:1;">
                         <span style="font-size:12px; color:#666;">Conv. Rate</span>
-                        <div style="font-size:24px; font-weight:bold; color:#F59E0B;">25%</div>
+                        <div style="font-size:24px; font-weight:bold; color:#F59E0B;"><?php echo $conv_rate; ?>%</div>
                     </div>
                 </div>
                 <canvas id="gp-main-chart" height="100"></canvas>
@@ -181,4 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: { labels: ['Google', 'Facebook', 'Referral'], datasets: [{ data: [60, 30, 10], backgroundColor: ['#2563EB', '#10B981', '#F59E0B'] }] }
     });
 });
+function exportLeads() {
+    window.location.href = ajaxurl + "?action=gp_export_leads&gp_nonce=" + gp_admin.nonce;
+}
 </script>

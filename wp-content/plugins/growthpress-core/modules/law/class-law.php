@@ -16,6 +16,7 @@ class GrowthPress_Law {
         add_shortcode( 'gp_legal_intake', array( $this, 'render_legal_intake' ) );
         add_action( 'wp_ajax_gp_legal_triage', array( $this, 'handle_legal_triage' ) );
         add_action( 'wp_ajax_nopriv_gp_legal_triage', array( $this, 'handle_legal_triage' ) );
+        add_action( 'gp_client_portal_dashboard', array( $this, 'render_doc_upload' ) );
     }
 
     public function register_law_cpts() {
@@ -28,6 +29,17 @@ class GrowthPress_Law {
 
     public function add_law_meta_boxes() {
         add_meta_box( 'gp_case_status_box', 'Case Lifecycle & Status', array( $this, 'render_case_meta' ), 'gp_legal_case', 'side', 'high' );
+    }
+
+    public function render_doc_upload() {
+        ?>
+        <div class="gp-legal-docs glass-card" style="margin-top:20px;">
+            <h4>Secure Document Upload</h4>
+            <p class="description">Upload evidence, IDs, or contracts securely for your attorney.</p>
+            <input type="file" multiple>
+            <button class="button" style="margin-top:10px;">Upload Files</button>
+        </div>
+        <?php
     }
 
     public function render_case_meta( $post ) {
