@@ -38,6 +38,8 @@ class GrowthPress_Content_Studio {
             case 'social': $result = $ai->generate_social_content($topic); break;
             case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
             case 'campaign': $result = $ai->generate_email_campaign($topic, $niche); break;
+            case 'headlines': $result = $ai->call_ai("Generate 5 high-converting headlines and 3 compelling Call-To-Action (CTA) variations for \"$topic\" in the $niche industry. Use behavioral psychology and power words.", "CRO Expert"); break;
+            case 'leadmagnet': $result = $ai->call_ai("Generate a comprehensive high-ticket lead magnet (Ebook/Guide) outline and opening chapter for \"$topic\" in the $niche niche. Focus on extreme value and authority building.", "Lead Magnet Architect"); break;
             case 'market': $result = $ai->generate_market_insights($topic, $niche); break;
             case 'sales': $result = $ai->call_ai("Generate high-ticket discovery call talk tracks, power questions, and objection handling for a $niche firm regarding \"$topic\".", "AI Sales Coach"); break;
             default: $result = 'Invalid.';
@@ -81,6 +83,7 @@ class GrowthPress_Content_Studio {
                             <option value="headlines">AI Headline & CTA Optimizer</option>
                             <option value="ad">Direct-Response Ads</option>
                             <option value="social">Omnichannel Social Suite</option>
+                            <option value="leadmagnet">AI Lead Magnet (Ebook/Guide)</option>
                         </select>
                         <label>Target Topic / Location</label>
                         <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:5px; margin-bottom:15px;">

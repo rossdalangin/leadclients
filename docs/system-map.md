@@ -22,7 +22,11 @@
    - Secure Client Portal Review
    - One-Click Acceptance & Kickoff
 
-5. **Retention & Reputation**
+5. **Reactivation & Waiting List**
+   - AI Reactivation Scout: Identifies cold leads (>30 days) and generates new value offers.
+   - Priority Waiting List: Captures intent when booking slots are full.
+
+6. **Retention & Reputation**
    - Automated Review Request
    - AI Reputation Monitoring
    - Client Portal Document Hub

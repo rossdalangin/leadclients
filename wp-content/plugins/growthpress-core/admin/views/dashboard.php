@@ -159,6 +159,26 @@
                 <p style="color:rgba(255,255,255,0.9); font-size:14px; line-height:1.6; margin-top:10px;"><?php echo $tip; ?></p>
             </div>
 
+            <!-- Growth Opportunities -->
+            <div class="glass-card" style="border-left: 6px solid #7c3aed;">
+                <h3 style="color:#7c3aed;">📈 Growth Opportunities</h3>
+                <?php
+                $waiting = get_posts(array('post_type' => 'gp_appointment', 'meta_key' => '_is_waiting_list', 'meta_value' => '1'));
+                $reactivation = get_posts(array('post_type' => 'gp_lead', 'meta_key' => '_reactivation_flagged', 'meta_value' => '1', 'posts_per_page' => 3));
+                ?>
+                <div style="font-size:12px;">
+                    <div style="margin-bottom:10px;"><strong>Waiting List:</strong> <?php echo count($waiting); ?> prospects waiting for slots.</div>
+                    <?php if($reactivation): ?>
+                        <div style="margin-top:15px;"><strong>Top Reactivation Targets:</strong></div>
+                        <?php foreach($reactivation as $rl): ?>
+                            <div style="background:#f5f3ff; padding:8px; border-radius:6px; margin-top:5px; border:1px solid #ddd6fe;">
+                                <a href="<?php echo get_edit_post_link($rl->ID); ?>" style="text-decoration:none;">⚡ <?php echo esc_html($rl->post_title); ?></a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <!-- Team performance -->
             <div class="glass-card">
                 <h3>Team Efficiency</h3>

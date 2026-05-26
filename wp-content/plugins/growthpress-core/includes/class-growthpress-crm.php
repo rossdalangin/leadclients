@@ -244,6 +244,7 @@ class GrowthPress_CRM {
         $suggested_reply = get_post_meta($post->ID, '_gp_ai_suggested_reply', true) ?: 'Generating suggested response...';
         $discovery_questions = get_post_meta($post->ID, '_gp_ai_discovery_questions', true) ?: 'Preparing discovery questions...';
         $property_rec = get_post_meta($post->ID, '_gp_ai_property_recommendation', true);
+        $reactivation = get_post_meta($post->ID, '_gp_ai_reactivation_campaign', true);
         ?>
         <div class="gp-insights-box">
             <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
@@ -280,9 +281,16 @@ class GrowthPress_CRM {
             </div>
 
             <?php if($property_rec): ?>
-                <div style="background:#f5f3ff; border:1px solid #ddd6fe; padding:15px; border-radius:12px;">
+                <div style="background:#f5f3ff; border:1px solid #ddd6fe; padding:15px; border-radius:12px; margin-bottom:20px;">
                     <h4 style="margin-top:0; color:#7c3aed;">🏠 AI Property Matches:</h4>
                     <div style="font-size:12px; line-height:1.6; color:#5b21b6;"><?php echo nl2br(esc_html($property_rec)); ?></div>
+                </div>
+            <?php endif; ?>
+
+            <?php if($reactivation): ?>
+                <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:15px; border-radius:12px;">
+                    <h4 style="margin-top:0; color:#be185d;">⚡ AI Reactivation Campaign:</h4>
+                    <div style="font-size:12px; line-height:1.6; color:#9d174d;"><?php echo nl2br(esc_html($reactivation)); ?></div>
                 </div>
             <?php endif; ?>
         </div>
@@ -385,6 +393,27 @@ class GrowthPress_CRM {
 
             GrowthPress_Activity::log( "CRM Automation: Abandoned inquiry follow-up triggered for Lead #{$lead->ID}." );
             update_post_meta( $lead->ID, '_followup_sent', 'true' );
+        }
+
+        $this->run_reactivation_scout();
+    }
+
+    private function run_reactivation_scout() {
+        $cold_leads = get_posts( array(
+            'post_type'  => 'gp_lead',
+            'posts_per_page' => 10,
+            'date_query' => array( array( 'before' => '30 days ago' ) ),
+            'meta_query' => array( array( 'key' => '_reactivation_flagged', 'compare' => 'NOT EXISTS' ) )
+        ) );
+
+        foreach ( $cold_leads as $lead ) {
+            $ai = GrowthPress_AI::get_instance();
+            $niche = get_option('growthpress_niche', 'business');
+            $campaign = $ai->call_ai("Generate a 3-sentence high-ticket reactivation message for a cold lead ($niche niche) who hasn't spoken to us in a month. Focus on a new value offer or market update.", "Growth Strategist");
+
+            update_post_meta( $lead->ID, '_reactivation_flagged', '1' );
+            update_post_meta( $lead->ID, '_gp_ai_reactivation_campaign', $campaign );
+            GrowthPress_Activity::log( "Growth Engine: Cold lead identified (#{$lead->ID}). Reactivation campaign generated." );
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress Booking Engine Class - Multi-Staff Enhanced
+ * GrowthPress Booking Engine Class - Waiting List Enhanced
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +25,8 @@ class GrowthPress_Booking {
         add_action( 'wp_ajax_gp_submit_booking', array( $this, 'handle_booking_submission' ) );
         add_action( 'wp_ajax_nopriv_gp_submit_booking', array( $this, 'handle_booking_submission' ) );
         add_action( 'wp_ajax_gp_cancel_appointment', array( $this, 'handle_cancellation' ) );
+        add_action( 'wp_ajax_gp_join_waiting_list', array( $this, 'handle_waiting_list' ) );
+        add_action( 'wp_ajax_nopriv_gp_join_waiting_list', array( $this, 'handle_waiting_list' ) );
     }
 
     public function register_booking_cpt() {
@@ -70,8 +72,11 @@ class GrowthPress_Booking {
                     <label>Your Name</label>
                     <input type="text" name="client_name" required>
                 </div>
-                <button type="submit">Confirm Booking</button>
-                <div class="form-feedback"></div>
+                <div class="booking-options" style="display:flex; gap:10px;">
+                    <button type="submit" class="button-primary" style="flex:1;">Confirm Booking</button>
+                    <button type="button" class="button" onclick="joinWaitingList()" style="flex:1; background:#1E293B;">Join Waiting List</button>
+                </div>
+                <div class="form-feedback" style="margin-top:15px; font-weight:bold; color: #2563EB;"></div>
             </form>
         </div>
         <script>
@@ -88,9 +93,34 @@ class GrowthPress_Booking {
                 }
             });
         });
+        function joinWaitingList() {
+            var name = jQuery('input[name="client_name"]').val();
+            if(!name) { alert("Please enter your name first."); return; }
+            jQuery.post(gp_ajax.ajaxurl, {
+                action: 'gp_join_waiting_list',
+                name: name,
+                nonce: '<?php echo $nonce; ?>'
+            }, function(res) {
+                if(res.success) jQuery('.form-feedback').text('You have been added to the priority waiting list.');
+            });
+        }
         </script>
         <?php
         return ob_get_clean();
+    }
+
+    public function handle_waiting_list() {
+        check_ajax_referer( 'gp_booking_nonce', 'nonce' );
+        $name = sanitize_text_field($_POST['name']);
+
+        $appt_id = wp_insert_post( array(
+            'post_title'  => "Waiting List: " . $name,
+            'post_type'   => 'gp_appointment',
+            'post_status' => 'publish',
+        ) );
+        update_post_meta($appt_id, '_is_waiting_list', '1');
+        GrowthPress_Activity::log( "User $name joined the appointment waiting list." );
+        wp_send_json_success();
     }
 
     public function handle_cancellation() {
