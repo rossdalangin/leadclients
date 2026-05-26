@@ -52,7 +52,7 @@ class GrowthPress_Content_Studio {
     public function render_studio() {
         $niche = get_option('growthpress_niche', 'business');
         $prompt_library = array(
-            'dental-clinic' => array('Invisalign vs Braces', 'Emergency Dental Care', 'Pediatric Dentistry Tips', 'Smile Makeovers'),
+            'dental'        => array('Invisalign vs Braces', 'Emergency Dental Care', 'Pediatric Dentistry Tips', 'Smile Makeovers'),
             'law-firm'      => array('Personal Injury Rights', 'Estate Planning 101', 'DUI Defense Strategies', 'Business Litigation'),
             'contractor'    => array('Kitchen Remodel ROI', 'Outdoor Living Spaces', 'Foundation Repair Signs', 'Smart Home Upgrades'),
             'roofing'       => array('Storm Damage Claims', 'Metal vs Shingle Roofs', 'Roof Life Extension', 'Emergency Leak Repair'),
@@ -60,8 +60,8 @@ class GrowthPress_Content_Studio {
             'accounting'    => array('Small Business Tax Prep', 'Audit Protection', 'Cash Flow Management', 'Virtual CFO Benefits'),
             'medical'       => array('Telemedicine Benefits', 'Wellness Checklists', 'Sports Injury Recovery', 'Heart Health AI'),
             'real-estate'   => array('Selling in a High-Rate Market', 'First-Time Buyer Guide', 'Investment Property ROI', 'Staging for Top Dollar'),
-            'coach'         => array('High-Performance Mindset', 'Scaling to 7 Figures', 'Overcoming Burnout', 'Executive Leadership'),
-            'consultant'    => array('Process Automation', 'Digital Transformation', 'Team Efficiency Boost', 'Market Entry Strategy')
+            'coaches'       => array('High-Performance Mindset', 'Scaling to 7 Figures', 'Overcoming Burnout', 'Executive Leadership'),
+            'consultants'   => array('Process Automation', 'Digital Transformation', 'Team Efficiency Boost', 'Market Entry Strategy')
         );
         $current_prompts = isset($prompt_library[$niche]) ? $prompt_library[$niche] : array('General Growth', 'Market Dominance', 'Client Acquisition');
         ?>

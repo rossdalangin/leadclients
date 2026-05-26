@@ -75,13 +75,28 @@
                                 $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
                                 if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) :
                                     $prob = get_post_meta($lead->ID, '_gp_ai_probability', true) ?: 50; ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:12px; padding:12px; cursor:grab; position:relative; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                        <strong style="display:block; margin-bottom:5px;"><?php echo esc_html($lead->post_title); ?></strong>
-                                        <div class="gp-probability" style="font-size:10px; color:#10B981; font-weight:600;">
-                                            AI Confidence: <?php echo $prob; ?>%
+                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:12px; padding:15px; cursor:grab; position:relative; border-left: 4px solid <?php echo $prob > 75 ? '#10B981' : '#2563EB'; ?>;">
+                                        <strong style="display:block; margin-bottom:8px;"><?php echo esc_html($lead->post_title); ?></strong>
+
+                                        <?php
+                                        $tag = wp_get_object_terms($lead->ID, 'gp_lead_tag', array('fields' => 'names'));
+                                        if($tag): ?>
+                                            <div style="font-size:9px; background:#eef2ff; color:#4338ca; display:inline-block; padding:2px 6px; border-radius:4px; margin-bottom:8px; font-weight:bold;">
+                                                <?php echo esc_html($tag[0]); ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="gp-probability" style="font-size:10px; color:#10B981; font-weight:700;">
+                                            AI Prob: <?php echo $prob; ?>%
                                         </div>
-                                        <div class="gp-next-step" style="font-size:9px; background:#f1f5f9; padding:4px; border-radius:4px; margin-top:5px;">
-                                            AI Suggests: <?php echo $prob > 80 ? 'Send Proposal' : 'Qualifying Call'; ?>
+
+                                        <div class="gp-next-step" style="font-size:10px; background:#f8fafc; padding:6px; border-radius:6px; margin-top:8px; border: 1px solid #e2e8f0;">
+                                            💡 <?php echo $prob > 80 ? 'Draft Proposal' : 'Schedule Discovery'; ?>
+                                        </div>
+
+                                        <div style="margin-top:10px; display:flex; gap:8px; opacity:0.5;">
+                                            <span class="dashicons dashicons-admin-comments" style="font-size:14px;"></span>
+                                            <span class="dashicons dashicons-yes-alt" style="font-size:14px;"></span>
                                         </div>
                                     </div>
                                 <?php endif;

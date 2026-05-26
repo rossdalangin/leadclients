@@ -141,6 +141,11 @@ class GrowthPress_Settings {
 
             <div id="tab-docs" class="tab-content" style="display:none; max-width:900px; margin-top:20px;">
                 <div class="glass-card">
+                    <div class="doc-header" style="text-align:center; margin-bottom:40px;">
+                        <h2 style="font-size:2rem; margin-bottom:10px;">Master Operations Manual</h2>
+                        <p>Follow the success roadmap to turn your site into an autonomous growth engine.</p>
+                    </div>
+
                     <h3>🚀 Launch Readiness Roadmap</h3>
                     <div class="roadmap-ui" style="display:flex; gap:10px; margin-bottom:30px; text-align:center;">
                         <div style="flex:1; padding:10px; background:#f0f9ff; border-radius:8px; border:1px solid #bae6fd;"><strong>1</strong><br><small>Connect API</small></div>
@@ -190,7 +195,19 @@ class GrowthPress_Settings {
                     </div>
 
                     <div class="doc-section" style="margin-bottom:25px;">
-                        <h4>5. High-Ticket Sales Playbook</h4>
+                        <h4>5. The GrowthPress Process Map</h4>
+                        <p>Your system automates these 5 critical business lifecycles:</p>
+                        <div style="background:#f8fafc; padding:20px; border-radius:12px; font-size:13px; border:1px solid #e2e8f0;">
+                            <strong>1. Lead Triage:</strong> Immediate AI analysis of every inquiry.<br>
+                            <strong>2. Opportunity Scoring:</strong> Real-time deal probability calculation.<br>
+                            <strong>3. Automated Nurture:</strong> 5-day intent-based re-engagement.<br>
+                            <strong>4. Operation Sync:</strong> Self-service client portal & document hub.<br>
+                            <strong>5. Closing:</strong> One-click proposal generation and acceptance.
+                        </div>
+                    </div>
+
+                    <div class="doc-section" style="margin-bottom:25px;">
+                        <h4>6. High-Ticket Sales Playbook</h4>
                         <p>Success in high-ticket niches requires <strong>speed-to-lead</strong>. When the AI alerts you of a "Hot" lead (Score 80+):</p>
                         <ul style="font-size:13px;">
                             <li><strong>Call within 5 mins:</strong> The AI sentiment analysis will tell you their pain point. Mention it immediately.</li>
