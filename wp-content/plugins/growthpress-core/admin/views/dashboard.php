@@ -90,8 +90,9 @@
                                             AI Prob: <?php echo $prob; ?>%
                                         </div>
 
-                                        <div class="gp-next-step" style="font-size:10px; background:#f8fafc; padding:6px; border-radius:6px; margin-top:8px; border: 1px solid #e2e8f0;">
-                                            💡 <?php echo $prob > 80 ? 'Draft Proposal' : 'Schedule Discovery'; ?>
+                                        <div class="gp-next-step" style="font-size:10px; background:#f8fafc; padding:6px; border-radius:6px; margin-top:8px; border: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+                                            <span>💡 <?php echo $prob > 80 ? 'Draft Proposal' : 'Schedule Discovery'; ?></span>
+                                            <a href="<?php echo get_edit_post_link($lead->ID); ?>#gp_lead_insights" style="text-decoration:none;">Brief &rarr;</a>
                                         </div>
 
                                         <div style="margin-top:10px; display:flex; gap:8px; opacity:0.5;">

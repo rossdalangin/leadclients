@@ -26,7 +26,13 @@ class GrowthPress_Contractor {
 
     public function render_service_area() {
         $area = get_option('gp_contractor_zip_codes', '90210, 90211, 90212');
-        return '<div class="gp-map-box glass-card"><h3>Our Service Area</h3><p>We provide expert services in the following areas: ' . esc_html($area) . '</p><div id="gp-mock-map" style="background:#e2e8f0; height:200px; display:flex; align-items:center; justify-content:center; border-radius:8px;">[Interactive Map Integration]</div></div>';
+        $maps_key = get_option('growthpress_google_maps_key');
+
+        $map_html = $maps_key
+            ? '<div id="gp-google-map" style="height:300px; border-radius:12px;" data-key="' . esc_attr($maps_key) . '"></div>'
+            : '<div id="gp-mock-map" style="background:#f8fafc; height:200px; display:flex; align-items:center; justify-content:center; border-radius:12px; border:1px solid #e2e8f0; color:#64748b;">[Connect Google Maps API in Settings]</div>';
+
+        return '<div class="gp-map-box glass-card"><h3>Our Service Area</h3><p>We provide expert services in the following areas: ' . esc_html($area) . '</p>' . $map_html . '</div>';
     }
 
     public function render_project_tracker() {

@@ -8,6 +8,7 @@ The GrowthPress Business Operating System automates the entire lead-to-cash life
 - **Dynamic Lead Scoring**: Automatic assignment of a 0-100 quality score to every new lead.
 - **Priority Lead Routing**: Instant routing of leads scoring >80 to senior staff or administrators.
 - **Lead Segmentation**: Auto-tagging prospects as 'Residential', 'Commercial', or 'Enterprise' based on their inquiry content.
+- **Autonomous Action Planning**: System-generated 3-step action plans for every new lead, created as linked tasks in the CRM.
 
 ## 2. CRM & Sales Pipeline Processes
 - **Kanban State Management**: Visual drag-and-drop movement of leads through New, Qualified, Booked, and Closed stages.

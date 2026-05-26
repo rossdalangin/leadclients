@@ -22,7 +22,8 @@ class GrowthPress_Settings {
         $keys = array(
             'growthpress_openai_api_key', 'growthpress_niche', 'growthpress_api_token',
             'growthpress_brand_name', 'growthpress_primary_color', 'growthpress_hot_threshold',
-            'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_whatsapp_key'
+            'growthpress_twilio_sid', 'growthpress_twilio_token', 'growthpress_whatsapp_key',
+            'growthpress_google_maps_key', 'growthpress_stripe_key', 'growthpress_stripe_secret'
         );
         foreach($keys as $k) register_setting( 'growthpress_settings_group', $k );
     }
@@ -118,6 +119,20 @@ class GrowthPress_Settings {
                         </td>
                     </tr>
 
+                    <tr class="section-header"><th colspan="2"><h3>Operational Integrations</h3></th></tr>
+                    <tr>
+                        <th scope="row"><label>Google Maps API Key</label></th>
+                        <td><input type="text" name="growthpress_google_maps_key" value="<?php echo esc_attr( get_option('growthpress_google_maps_key') ); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>Stripe Public Key</label></th>
+                        <td><input type="text" name="growthpress_stripe_key" value="<?php echo esc_attr( get_option('growthpress_stripe_key') ); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>Stripe Secret Key</label></th>
+                        <td><input type="password" name="growthpress_stripe_secret" value="<?php echo esc_attr( get_option('growthpress_stripe_secret') ); ?>" class="regular-text"></td>
+                    </tr>
+
                     <tr class="section-header"><th colspan="2"><h3>SMS & Communication</h3></th></tr>
                     <tr>
                         <th scope="row"><label>Twilio SID</label></th>
@@ -200,9 +215,10 @@ class GrowthPress_Settings {
                         <div style="background:#f8fafc; padding:20px; border-radius:12px; font-size:13px; border:1px solid #e2e8f0;">
                             <strong>1. Lead Triage:</strong> Immediate AI analysis of every inquiry.<br>
                             <strong>2. Opportunity Scoring:</strong> Real-time deal probability calculation.<br>
-                            <strong>3. Automated Nurture:</strong> 5-day intent-based re-engagement.<br>
-                            <strong>4. Operation Sync:</strong> Self-service client portal & document hub.<br>
-                            <strong>5. Closing:</strong> One-click proposal generation and acceptance.
+                            <strong>3. Action Planning:</strong> Autonomous generation of sales tasks for every lead.<br>
+                            <strong>4. Automated Nurture:</strong> 5-day intent-based re-engagement.<br>
+                            <strong>5. Operation Sync:</strong> Self-service client portal & document hub.<br>
+                            <strong>6. Closing:</strong> One-click proposal generation and acceptance.
                         </div>
                     </div>
 

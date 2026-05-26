@@ -17,10 +17,16 @@ class GrowthPress_Accounting {
     public function render_tax_estimator() {
         ob_start(); ?>
         <div class="gp-tax-calc glass-card">
-            <h3>Small Business Tax Estimator</h3>
-            <input type="number" id="gp-revenue" placeholder="Annual Revenue ($)">
-            <input type="number" id="gp-expenses" placeholder="Annual Expenses ($)">
-            <button onclick="runTaxCalc()">Estimate Liability</button>
+            <h3>Small Business Tax & Savings Estimator</h3>
+            <div class="form-group">
+                <label>Total Annual Revenue ($)</label>
+                <input type="number" id="gp-revenue" placeholder="e.g. 500000">
+            </div>
+            <div class="form-group">
+                <label>Business Expenses ($)</label>
+                <input type="number" id="gp-expenses" placeholder="e.g. 200000">
+            </div>
+            <button onclick="runTaxCalc()">Calculate Tax Strategy</button>
             <div id="tax-result"></div>
         </div>
         <script>
@@ -28,8 +34,12 @@ class GrowthPress_Accounting {
             var rev = jQuery('#gp-revenue').val();
             var exp = jQuery('#gp-expenses').val();
             var profit = rev - exp;
-            var tax = profit * 0.25; // 25% mock rate
-            if(profit > 0) jQuery('#tax-result').html('Estimated Liability: $' + tax.toLocaleString());
+            var tax = profit * 0.21; // Standard 21% Corporate
+            var potentialSavings = profit * 0.05; // AI-driven mock savings
+
+            if(profit > 0) {
+                jQuery('#tax-result').html("<div class='glass-card' style='margin-top:20px; border-color:#2563EB;'><h4>Strategic Projection</h4><p>Estimated Tax: <strong>$" + Math.round(tax).toLocaleString() + "</strong></p><p>Potential Savings with AI Optimization: <strong style='color:#10B981;'>$" + Math.round(potentialSavings).toLocaleString() + "</strong></p></div>");
+            }
         }
         </script>
         <?php

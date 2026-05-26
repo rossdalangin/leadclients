@@ -156,6 +156,14 @@ class GrowthPress_CRM {
                 GrowthPress_Activity::log( "URGENT LEAD #$lead_id routed to " . $staff[0]->display_name );
             }
         }
+
+        // Generate Automated Action Plan
+        $task_prompt = "Based on this lead: \"{$lead->post_content}\", generate 3 immediate next steps for our sales team. Return as a numbered list.";
+        $action_plan = $ai->call_ai($task_prompt, "Sales Strategist");
+        if ( ! is_wp_error($action_plan) ) {
+            $this->create_task( "Action Plan for " . $lead->post_title, $action_plan, $lead_id );
+            GrowthPress_Activity::log( "Autonomous Action Plan generated for Lead #$lead_id." );
+        }
     }
 
     public function add_crm_meta_boxes() {
