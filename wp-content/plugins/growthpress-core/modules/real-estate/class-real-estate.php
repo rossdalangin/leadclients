@@ -15,6 +15,13 @@ class GrowthPress_RealEstate {
         add_action( 'admin_head', array( $this, 'add_property_help_tabs' ) );
         add_action( 'wp_ajax_gp_property_match', array( $this, 'handle_property_match' ) );
         add_action( 'wp_ajax_nopriv_gp_property_match', array( $this, 'handle_property_match' ) );
+        add_action( 'gp_niche_lead_analysis', array( $this, 'analyze_lead_property_fit' ) );
+    }
+
+    public function analyze_lead_property_fit( $lead_id ) {
+        if ( get_option('growthpress_niche') !== 'real-estate' ) return;
+        $recommendation = $this->suggest_properties_for_lead($lead_id);
+        update_post_meta($lead_id, '_gp_ai_property_recommendation', $recommendation);
     }
 
     public function register_property_cpt() {

@@ -80,6 +80,7 @@ class GrowthPress_Content_Studio {
                             <option value="sales">AI Sales Assistant (Talk Tracks)</option>
                             <option value="headlines">AI Headline & CTA Optimizer</option>
                             <option value="ad">Direct-Response Ads</option>
+                            <option value="social">Omnichannel Social Suite</option>
                         </select>
                         <label>Target Topic / Location</label>
                         <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:5px; margin-bottom:15px;">

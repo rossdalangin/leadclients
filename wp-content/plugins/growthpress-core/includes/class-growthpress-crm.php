@@ -175,6 +175,8 @@ class GrowthPress_CRM {
 
         $discovery_questions = $ai->call_ai("Based on this inquiry: \"{$lead->post_content}\", generate 4 deep-dive discovery questions for the first call to qualify them for a high-ticket service.", "Lead Qualifier");
         if ( ! is_wp_error($discovery_questions) ) update_post_meta($lead_id, '_gp_ai_discovery_questions', $discovery_questions);
+
+        do_action('gp_niche_lead_analysis', $lead_id);
     }
 
     public function add_crm_meta_boxes() {
@@ -241,6 +243,7 @@ class GrowthPress_CRM {
         $closing_tips = get_post_meta($post->ID, '_gp_ai_closing_tips', true) ?: 'Analyzing closing tactics... (Refresh in a moment)';
         $suggested_reply = get_post_meta($post->ID, '_gp_ai_suggested_reply', true) ?: 'Generating suggested response...';
         $discovery_questions = get_post_meta($post->ID, '_gp_ai_discovery_questions', true) ?: 'Preparing discovery questions...';
+        $property_rec = get_post_meta($post->ID, '_gp_ai_property_recommendation', true);
         ?>
         <div class="gp-insights-box">
             <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
@@ -271,10 +274,17 @@ class GrowthPress_CRM {
             }
             </script>
 
-            <div style="background:#fff7ed; border:1px solid #ffedd5; padding:15px; border-radius:12px;">
+            <div style="background:#fff7ed; border:1px solid #ffedd5; padding:15px; border-radius:12px; margin-bottom:20px;">
                 <h4 style="margin-top:0; color:#c2410c;">🎯 Discovery Questions for First Call:</h4>
                 <div style="font-size:12px; line-height:1.6; color:#9a3412;"><?php echo nl2br(esc_html($discovery_questions)); ?></div>
             </div>
+
+            <?php if($property_rec): ?>
+                <div style="background:#f5f3ff; border:1px solid #ddd6fe; padding:15px; border-radius:12px;">
+                    <h4 style="margin-top:0; color:#7c3aed;">🏠 AI Property Matches:</h4>
+                    <div style="font-size:12px; line-height:1.6; color:#5b21b6;"><?php echo nl2br(esc_html($property_rec)); ?></div>
+                </div>
+            <?php endif; ?>
         </div>
         <?php
     }
