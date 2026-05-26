@@ -26,6 +26,7 @@ class GrowthPress_Content_Studio {
     }
 
     public function handle_generation() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $type = sanitize_text_field($_POST['content_type']);
         $topic = sanitize_text_field($_POST['topic']);
@@ -77,6 +78,7 @@ class GrowthPress_Content_Studio {
                             <option value="campaign">Nurture Campaign</option>
                             <option value="market">Market Insights & Angle of Attack</option>
                             <option value="sales">AI Sales Assistant (Talk Tracks)</option>
+                            <option value="headlines">AI Headline & CTA Optimizer</option>
                             <option value="ad">Direct-Response Ads</option>
                         </select>
                         <label>Target Topic / Location</label>

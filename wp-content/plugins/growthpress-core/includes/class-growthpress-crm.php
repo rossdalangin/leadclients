@@ -195,6 +195,7 @@ class GrowthPress_CRM {
 
         $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$post->post_content}\"", "Sales Closer");
         $suggested_reply = $ai->call_ai("Generate a professional, high-ticket personalized email reply for this lead inquiry: \"{$post->post_content}\". Mention their specific concern.", "Executive Assistant");
+        $discovery_questions = $ai->call_ai("Based on this inquiry: \"{$post->post_content}\", generate 4 deep-dive discovery questions for the first call to qualify them for a high-ticket service.", "Lead Qualifier");
         ?>
         <div class="gp-insights-box">
             <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
@@ -211,7 +212,7 @@ class GrowthPress_CRM {
             <div style="background:#f8fafc; padding:15px; border-radius:8px; font-size:13px; margin-bottom:20px;"><?php echo nl2br(esc_html($closing_tips)); ?></div>
 
             <h4>Suggested AI Response:</h4>
-            <div style="position:relative;">
+            <div style="position:relative; margin-bottom:20px;">
                 <textarea id="gp-ai-reply-text" style="width:100%; height:120px; font-size:12px; background:#f0f9ff; border:1px solid #bae6fd; padding:10px; border-radius:8px;"><?php echo esc_textarea($suggested_reply); ?></textarea>
                 <button type="button" class="button button-small" onclick="copyReply()" style="margin-top:5px;">Copy to Clipboard</button>
             </div>
@@ -224,6 +225,11 @@ class GrowthPress_CRM {
                 alert("Response copied!");
             }
             </script>
+
+            <div style="background:#fff7ed; border:1px solid #ffedd5; padding:15px; border-radius:12px;">
+                <h4 style="margin-top:0; color:#c2410c;">🎯 Discovery Questions for First Call:</h4>
+                <div style="font-size:12px; line-height:1.6; color:#9a3412;"><?php echo nl2br(esc_html($discovery_questions)); ?></div>
+            </div>
         </div>
         <?php
     }
@@ -243,6 +249,7 @@ class GrowthPress_CRM {
     }
 
     public function handle_lead_export() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
 

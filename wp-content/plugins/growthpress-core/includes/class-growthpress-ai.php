@@ -57,6 +57,7 @@ class GrowthPress_AI {
         $content = $lead->post_content;
         $prompt = "Based on this lead inquiry: \"$content\", predict the probability of closing this deal as a percentage (0-100). Return ONLY the number.";
         $res = $this->call_ai($prompt, "Sales Predictor");
+        if ( is_wp_error($res) ) return 50;
         return is_numeric(trim($res)) ? intval(trim($res)) : 75;
     }
 
@@ -93,6 +94,7 @@ class GrowthPress_AI {
     public function is_spam($m, $n, $e) {
         $prompt = "Analyze this lead submission. Content: \"$m\", Name: \"$n\", Email: \"$e\". Is this likely automated spam or a legitimate high-ticket inquiry? Return ONLY 'SPAM' or 'LEGIT'.";
         $res = $this->call_ai($prompt, "Security Filter");
+        if ( is_wp_error($res) ) return false; // Default to allow on error
         return (trim($res) === 'SPAM');
     }
 }

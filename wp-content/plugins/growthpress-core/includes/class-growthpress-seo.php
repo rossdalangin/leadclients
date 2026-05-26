@@ -27,6 +27,13 @@ class GrowthPress_SEO {
                 echo '<meta name="description" content="' . esc_attr( wp_trim_words( $excerpt, 25 ) ) . '">' . "\n";
             }
             echo '<link rel="canonical" href="' . esc_url( get_permalink() ) . '">' . "\n";
+
+            // Dynamic Title Optimization
+            $niche = get_option('growthpress_niche', 'business');
+            $location = get_option('growthpress_brand_name', 'Professional');
+            add_filter( 'pre_get_document_title', function($title) use ($niche, $location) {
+                return get_the_title() . " | " . ucwords($niche) . " Specialist in " . $location;
+            }, 999);
         }
     }
 

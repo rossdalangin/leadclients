@@ -223,7 +223,16 @@ class GrowthPress_Settings {
                     </div>
 
                     <div class="doc-section" style="margin-bottom:25px;">
-                        <h4>6. High-Ticket Sales Playbook</h4>
+                        <h4>6. Strategic Brief & Market Dominance</h4>
+                        <p>To dominate your local market, use the **AI Content Studio** to identify "Angle of Attack" strategies. High-ticket sales are won by answering questions the prospect hasn't even asked yet.</p>
+                        <ul style="font-size:13px;">
+                            <li><strong>Positioning:</strong> Position yourself as the <em>Authority</em> using the 'Our Mission' page generator.</li>
+                            <li><strong>Triage:</strong> Use AI Triage to handle 80% of common questions, reserving human staff for final closure.</li>
+                        </ul>
+                    </div>
+
+                    <div class="doc-section" style="margin-bottom:25px;">
+                        <h4>7. High-Ticket Sales Playbook</h4>
                         <p>Success in high-ticket niches requires <strong>speed-to-lead</strong>. When the AI alerts you of a "Hot" lead (Score 80+):</p>
                         <ul style="font-size:13px;">
                             <li><strong>Call within 5 mins:</strong> The AI sentiment analysis will tell you their pain point. Mention it immediately.</li>

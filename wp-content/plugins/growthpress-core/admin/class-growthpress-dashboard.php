@@ -33,6 +33,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_lead_stage_update() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $lead_id = intval($_POST['lead_id']);
         wp_set_object_terms( $lead_id, sanitize_text_field($_POST['stage']), 'gp_lead_stage' );
@@ -41,6 +42,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_niche_setup() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $niche = sanitize_text_field($_POST['niche']);
         $this->generate_niche_pages($niche);
@@ -51,6 +53,7 @@ class GrowthPress_Dashboard {
     }
 
     public function handle_page_regeneration() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
         $niche = get_option('growthpress_niche', 'business');
         $this->generate_niche_pages($niche, true);

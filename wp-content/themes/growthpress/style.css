@@ -58,6 +58,12 @@ body {
     .container { padding: 0 15px; }
 }
 
+/* Luxury Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; border: 2px solid #f1f5f9; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
 /* Accessibility */
 :focus { outline: 3px solid var(--primary); outline-offset: 2px; }
 .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px; z-index: 100; transition: top 0.2s; }
