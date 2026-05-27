@@ -44,3 +44,8 @@ The GrowthPress Business Operating System automates the entire lead-to-cash life
 - **ROI Estimation**: Automated calculation of project and lead value based on historical niche data.
 - **System Activity Logging**: Auditable trail of every automated action, lead move, and AI generation.
 - **Global White-Label Branding**: One-click rebranding of the entire admin and client experience.
+- **Appointment Waiting List**: Automated priority queuing for prospects when calendar slots are at capacity.
+- **AI Reactivation Scouting**: Periodic identification of dormant leads with context-aware re-engagement prompts.
+- **Pipeline Value Calculation**: Automated summing of active proposal values for real-time revenue forecasting.
+- **Behavioral Nudge Engine**: Delivery of psychologically-optimized sales tactics to reps during lead interaction.
+- **Niche-Aware Qualification**: Dynamic question adjustment in the intake quiz based on active industry selection.
