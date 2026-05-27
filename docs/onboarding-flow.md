@@ -21,3 +21,12 @@ Welcome to the GrowthPress Business OS. This guide ensures your ecosystem is lau
 1. **Content Studio:** Generate your first 5 SEO blog posts using the `AI Content Studio`.
 2. **Team Onboarding:** Add your staff members as WP users so they can be assigned leads in the CRM.
 3. **Performance Tracking:** Review the executive charts on the dashboard weekly to identify your best lead sources.
+
+---
+
+### 🎥 GrowthPress 'Quick Start' Video Script (60 Seconds)
+**0:00-0:10**: "Welcome to GrowthPress. In the next 60 seconds, we're going to install a high-performance sales brain into your WordPress site."
+**0:10-0:25**: "First, activate the theme and core plugin. Head to the Dashboard and use our One-Click Launch Wizard to select your niche. Watch as the OS builds your Home, Services, and Pricing pages instantly."
+**0:25-0:40**: "Next, calibration. Connect your OpenAI key in Settings. This activates real-time lead triage and scoring. Now, every inquiry you get is automatically analyzed for intent and urgency."
+**0:40-0:55**: "Finally, branding. Use the Customizer to set your Growth Blue or brand colors. Your AI assistant, booking calendar, and client portal are now live and ready to close."
+**0:55-1:00**: "Capture the leads your competitors are ignoring. Let's grow."
