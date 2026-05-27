@@ -39,3 +39,7 @@ This map outlines the modular structure of the GrowthPress Business Operating Sy
 
 ## 3. Documentation (`docs/`)
 - Master technical specifications, marketing toolkits, and success roadmaps.
+- `database-schema-deep-dive.md`: Granular mapping of CPTs and meta keys.
+- `page-builder-guide.md`: Integration for Elementor, Bricks, and Gutenberg.
+- `team-collaboration-guide.md`: CRM protocols and team workflows.
+- `system-scalability-multisite.md`: Agency guide for scaling to 100+ clients.
