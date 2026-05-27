@@ -57,6 +57,18 @@ class GrowthPress_CRM {
             'menu_icon' => 'dashicons-book-alt'
         ) );
 
+        register_post_type( 'gp_project', array(
+            'labels'      => array( 'name' => 'Case Studies/Projects', 'singular_name' => 'Project' ),
+            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-portfolio',
+            'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        ) );
+
+        register_post_type( 'gp_service', array(
+            'labels'      => array( 'name' => 'Service Lines', 'singular_name' => 'Service' ),
+            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-hammer',
+            'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        ) );
+
         register_taxonomy( 'gp_lead_stage', 'gp_lead', array(
             'labels' => array( 'name' => 'Lead Stages' ),
             'hierarchical' => true,

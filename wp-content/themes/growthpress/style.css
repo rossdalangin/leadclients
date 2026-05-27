@@ -115,3 +115,14 @@ button:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(37, 99,
 /* Component Specific Fixes */
 .gp-ai-chat-bubble { z-index: 10001; }
 #gp-faq-chat-box { font-size: 14px; color: #475569; }
+
+/* Reveal Animations */
+.gp-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.gp-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}

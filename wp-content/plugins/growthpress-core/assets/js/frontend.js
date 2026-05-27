@@ -65,4 +65,20 @@ jQuery(document).ready(function($) {
         }, 60000); // 1 minute
     }
     $(document).on('mousemove keypress', resetInactivity);
+
+    // Scroll Reveal Animation (Intersection Observer)
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('gp-revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, { threshold: 0.1 });
+    $('.glass-card, section, .gp-hero').each(function() {
+        $(this).addClass('gp-reveal');
+        revealObserver.observe(this);
+    });
 });

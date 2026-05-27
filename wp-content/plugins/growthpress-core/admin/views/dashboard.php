@@ -74,6 +74,22 @@
                 <canvas id="gp-main-chart" height="100"></canvas>
             </div>
 
+            <!-- Automation Workflows Visualization -->
+            <div class="glass-card" style="margin-top:30px; border-left: 6px solid #10B981;">
+                <h3 style="color:#10B981;">⚡ Active Automation Workflows</h3>
+                <div class="workflow-visual" style="display:flex; justify-content:space-between; align-items:center; text-align:center; padding:20px 0;">
+                    <div style="flex:1;"><div style="font-size:20px;">📥</div><div style="font-size:10px; font-weight:700;">INTAKE</div><div style="font-size:9px; opacity:0.6;">AI Sentiment Analysis</div></div>
+                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
+                    <div style="flex:1;"><div style="font-size:20px;">🤖</div><div style="font-size:10px; font-weight:700;">TRIAGE</div><div style="font-size:9px; opacity:0.6;">Lead Scoring (0-100)</div></div>
+                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
+                    <div style="flex:1;"><div style="font-size:20px;">📅</div><div style="font-size:10px; font-weight:700;">BOOKING</div><div style="font-size:9px; opacity:0.6;">Staff-Aware Engines</div></div>
+                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
+                    <div style="flex:1;"><div style="font-size:20px;">🤝</div><div style="font-size:10px; font-weight:700;">NURTURE</div><div style="font-size:9px; opacity:0.6;">5-Day Omnichannel</div></div>
+                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
+                    <div style="flex:1;"><div style="font-size:20px;">💰</div><div style="font-size:10px; font-weight:700;">CLOSE</div><div style="font-size:9px; opacity:0.6;">AI Proposal Acceptance</div></div>
+                </div>
+            </div>
+
             <!-- Kanban -->
             <div id="gp-kanban-board" style="display:flex; gap:15px; overflow-x:auto; margin-top:30px;">
                 <?php foreach ( $stages as $slug => $label ) : ?>
@@ -118,6 +134,25 @@
         </div>
 
         <div class="side-col">
+            <!-- Strategic Funnel View -->
+            <div class="glass-card" style="border-left: 6px solid #2563EB;">
+                <h3>Strategic Funnel</h3>
+                <?php
+                $f_new = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'new')), 'posts_per_page' => -1)));
+                $f_qualified = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'qualified')), 'posts_per_page' => -1)));
+                $f_booked = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'booked')), 'posts_per_page' => -1)));
+                $f_closed = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'closed')), 'posts_per_page' => -1)));
+                $total_f = max(1, $f_new + $f_qualified + $f_booked + $f_closed);
+                ?>
+                <div class="funnel-viz" style="display:flex; flex-direction:column; gap:5px;">
+                    <div style="background:#eef2ff; padding:10px; border-radius:4px; width:100%;"><strong>Leads:</strong> <?php echo $f_new; ?></div>
+                    <div style="background:#dee7ff; padding:10px; border-radius:4px; width:85%; margin:0 auto;"><strong>Qualified:</strong> <?php echo $f_qualified; ?></div>
+                    <div style="background:#c7d6ff; padding:10px; border-radius:4px; width:70%; margin:0 auto;"><strong>Booked:</strong> <?php echo $f_booked; ?></div>
+                    <div style="background:#adc3ff; padding:10px; border-radius:4px; width:55%; margin:0 auto;"><strong>Closed:</strong> <?php echo $f_closed; ?></div>
+                </div>
+                <div style="font-size:10px; text-align:center; margin-top:10px; opacity:0.6;">Overall Conversion: <?php echo round(($f_closed / $total_f) * 100); ?>%</div>
+            </div>
+
             <!-- Lead Sources -->
             <div class="glass-card">
                 <h3>Lead Sources</h3>

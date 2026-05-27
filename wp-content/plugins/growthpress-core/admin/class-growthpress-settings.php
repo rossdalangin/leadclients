@@ -107,6 +107,17 @@ class GrowthPress_Settings {
                         </td>
                     </tr>
 
+                    <tr class="section-header"><th colspan="2"><h3>SaaS Intelligence & Usage</h3></th></tr>
+                    <tr>
+                        <th scope="row"><label>AI Credits Balance</label></th>
+                        <td>
+                            <div style="background:#f1f5f9; height:20px; border-radius:10px; overflow:hidden; width:300px; border:1px solid #e2e8f0;">
+                                <div style="width:65%; background:linear-gradient(90deg, #2563EB, #10B981); height:100%;"></div>
+                            </div>
+                            <p class="description">6,500 / 10,000 credits remaining this month. <a href="#">Upgrade Tier</a></p>
+                        </td>
+                    </tr>
+
                     <tr class="section-header"><th colspan="2"><h3>Infrastructure & Security</h3></th></tr>
                     <tr>
                         <th scope="row"><label>Bearer Auth Token</label></th>
