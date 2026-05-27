@@ -29,3 +29,22 @@ To create a high-trust, elite-authority atmosphere that justifies high-ticket pr
 - **Sticky CTAs**: "Book Now" remains reachable at the bottom of the screen on mobile devices.
 - **Touch Targets**: Minimum 44x44px for all interactive elements.
 - **Full-Screen Menus**: Minimalist overlay for navigation on mobile.
+
+## 5. Executive Dashboard Mockup Specs
+- **Header**: 40px high containing the business logo (left) and AI status indicator (right).
+- **Executive Summary**: 3 cards (Leads, Bookings, Conv. Rate) using 32px bold numbers and color-coded growth indicators (+/- %).
+- **Charts**: Single Chart.js line graph showing 30-day growth trends in primary #2563EB.
+- **Kanban Board**:
+  - 4 columns (New, Qualified, Booked, Closed).
+  - Cards: 15px padding, 4px blue border-left for high-intent, 2px slate for others.
+  - Hover: Subtle 5px shadow lift and scale(1.02).
+- **Pro Tips Widget**: Dark Slate background (#1E293B) with white text, rotating industry advice every 10 seconds.
+- **Activity Feed**: Scrolling list with 9px timestamps and 11px event logs.
+
+## 6. CRM Lead Brief Mockup Specs
+- **Lead Header**: Name, Email, and large 'AI Probability' percentage card.
+- **Strategic Brief**: 2-column layout.
+  - Left: AI-generated closing tactics in a light blue information box.
+  - Right: AI-suggested discovery questions in a light orange box.
+- **Nudge Widget**: Sidebar list with lightning bolt icons and 12px behavioral advice.
+- **Action Footer**: High-contrast blue button: "Generate Strategic AI Proposal".
