@@ -3,7 +3,7 @@
  * Plugin Name: GrowthPress Core
  * Plugin URI: https://growthpress.io
  * Description: Core engine for the GrowthPress Business Operating System.
- * Version: 1.0.0
+ * Version: 4.0.0
  * Author: GrowthPress Team
  * Text Domain: growthpress-core
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-define( 'GROWTHPRESS_CORE_VERSION', '1.0.0' );
+define( 'GROWTHPRESS_CORE_VERSION', '4.0.0' );
 define( 'GROWTHPRESS_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'GROWTHPRESS_CORE_URL', plugin_dir_url( __FILE__ ) );
 
