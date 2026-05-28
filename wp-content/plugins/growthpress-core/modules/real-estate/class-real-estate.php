@@ -1,105 +1,43 @@
 <?php
 /**
- * GrowthPress Real Estate Module - Help Enhanced
+ * Real Estate Niche specialized Closer Tools - Ultra Elite v3.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
-
 class GrowthPress_RealEstate {
-
     public function __construct() {
-        add_action( 'init', array( $this, 'register_property_cpt' ) );
-        add_action( 'add_meta_boxes', array( $this, 'add_property_meta_boxes' ) );
-        add_action( 'admin_head', array( $this, 'add_property_help_tabs' ) );
-        add_action( 'wp_ajax_gp_property_match', array( $this, 'handle_property_match' ) );
-        add_action( 'wp_ajax_nopriv_gp_property_match', array( $this, 'handle_property_match' ) );
-        add_action( 'gp_niche_lead_analysis', array( $this, 'analyze_lead_property_fit' ) );
-    }
-
-    public function analyze_lead_property_fit( $lead_id ) {
-        if ( get_option('growthpress_niche') !== 'real-estate' ) return;
-        $recommendation = $this->suggest_properties_for_lead($lead_id);
-        update_post_meta($lead_id, '_gp_ai_property_recommendation', $recommendation);
+        add_shortcode('gp_property_matcher', array($this, 'render_property_matcher'));
+        add_action('init', array($this, 'register_property_cpt'));
     }
 
     public function register_property_cpt() {
-        register_post_type( 'gp_property', array(
-            'labels'      => array( 'name' => 'Properties', 'singular_name' => 'Property' ),
-            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-admin-home',
-            'supports'    => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
-        ) );
+        register_post_type('gp_property', array(
+            'labels' => array('name' => 'Properties', 'singular_name' => 'Property'),
+            'public' => true,
+            'show_ui' => true,
+            'menu_icon' => 'dashicons-admin-home',
+            'supports' => array('title', 'editor', 'thumbnail', 'excerpt')
+        ));
     }
 
-    public function add_property_meta_boxes() {
-        add_meta_box( 'gp_prop_config', 'AI Asset Configuration', array( $this, 'render_prop_meta' ), 'gp_property', 'side' );
-    }
+    public function render_property_matcher() {
+        return '<div class="gp-property-matcher glass-card gp-reveal" style="text-align:center; padding:80px 60px;">
+            <div style="font-size:10px; font-weight:950; color:var(--primary); text-transform:uppercase; letter-spacing:3px; margin-bottom:15px;">PROPRIETARY MATCH ENGINE</div>
+            <h3 class="text-gradient" style="font-size:3rem;">AI Lifestyle Matcher</h3>
+            <p style="font-size:1.1rem; opacity:0.7; max-width:600px; margin:20px auto 0;">Our neural network matches your specific lifestyle profile with high-authority off-market inventory.</p>
 
-    public function render_prop_meta( $post ) {
-        ?>
-        <div class="gp-meta-field">
-            <label>Virtual Tour (Matterport/YouTube)</label>
-            <input type="url" name="gp_virtual_tour" style="width:100%;" placeholder="https://...">
-            <p class="description">Example: https://my.matterport.com/show/?m=XXXXXXXXX</p>
-        </div>
-        <?php
-    }
-
-    public function add_property_help_tabs() {
-        $screen = get_current_screen();
-        if ( ! $screen || $screen->post_type !== 'gp_property' ) return;
-
-        $screen->add_help_tab( array(
-            'id'      => 'gp_re_ai',
-            'title'   => 'AI Matchmaking',
-            'content' => '<p>The AI Matchmaker scans your property descriptions and meta data to suggest listings to leads based on their specific lifestyle intent.</p>',
-        ) );
-    }
-
-    public function handle_property_match() {
-        $intent = sanitize_textarea_field($_POST['intent'] ?? '');
-        $all_props = get_posts(array('post_type' => 'gp_property', 'posts_per_page' => 10));
-
-        $prop_list = '';
-        foreach($all_props as $p) $prop_list .= "- {$p->post_title}: {$p->post_excerpt}\n";
-
-        $ai = GrowthPress_AI::get_instance();
-        $prompt = "A buyer is looking for: \"$intent\". Based on these properties: \n$prop_list\n which one is the best fit and why? Return a professional recommendation.";
-
-        $result = $ai->call_ai($prompt, "Real Estate Matchmaker");
-        wp_send_json_success($result);
-    }
-
-    public function suggest_properties_for_lead( $lead_id ) {
-        $lead = get_post($lead_id);
-        $all_props = get_posts(array('post_type' => 'gp_property', 'posts_per_page' => 10));
-
-        $prop_list = '';
-        foreach($all_props as $p) $prop_list .= "- {$p->post_title}: {$p->post_excerpt}\n";
-
-        $ai = GrowthPress_AI::get_instance();
-        $prompt = "Based on this lead inquiry: \"{$lead->post_content}\", which of these properties are the best match? \n$prop_list\n Return the top 2 property names and why.";
-
-        return $ai->call_ai($prompt, "Real Estate Matchmaker");
+            <div id="lifestyle-steps" style="margin-top:60px;">
+                <div class="wp-block-columns" style="gap:25px;">
+                    <div class="wp-block-column"><button class="gp-btn" style="width:100%; height:100px; text-transform:none; border-radius:24px; font-size:16px;" onclick="jQuery(\'#lifestyle-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Suburban Sanctuary</button></div>
+                    <div class="wp-block-column"><button class="gp-btn" style="width:100%; height:100px; text-transform:none; border-radius:24px; font-size:16px;" onclick="jQuery(\'#lifestyle-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Urban Modernist</button></div>
+                    <div class="wp-block-column"><button class="gp-btn" style="width:100%; height:100px; text-transform:none; border-radius:24px; font-size:16px;" onclick="jQuery(\'#lifestyle-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Coastal Elite</button></div>
+                </div>
+                <div style="margin-top:30px; font-size:11px; font-weight:900; opacity:0.3; letter-spacing:2px;">ENGINE STATUS: READY FOR INFERENCE</div>
+            </div>
+            <div id="gp-quiz-form" style="display:none; margin-top:40px;">[gp_lead_form]</div>
+        </div>';
     }
 
     public function generate_sample_data() {
-        $props = array(
-            'Modern Penthouse' => 'Luxury living in the heart of downtown.',
-            'Suburban Family Estate' => 'Spacious 5-bedroom home with large backyard.',
-            'Oceanfront Villa' => 'Direct beach access and panoramic views.'
-        );
-        foreach($props as $title => $desc) {
-            if ( ! get_page_by_path( sanitize_title($title), OBJECT, 'gp_property' ) ) {
-                wp_insert_post(array(
-                    'post_title'   => $title,
-                    'post_content' => $desc,
-                    'post_type'    => 'gp_property',
-                    'post_status'  => 'publish'
-                ));
-            }
-        }
+        wp_insert_post(array('post_title' => 'The Glass Penthouse', 'post_content' => 'High-floor luxury with total skyline immersion.', 'post_type' => 'gp_property', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_RealEstate();

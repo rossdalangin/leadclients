@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress AI Content Studio - Market Insights Enhanced
+ * GrowthPress AI Content Studio - Command Center v1.7
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,92 +35,102 @@ class GrowthPress_Content_Studio {
 
         switch($type) {
             case 'blog': $result = $ai->generate_blog_post($topic, $niche); break;
-            case 'social': $result = $ai->generate_social_content($topic); break;
-            case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
             case 'campaign': $result = $ai->generate_email_campaign($topic, $niche); break;
-            case 'headlines': $result = $ai->call_ai("Generate 5 high-converting headlines and 3 compelling Call-To-Action (CTA) variations for \"$topic\" in the $niche industry. Use behavioral psychology and power words.", "CRO Expert"); break;
-            case 'conversion': $result = $ai->call_ai("Act as a conversion rate optimization (CRO) expert. Analyze the $niche landing page for \"$topic\" and suggest 5 high-impact changes to improve lead capture and trust. Include psychological reasonings.", "CRO Specialist"); break;
-            case 'leadmagnet': $result = $ai->call_ai("Generate a comprehensive high-ticket lead magnet (Ebook/Guide) outline and opening chapter for \"$topic\" in the $niche niche. Focus on extreme value and authority building.", "Lead Magnet Architect"); break;
             case 'market': $result = $ai->generate_market_insights($topic, $niche); break;
-            case 'sales': $result = $ai->call_ai("Generate high-ticket discovery call talk tracks, power questions, and objection handling for a $niche firm regarding \"$topic\".", "AI Sales Coach"); break;
-            default: $result = 'Invalid.';
+            case 'sales': $result = $ai->call_ai("Generate high-ticket discovery call talk tracks and objection handling for a $niche firm regarding \"$topic\".", "AI Sales Coach"); break;
+            case 'ad': $result = $ai->generate_ad_copy($topic, $niche); break;
+            case 'headlines': $result = $ai->call_ai("Generate 5 elite headlines for \"$topic\" in the $niche industry.", "CRO Expert"); break;
+            default: $result = 'Invalid selection.';
         }
 
-        if ( is_wp_error($result) ) {
-            wp_send_json_error($result->get_error_message());
-        }
-
+        if ( is_wp_error($result) ) wp_send_json_error($result->get_error_message());
         wp_send_json_success($result);
     }
 
     public function render_studio() {
         $niche = get_option('growthpress_niche', 'business');
         $prompt_library = array(
-            'dental'        => array('Invisalign vs Braces', 'Emergency Dental Care', 'Pediatric Dentistry Tips', 'Smile Makeovers'),
-            'law'           => array('Personal Injury Rights', 'Estate Planning 101', 'DUI Defense Strategies', 'Business Litigation'),
-            'contractor'    => array('Kitchen Remodel ROI', 'Outdoor Living Spaces', 'Foundation Repair Signs', 'Smart Home Upgrades'),
-            'roofing'       => array('Storm Damage Claims', 'Metal vs Shingle Roofs', 'Roof Life Extension', 'Emergency Leak Repair'),
-            'solar'         => array('Federal Tax Credits', 'Battery Backup Value', 'Solar for Off-Grid', 'Net Metering Explained'),
-            'accounting'    => array('Small Business Tax Prep', 'Audit Protection', 'Cash Flow Management', 'Virtual CFO Benefits'),
-            'medical'       => array('Telemedicine Benefits', 'Wellness Checklists', 'Sports Injury Recovery', 'Heart Health AI'),
-            'real-estate'   => array('Selling in a High-Rate Market', 'First-Time Buyer Guide', 'Investment Property ROI', 'Staging for Top Dollar'),
-            'coaches'       => array('High-Performance Mindset', 'Scaling to 7 Figures', 'Overcoming Burnout', 'Executive Leadership'),
-            'consultants'   => array('Process Automation', 'Digital Transformation', 'Team Efficiency Boost', 'Market Entry Strategy')
+            'dental'        => array('Invisalign vs Braces', 'Emergency Dental Care', 'Smile Makeovers'),
+            'law'           => array('Personal Injury Rights', 'Estate Planning 101', 'Business Litigation'),
+            'solar'         => array('Federal Tax Credits', 'Battery Backup Value', 'Net Metering'),
+            'contractor'    => array('Kitchen Remodel ROI', 'Outdoor Living Spaces', 'Foundation Repair'),
+            'accounting'    => array('Small Business Tax Prep', 'Audit Protection', 'Virtual CFO'),
+            'medical'       => array('Telemedicine Benefits', 'Wellness Checklists', 'Heart Health'),
+            'real-estate'   => array('Selling in a High-Rate Market', 'First-Time Buyer Guide', 'Investment ROI'),
+            'coaches'       => array('High-Performance Mindset', 'Scaling to 7 Figures', 'Overcoming Burnout'),
+            'consultants'   => array('Process Automation', 'Digital Transformation', 'Team Efficiency')
         );
-        $current_prompts = isset($prompt_library[$niche]) ? $prompt_library[$niche] : array('General Growth', 'Market Dominance', 'Client Acquisition');
+        $current_prompts = $prompt_library[$niche] ?? array('Market Dominance', 'Client Acquisition', 'Authority Building');
         ?>
         <div class="wrap growthpress-studio">
-            <h1>AI Content & Insights Studio</h1>
-            <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
-                <div class="studio-input-column" style="display:flex; flex-direction:column; gap:20px;">
-                    <div class="studio-input glass-card">
-                        <h3>Asset & Strategy Generation</h3>
-                        <label>Content Type</label>
-                        <select id="gp-content-type" style="width:100%; margin-bottom:15px;">
-                            <option value="blog">SEO Blog Post</option>
-                            <option value="campaign">Nurture Campaign</option>
-                            <option value="market">Market Insights & Angle of Attack</option>
-                            <option value="sales">AI Sales Assistant (Talk Tracks)</option>
-                            <option value="headlines">AI Headline & CTA Optimizer</option>
-                            <option value="conversion">AI Conversion Suggestions</option>
-                            <option value="ad">Direct-Response Ads</option>
-                            <option value="social">Omnichannel Social Suite</option>
-                            <option value="leadmagnet">AI Lead Magnet (Ebook/Guide)</option>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+                <h1>AI Content & Insights Command Center</h1>
+                <div style="background:var(--primary-glow); color:var(--primary); padding:8px 16px; border-radius:30px; font-size:11px; font-weight:900; letter-spacing:1px;">ENGINE: GPT-4-TURBO</div>
+            </div>
+
+            <div class="studio-layout" style="display:grid; grid-template-columns: 1fr 1fr 1.2fr; gap:30px;">
+                <!-- Column 1: Config -->
+                <div class="glass-card" style="padding:40px;">
+                    <h3 style="margin-top:0;">Asset Calibration</h3>
+                    <p style="font-size:13px; opacity:0.7; margin-bottom:30px;">Define the strategic asset you need for your <?php echo ucwords($niche); ?> practice.</p>
+
+                    <div style="margin-bottom:25px;">
+                        <label style="font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:10px;">Select Asset Type</label>
+                        <select id="gp-content-type" style="width:100%; height:50px; border-radius:12px; font-weight:600;">
+                            <option value="blog">SEO Authority Post</option>
+                            <option value="campaign">5-Day Nurture Sequence</option>
+                            <option value="market">Market Angle of Attack</option>
+                            <option value="sales">Discovery Talk Tracks</option>
+                            <option value="ad">Direct-Response Ad Suite</option>
+                            <option value="headlines">Conversion Headlines</option>
                         </select>
-                        <label>Target Topic / Location</label>
-                        <input type="text" id="gp-content-topic" placeholder="e.g. Dallas, Texas" style="width:100%; margin-top:5px; margin-bottom:15px;">
-                        <button class="button button-primary" onclick="generateContent()" style="width:100%;">Generate High-Ticket Strategy</button>
                     </div>
 
-                    <div class="studio-prompts glass-card">
-                        <h3>Recommended AI Topics</h3>
-                        <p class="description">Click a topic below to auto-fill the generator. These are optimized for the <strong><?php echo ucwords(str_replace('-', ' ', $niche)); ?></strong> niche.</p>
-                        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
-                            <?php foreach($current_prompts as $p): ?>
-                                <button type="button" class="button button-small" onclick="jQuery('#gp-content-topic').val('<?php echo esc_js($p); ?>')"><?php echo esc_html($p); ?></button>
-                            <?php endforeach; ?>
-                        </div>
+                    <div style="margin-bottom:30px;">
+                        <label style="font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:10px;">Target Topic or Focus</label>
+                        <input type="text" id="gp-content-topic" placeholder="e.g. Luxury Renovation" style="width:100%; height:50px; border-radius:12px; border:1px solid #E2E8F0; padding:0 15px;">
+                    </div>
+
+                    <button class="button button-primary button-hero" onclick="generateContent()" style="width:100%; height:60px !important; border-radius:15px !important; font-size:16px !important;">Generate Strategic Asset</button>
+                </div>
+
+                <!-- Column 2: Library -->
+                <div class="glass-card" style="padding:40px;">
+                    <h3 style="margin-top:0;">Prompt Intelligence</h3>
+                    <p style="font-size:13px; opacity:0.7; margin-bottom:30px;">Click a specialized topic below to pre-fill the command engine.</p>
+
+                    <div style="display:grid; gap:15px;">
+                        <?php foreach($current_prompts as $p): ?>
+                            <div class="prompt-card" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:20px; border-radius:18px; cursor:pointer; transition:all 0.3s ease;" onclick="jQuery('#gp-content-topic').val('<?php echo esc_js($p); ?>')">
+                                <div style="font-size:14px; font-weight:800; color:var(--primary);">🎯 <?php echo esc_html($p); ?></div>
+                                <div style="font-size:11px; opacity:0.5; margin-top:5px;">Optimized for your <?php echo $niche; ?> niche.</div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
-                <div class="studio-output glass-card" style="min-height:400px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h3 style="margin:0;">Strategic Output</h3>
-                        <button class="button button-small" onclick="copyStudioOutput()">Copy to Clipboard</button>
+                <!-- Column 3: Output -->
+                <div class="studio-output glass-card" style="padding:0; overflow:hidden; border:none; background: #0F172A; color:white;">
+                    <div style="padding:30px 40px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin:0; color:white; font-size:16px;">Strategic Intelligence Output</h3>
+                        <button class="button button-small" onclick="copyStudioOutput()" style="background:rgba(255,255,255,0.1); color:white; border:none;">COPY</button>
                     </div>
-                    <div id="gp-studio-output" style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid #e2e8f0; font-family:monospace; min-height:300px; max-height:600px; overflow-y:auto;">
-                        Your generated strategy or content will appear here...
+                    <div id="gp-studio-output" style="padding:40px; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.7; height:500px; overflow-y:auto; color:rgba(255,255,255,0.8);">
+                        <span style="opacity:0.3;">// Waiting for strategic command...</span>
                     </div>
                 </div>
-                <script>
-                function copyStudioOutput() {
-                    var content = jQuery('#gp-studio-output').text();
-                    navigator.clipboard.writeText(content);
-                    alert("Output copied to clipboard!");
-                }
-                </script>
             </div>
         </div>
+        <script>
+        function copyStudioOutput() {
+            var content = jQuery('#gp-studio-output').text();
+            navigator.clipboard.writeText(content);
+            alert("Strategic asset copied to clipboard!");
+        }
+        </script>
+        <style>
+            .prompt-card:hover { transform: translateX(8px); border-color: var(--primary); background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        </style>
         <?php
     }
 }

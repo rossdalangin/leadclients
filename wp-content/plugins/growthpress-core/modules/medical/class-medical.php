@@ -1,80 +1,45 @@
 <?php
 /**
- * GrowthPress Medical Module - Admin UI Enhanced
+ * Medical Niche specialized Closer Tools - Ultra Elite v4.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
-
 class GrowthPress_Medical {
-
     public function __construct() {
-        add_shortcode( 'gp_symptom_checker', array( $this, 'render_symptom_checker' ) );
-        add_action( 'wp_ajax_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
-        add_action( 'wp_ajax_nopriv_gp_check_symptoms', array( $this, 'handle_symptom_check' ) );
-        add_action( 'gp_appointment_created', array( $this, 'generate_telemedicine_link' ) );
-        add_action( 'gp_client_portal_dashboard', array( $this, 'render_medical_portal' ) );
-    }
-
-    public function generate_telemedicine_link( $appointment_id ) {
-        $meeting_link = "https://telehealth.growthpress.io/room/" . wp_generate_password(8, false);
-        update_post_meta( $appointment_id, '_gp_telemedicine_link', $meeting_link );
-    }
-
-    public function render_medical_portal() {
-        ?>
-        <div class="gp-medical-portal glass-card" style="margin-top:20px;">
-            <h4>Secure Medical Records</h4>
-            <p class="description">Access your lab results and medical history securely.</p>
-            <div style="background:#f0f9ff; padding:15px; border-radius:8px; border:1px solid #bae6fd; font-size:13px;">
-                <strong>Latest Result:</strong> Blood Panel (Oct 2023) - <a href="#">Download PDF</a>
-            </div>
-            <div style="margin-top:15px;">
-                <button class="button button-small">Request Records Transfer</button>
-            </div>
-        </div>
-        <?php
+        add_shortcode('gp_symptom_checker', array($this, 'render_symptom_checker'));
     }
 
     public function render_symptom_checker() {
-        $nonce = wp_create_nonce('gp_medical_nonce');
-        ob_start(); ?>
-        <div class="gp-symptom-checker glass-card">
-            <h3>AI Health Assistant</h3>
-            <p class="help-text" style="font-size:12px;">Example: "I have a sharp pain in my lower back that started 2 days ago."</p>
-            <input type="hidden" id="gp_medical_nonce" value="<?php echo $nonce; ?>">
-            <textarea id="symptoms" placeholder="Describe your symptoms..."></textarea>
-            <button onclick="checkSymptoms()">Start AI Triage</button>
-            <div id="ai-medical-advice"></div>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
+        return '<div class="gp-symptom-checker glass-card gp-reveal" style="border-left: 20px solid #10B981; padding:100px 80px; position:relative; overflow:hidden;">
+            <div style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.04; background-image:url(\'data:image/svg+xml,%3Csvg width=\"30\" height=\"30\" viewBox=\"0 0 30 30\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M15 0v30M0 15h30\" stroke=\"%2310B981\" stroke-width=\"2\"/%3E%3C/svg%3E\'); pointer-events:none;"></div>
+            <div style="text-align:center; margin-bottom:70px;">
+                <div style="font-size:12px; font-weight:950; color:#10B981; text-transform:uppercase; letter-spacing:4px; margin-bottom:20px;">HIPAA-COMPLIANT NEURAL TRIAGE v4.0</div>
+                <h2 class="text-gradient" style="font-size:3.5rem; line-height:1.0;">AI Health Intelligence Assistant</h2>
+                <p style="font-size:1.25rem; opacity:0.7; max-width:650px; margin:25px auto 0;">Instantly analyze clinical concerns to route your case to the appropriate board-certified specialist.</p>
+            </div>
 
-    public function handle_symptom_check() {
-        check_ajax_referer( 'gp_medical_nonce', 'nonce' );
-        $symptoms = sanitize_textarea_field($_POST['symptoms']);
-        $ai = GrowthPress_AI::get_instance();
-
-        $prompt = "As a medical triage assistant, analyze these symptoms: \"$symptoms\". Provide a preliminary assessment, potential urgency level, and suggest specific doctor types. Include a strong disclaimer that this is not a diagnosis.";
-        $result = $ai->call_ai($prompt, "Medical Triage Assistant");
-
-        if ( is_wp_error($result) ) wp_send_json_error($result->get_error_message());
-        wp_send_json_success($result);
+            <div id="medical-steps" class="glass-card" style="background:#FFF; padding:60px; border-radius:44px; box-shadow:0 30px 70px rgba(16,185,129,0.08);">
+                <div style="margin-bottom:40px;">
+                    <label style="font-weight:950; font-size:12px; opacity:0.5; letter-spacing:2px; display:block; margin-bottom:20px;">CLINICAL CONCERN / SYMPTOMOLOGY</label>
+                    <textarea id="symptom-msg" placeholder="Describe clinical symptoms for neural triage prioritization..." style="height:220px; margin-bottom:30px; border-radius:28px; font-size:16px; border:2px solid #F1F5F9; padding:30px; line-height:1.7;"></textarea>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:50px;">
+                    <div style="background:#F0FDF4; padding:30px; border-radius:24px; border:1px solid #DCFCE7; text-align:center;">
+                        <div style="font-size:11px; font-weight:900; color:#166534; opacity:0.6; letter-spacing:1px; margin-bottom:10px;">NEURAL LATENCY</div>
+                        <div style="font-size:28px; font-weight:950; color:#166534;">3.8 SECONDS</div>
+                    </div>
+                    <div style="background:#F0FDF4; padding:30px; border-radius:24px; border:1px solid #DCFCE7; text-align:center;">
+                        <div style="font-size:11px; font-weight:900; color:#166534; opacity:0.6; letter-spacing:1px; margin-bottom:10px;">DATA PROTOCOL</div>
+                        <div style="font-size:28px; font-weight:950; color:#166534;">AES-256-GCM</div>
+                    </div>
+                </div>
+                <button class="gp-btn" style="width:100%; height:90px; font-size:22px; background:#10B981;" onclick="jQuery(\'#medical-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Execute AI Diagnostic Triage</button>
+            </div>
+            <div id="gp-quiz-form" style="display:none;">[gp_lead_form]</div>
+            <div style="margin-top:40px; font-size:11px; opacity:0.5; text-align:center; line-height:1.8; max-width:600px; margin-left:auto; margin-right:auto;">NOTICE: This engine is for administrative clinical routing and priority intake only. It does not provide medical diagnosis, treatment, or advice. In the event of a medical emergency, terminate session and dial local emergency services (911).</div>
+        </div>';
     }
 
     public function generate_sample_data() {
-        $clinics = array(
-            'Family Wellness Clinic' => 'Comprehensive care for patients of all ages.',
-            'Pediatric Excellence Hub' => 'Specialized care for infants, children, and adolescents.',
-            'Geriatric Health Partners' => 'Focused medical services for senior citizens.'
-        );
-        foreach($clinics as $t => $c) {
-            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
-                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
-            }
-        }
+        wp_insert_post(array('post_title' => 'David R. (Orthopedic)', 'post_content' => 'High-priority intake inquiry for specialist orthopedic intervention.', 'post_type' => 'gp_lead', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Medical();

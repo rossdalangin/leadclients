@@ -1,36 +1,30 @@
-<?php get_header(); ?>
-<main class="site-main container">
-    <?php while ( have_posts() ) : the_post();
-        $price = get_post_meta(get_the_ID(), '_gp_property_price', true);
-        $tour_url = get_post_meta(get_the_ID(), '_gp_virtual_tour', true); ?>
-        <article class="glass-card property-display">
-            <div class="property-header">
-                <h1><?php the_title(); ?></h1>
-                <p class="price">$<?php echo number_format($price ?: 0); ?></p>
+<?php
+/**
+ * Single Property Template - GrowthPress Elite
+ */
+get_header(); ?>
+<main class="site-main grainy-bg" style="padding-top:100px; padding-bottom:100px;">
+    <div class="container">
+        <?php while ( have_posts() ) : the_post(); ?>
+            <div class="glass-card" style="padding:0; border-radius:40px; overflow:hidden; margin-bottom:60px;">
+                <?php if(has_post_thumbnail()) the_post_thumbnail('full', array('style'=>'width:100%; height:auto; display:block;')); ?>
             </div>
-            <?php if ( $tour_url ) : ?>
-                <div class="virtual-tour-embed" style="margin-bottom: 20px;">
-                    <iframe src="<?php echo esc_url($tour_url); ?>" width="100%" height="400" frameborder="0"></iframe>
+            <div class="wp-block-columns" style="gap:50px;">
+                <div class="wp-block-column" style="flex-basis:60%;">
+                    <h1 class="text-gradient"><?php the_title(); ?></h1>
+                    <div class="entry-content" style="font-size:1.2rem; line-height:1.8; opacity:0.8;">
+                        <?php the_content(); ?>
+                    </div>
                 </div>
-            <?php else : the_post_thumbnail('large'); endif; ?>
-
-            <div class="property-details"><?php the_content(); ?></div>
-
-            <div class="ai-matchmaking glass-card" style="margin-top: 20px;">
-                <h3>AI Matchmaker</h3>
-                <textarea id="buyer-intent" placeholder="Tell us what you need in a home..."></textarea>
-                <button onclick="matchProperty()">Check Compatibility</button>
-                <div id="match-result"></div>
+                <div class="wp-block-column">
+                    <div class="glass-card" style="background:var(--secondary); color:white; border:none;">
+                        <h3 style="color:white;">Schedule Private Viewing</h3>
+                        <p style="opacity:0.6; font-size:14px;">Inquire now to receive the full off-market dossier for this property.</p>
+                        [gp_lead_form]
+                    </div>
+                </div>
             </div>
-        </article>
-    <?php endwhile; ?>
+        <?php endwhile; ?>
+    </div>
 </main>
-<script>
-function matchProperty() {
-    jQuery('#match-result').text('Analyzing...');
-    jQuery.post(gp_ajax.ajaxurl, { action: 'gp_property_match', intent: jQuery('#buyer-intent').val() }, function(res) {
-        if(res.success) jQuery('#match-result').html(res.data);
-    });
-}
-</script>
 <?php get_footer(); ?>

@@ -1,0 +1,34 @@
+/* Admin Menu & UI Refinement v1.7 */
+#adminmenu li.toplevel_page_growthpress-dashboard .wp-menu-image::before {
+    content: "\f239"; /* chart-line */
+    color: #2563EB !important;
+}
+
+#adminmenu li.toplevel_page_growthpress-dashboard:hover .wp-menu-image::before {
+    transform: scale(1.2) rotate(-5deg);
+    transition: all 0.3s ease;
+}
+
+#adminmenu li.toplevel_page_growthpress-dashboard {
+    border-left: 4px solid transparent;
+}
+
+#adminmenu li.toplevel_page_growthpress-dashboard.current {
+    border-left-color: #2563EB;
+    background: rgba(37, 99, 235, 0.05) !important;
+}
+
+/* Custom Icons for Submenus */
+#adminmenu a[href="admin.php?page=growthpress-studio"]::before { content: "✨ "; font-size: 10px; }
+#adminmenu a[href="admin.php?page=growthpress-settings"]::before { content: "⚙️ "; font-size: 10px; }
+
+/* Dashboard UI Glow-up */
+.growthpress-dashboard .glass-card {
+    border-left: 6px solid var(--primary);
+}
+
+.growthpress-dashboard .stat:hover {
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.08);
+    transform: translateY(-4px);
+    border-color: var(--primary);
+}

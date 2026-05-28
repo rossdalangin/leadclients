@@ -1,128 +1,111 @@
 <div class="wrap growthpress-dashboard">
-    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-        <?php $dash_logo = get_option('growthpress_dashboard_logo'); if($dash_logo): ?>
-            <img src="<?php echo esc_url($dash_logo); ?>" style="max-height:40px;">
-        <?php else: ?>
-            <h1><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> OS</h1>
-        <?php endif; ?>
-        <div style="display:flex; gap:10px; align-items:center;">
-            <button class="button" onclick="exportLeads()">Export CSV</button>
-            <div class="ai-status" style="background:#10B981; color:white; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:bold;">AI ACTIVE</div>
+    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px;">
+        <div style="display:flex; align-items:center; gap:25px;">
+            <?php $dash_logo = get_option('growthpress_dashboard_logo'); if($dash_logo): ?>
+                <img src="<?php echo esc_url($dash_logo); ?>" style="max-height:60px;">
+            <?php else: ?>
+                <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.08em; margin:0;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.4;">OS</span></h1>
+            <?php endif; ?>
+            <div style="height:35px; width:2px; background:rgba(0,0,0,0.1);"></div>
+            <div style="font-size:12px; font-weight:950; opacity:0.5; letter-spacing:3px; text-transform:uppercase;">OMNI-INTELLIGENCE v4.0</div>
         </div>
-    </div>
-
-    <?php if ( ! get_option('growthpress_niche') ) : ?>
-    <div class="setup-wizard glass-card" style="margin-bottom: 25px; border: 2px solid #2563EB;">
-        <h3>🚀 OS Launch Wizard</h3>
-        <p>Your Business Operating System is almost ready. Select your industry to generate optimized pages, AI prompts, and demo data.</p>
         <div style="display:flex; gap:15px; align-items:center;">
-            <select id="gp-niche-select" style="padding:10px; border-radius:8px; border:1px solid #ddd; flex:1;">
-                <option value="dental">Dental Clinic</option>
-                <option value="law">Law Firm</option>
-                <option value="contractor">Contracting Company</option>
-                <option value="roofing">Roofing Company</option>
-                <option value="solar">Solar Company</option>
-                <option value="accounting">Accounting Firm</option>
-                <option value="medical">Medical Clinic</option>
-                <option value="real-estate">Real Estate Team</option>
-                <option value="coaches">Business Coach</option>
-                <option value="consultants">Consultancy</option>
-            </select>
-            <button class="button button-primary button-hero" onclick="setupNiche()">Initialize OS</button>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <div class="system-diagnostics glass-card" style="margin-bottom: 25px; padding: 20px; display:flex; gap:30px; align-items:center;">
-        <div style="flex:1;">
-            <h3 style="font-size:14px; margin-bottom:10px;">System Diagnostics</h3>
-            <div style="display:flex; gap:20px; font-size:11px;">
-                <span><strong>API:</strong> <?php echo get_option('growthpress_openai_api_key') ? '✅ Connected' : '❌ Offline'; ?></span>
-                <span><strong>OS:</strong> <?php echo get_option('growthpress_niche') ? '✅ Ready' : '❌ Needs Setup'; ?></span>
-                <span><strong>PHP:</strong> <?php echo version_compare(PHP_VERSION, '7.4', '>=') ? '✅ OK' : '❌ Update Needed'; ?></span>
-            </div>
-        </div>
-        <div style="text-align:right;">
-            <a href="<?php echo admin_url('admin.php?page=growthpress-settings#tab-docs'); ?>" class="button button-small">View Knowledge Base</a>
+            <button class="gp-btn" style="padding:12px 25px; font-size:12px; border-radius:12px; background:var(--secondary); color:white !important;" onclick="exportLeads()">EXPORT INTEL</button>
+            <div class="ai-status" style="background:#10B981; color:white; padding:12px 25px; border-radius:40px; font-size:12px; font-weight:950; letter-spacing:1px; box-shadow:0 15px 30px rgba(16,185,129,0.25);">NEURAL CORE ACTIVE</div>
         </div>
     </div>
 
-    <div class="dashboard-grid" style="display:grid; grid-template-columns: 2fr 1fr; gap:25px;">
+    <div class="dashboard-grid" style="display:grid; grid-template-columns: 2.8fr 1fr; gap:40px;">
         <div class="main-col">
-            <!-- Growth Overview -->
-            <div class="glass-card">
-                <h3>Executive Summary</h3>
-                <div class="stats-grid" style="display:flex; gap:20px; margin-bottom:20px;">
-                    <div class="stat" style="flex:1;">
-                        <span style="font-size:12px; color:#666;">Leads (Total)</span>
-                        <div style="font-size:24px; font-weight:bold; color:#2563EB;"><?php echo $lead_count_30d; ?></div>
+            <!-- Strategic Performance Engine -->
+            <div class="glass-card" style="padding:60px; border-radius:44px; margin-bottom:40px; border:1px solid rgba(255,255,255,0.6);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:50px;">
+                    <div>
+                        <h3 style="margin:0; font-size:28px; font-weight:950; letter-spacing:-0.04em;">Intelligence Performance Hub</h3>
+                        <p style="font-size:15px; opacity:0.6; margin-top:8px;">Real-time trajectory modeling across all high-ticket conversion vectors.</p>
                     </div>
-                    <div class="stat" style="flex:1;">
-                        <span style="font-size:12px; color:#666;">Bookings</span>
-                        <div style="font-size:24px; font-weight:bold; color:#10B981;"><?php echo $booking_count; ?></div>
+                    <div style="text-align:right;">
+                        <span style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:2px;">ENGINE LATENCY</span><br>
+                        <span style="color:#10B981; font-weight:900; font-size:14px;">142ms (OPTIMAL)</span>
                     </div>
-                    <div class="stat" style="flex:1;">
-                        <span style="font-size:12px; color:#666;">Conv. Rate</span>
-                        <div style="font-size:24px; font-weight:bold; color:#F59E0B;"><?php echo $conv_rate; ?>%</div>
+                </div>
+                <div class="stats-grid" style="display:flex; gap:30px; margin-bottom:50px;">
+                    <div class="stat" style="flex:1; background:#F8FAFC; padding:40px; border-radius:35px; border:1px solid #E2E8F0; position:relative; overflow:hidden;">
+                        <span style="font-size:11px; font-weight:950; color:#64748B; text-transform:uppercase; letter-spacing:2px;">Captured Inquiries</span>
+                        <div style="font-size:48px; font-weight:950; color:var(--secondary); margin-top:15px;"><?php echo $lead_count_30d; ?></div>
+                        <div style="position:absolute; bottom:0; left:0; height:4px; width:100%; background:var(--primary);"></div>
                     </div>
-                    <div class="stat" style="flex:1;">
-                        <span style="font-size:12px; color:#666;">Pipeline Value</span>
+                    <div class="stat" style="flex:1; background:#F8FAFC; padding:40px; border-radius:35px; border:1px solid #E2E8F0; position:relative; overflow:hidden;">
+                        <span style="font-size:11px; font-weight:950; color:#64748B; text-transform:uppercase; letter-spacing:2px;">Strategy Sessions</span>
+                        <div style="font-size:48px; font-weight:950; color:#10B981; margin-top:15px;"><?php echo $booking_count; ?></div>
+                        <div style="position:absolute; bottom:0; left:0; height:4px; width:100%; background:#10B981;"></div>
+                    </div>
+                    <div class="stat" style="flex:1; background:#F8FAFC; padding:40px; border-radius:35px; border:1px solid #E2E8F0; position:relative; overflow:hidden;">
+                        <span style="font-size:11px; font-weight:950; color:#64748B; text-transform:uppercase; letter-spacing:2px;">Pipeline Equity</span>
                         <?php $pipe_val = GrowthPress_Proposals::get_instance()->get_pipeline_value(); ?>
-                        <div style="font-size:24px; font-weight:bold; color:#7c3aed;">$<?php echo number_format($pipe_val); ?></div>
+                        <div style="font-size:48px; font-weight:950; color:var(--primary); margin-top:15px;">$<?php echo number_format($pipe_val); ?></div>
+                        <div style="position:absolute; bottom:0; left:0; height:4px; width:100%; background:var(--primary);"></div>
                     </div>
                 </div>
-                <canvas id="gp-main-chart" height="100"></canvas>
-            </div>
-
-            <!-- Automation Workflows Visualization -->
-            <div class="glass-card" style="margin-top:30px; border-left: 6px solid #10B981;">
-                <h3 style="color:#10B981;">⚡ Active Automation Workflows</h3>
-                <div class="workflow-visual" style="display:flex; justify-content:space-between; align-items:center; text-align:center; padding:20px 0;">
-                    <div style="flex:1;"><div style="font-size:20px;">📥</div><div style="font-size:10px; font-weight:700;">INTAKE</div><div style="font-size:9px; opacity:0.6;">AI Sentiment Analysis</div></div>
-                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
-                    <div style="flex:1;"><div style="font-size:20px;">🤖</div><div style="font-size:10px; font-weight:700;">TRIAGE</div><div style="font-size:9px; opacity:0.6;">Lead Scoring (0-100)</div></div>
-                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
-                    <div style="flex:1;"><div style="font-size:20px;">📅</div><div style="font-size:10px; font-weight:700;">BOOKING</div><div style="font-size:9px; opacity:0.6;">Staff-Aware Engines</div></div>
-                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
-                    <div style="flex:1;"><div style="font-size:20px;">🤝</div><div style="font-size:10px; font-weight:700;">NURTURE</div><div style="font-size:9px; opacity:0.6;">5-Day Omnichannel</div></div>
-                    <div style="width:30px; border-top:2px dashed #ddd;"></div>
-                    <div style="flex:1;"><div style="font-size:20px;">💰</div><div style="font-size:10px; font-weight:700;">CLOSE</div><div style="font-size:9px; opacity:0.6;">AI Proposal Acceptance</div></div>
+                <div style="background:#FFF; padding:50px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
+                    <canvas id="gp-main-chart" height="110"></canvas>
                 </div>
             </div>
 
-            <!-- Kanban -->
-            <div id="gp-kanban-board" style="display:flex; gap:15px; overflow-x:auto; margin-top:30px;">
+            <!-- CRM Board -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:60px; margin-bottom:40px;">
+                <h3 style="display:flex; align-items:center; gap:15px; font-size:28px; letter-spacing:-0.05em; margin:0;">
+                    <span class="dashicons dashicons-networking" style="color: var(--primary); font-size:32px; width:32px; height:32px;"></span> Neural Sales Command
+                </h3>
+                <div style="font-size:12px; font-weight:900; opacity:0.4; letter-spacing:1px;">SORT BY: STRATEGIC PRIORITY</div>
+            </div>
+
+            <div id="gp-kanban-board" style="display:flex; gap:30px; overflow-x:auto; padding-bottom:50px;">
                 <?php foreach ( $stages as $slug => $label ) : ?>
-                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width:220px; background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <h4 style="margin-top:0; color:#1e293b;"><?php echo $label; ?></h4>
-                        <div class="kanban-cards" style="min-height:200px;">
+                    <div class="kanban-col" data-stage="<?php echo $slug; ?>" style="min-width:400px;">
+                        <h4 style="margin-top:0; font-weight:950; color:var(--secondary); display:flex; justify-content:space-between; align-items:center; text-transform: uppercase; letter-spacing:2px; font-size:13px; padding:0 15px; opacity:0.6;">
+                            <?php echo $label; ?>
+                            <span style="font-size:11px; background:#FFF; border:1px solid #E2E8F0; padding:4px 14px; border-radius:30px; color:var(--secondary);">
+                                <?php
+                                $count_in_stage = count(array_filter($leads, function($l) use ($slug) {
+                                    $s = wp_get_object_terms($l->ID, 'gp_lead_stage', array('fields' => 'slugs'));
+                                    return (empty($s) && $slug === 'new') || in_array($slug, $s);
+                                }));
+                                echo $count_in_stage;
+                                ?>
+                            </span>
+                        </h4>
+                        <div class="kanban-cards" style="min-height:600px; margin-top:30px;">
                             <?php foreach ( $leads as $lead ) :
                                 $stage = wp_get_object_terms( $lead->ID, 'gp_lead_stage', array('fields' => 'slugs') );
                                 if ( (empty($stage) && $slug === 'new') || in_array($slug, $stage) ) :
-                                    $prob = get_post_meta($lead->ID, '_gp_ai_probability', true) ?: 50; ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="background:white; margin-bottom:12px; padding:15px; cursor:grab; position:relative; border-left: 4px solid <?php echo $prob > 75 ? '#10B981' : '#2563EB'; ?>;">
-                                        <strong style="display:block; margin-bottom:8px;"><?php echo esc_html($lead->post_title); ?></strong>
-
-                                        <?php
-                                        $tag = wp_get_object_terms($lead->ID, 'gp_lead_tag', array('fields' => 'names'));
-                                        if($tag): ?>
-                                            <div style="font-size:9px; background:#eef2ff; color:#4338ca; display:inline-block; padding:2px 6px; border-radius:4px; margin-bottom:8px; font-weight:bold;">
-                                                <?php echo esc_html($tag[0]); ?>
-                                            </div>
+                                    $prob = get_post_meta($lead->ID, '_gp_ai_probability', true) ?: 50;
+                                    $staff_id = get_post_meta($lead->ID, '_assigned_staff', true);
+                                    $staff = $staff_id ? get_userdata($staff_id) : null;
+                                    ?>
+                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="padding:35px; border-radius:35px; border-left: 12px solid <?php echo $prob > 80 ? '#10B981' : 'var(--primary)'; ?>; margin-bottom:30px; position:relative;">
+                                        <?php if($prob > 88): ?>
+                                            <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; font-size: 9px; font-weight: 950; padding: 6px 30px; transform: rotate(45deg) translate(25px, -25px); text-transform: uppercase; letter-spacing:1px; box-shadow:0 5px 15px rgba(239,68,68,0.3);">ELITE</div>
                                         <?php endif; ?>
 
-                                        <div class="gp-probability" style="font-size:10px; color:#10B981; font-weight:700;">
-                                            AI Prob: <?php echo $prob; ?>%
+                                        <strong style="display:block; margin-bottom:18px; font-size:20px; font-weight:950; letter-spacing:-0.04em;"><?php echo esc_html($lead->post_title); ?></strong>
+
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                            <div>
+                                                <?php $tag = wp_get_object_terms($lead->ID, 'gp_lead_tag', array('fields' => 'names')); if($tag): ?>
+                                                    <div style="font-size:10px; background:var(--primary-glow); color:var(--primary); display:inline-block; padding:6px 15px; border-radius:30px; margin-bottom:20px; font-weight:900; text-transform: uppercase; letter-spacing:1px; border:1px solid rgba(37,99,235,0.08);"><?php echo esc_html($tag[0]); ?></div>
+                                                <?php endif; ?>
+                                                <div style="font-size:12px; font-weight:950; color:#10B981; letter-spacing:0.5px;">PROBABILITY: <?php echo $prob; ?>%</div>
+                                            </div>
+
+                                            <div class="staff-avatar" title="<?php echo $staff ? esc_attr($staff->display_name) : 'UNASSIGNED'; ?>" style="width: 50px; height: 50px; border-radius: 50%; background: #FFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 950; border: 4px solid #F8FAFC; box-shadow: 0 15px 30px rgba(0,0,0,0.08); color:var(--secondary);">
+                                                <?php echo $staff ? substr($staff->display_name, 0, 1) : '?'; ?>
+                                            </div>
                                         </div>
 
-                                        <div class="gp-next-step" style="font-size:10px; background:#f8fafc; padding:6px; border-radius:6px; margin-top:8px; border: 1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
-                                            <span>💡 <?php echo $prob > 80 ? 'Draft Proposal' : 'Schedule Discovery'; ?></span>
-                                            <a href="<?php echo get_edit_post_link($lead->ID); ?>#gp_lead_insights" style="text-decoration:none;">Brief &rarr;</a>
-                                        </div>
-
-                                        <div style="margin-top:10px; display:flex; gap:8px; opacity:0.5;">
-                                            <span class="dashicons dashicons-admin-comments" style="font-size:14px;"></span>
-                                            <span class="dashicons dashicons-yes-alt" style="font-size:14px;"></span>
+                                        <div style="margin-top:30px; display: flex; gap:12px;">
+                                            <a href="<?php echo get_edit_post_link($lead->ID); ?>" class="gp-btn" style="flex:1; padding:12px; font-size:11px; border-radius:14px; background:var(--secondary); text-align:center; color:white !important;">INTEL BRIEF</a>
+                                            <button class="gp-btn" style="padding:12px; border-radius:14px; background:transparent; border:1px solid #E2E8F0; color:var(--secondary) !important;"><span class="dashicons dashicons-email"></span></button>
                                         </div>
                                     </div>
                                 <?php endif;
@@ -134,150 +117,54 @@
         </div>
 
         <div class="side-col">
-            <!-- Strategic Funnel View -->
-            <div class="glass-card" style="border-left: 6px solid #2563EB;">
-                <h3>Strategic Funnel</h3>
-                <?php
-                $f_new = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'new')), 'posts_per_page' => -1)));
-                $f_qualified = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'qualified')), 'posts_per_page' => -1)));
-                $f_booked = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'booked')), 'posts_per_page' => -1)));
-                $f_closed = count(get_posts(array('post_type' => 'gp_lead', 'tax_query' => array(array('taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'closed')), 'posts_per_page' => -1)));
-                $total_f = max(1, $f_new + $f_qualified + $f_booked + $f_closed);
-                ?>
-                <div class="funnel-viz" style="display:flex; flex-direction:column; gap:5px;">
-                    <div style="background:#eef2ff; padding:10px; border-radius:4px; width:100%;"><strong>Leads:</strong> <?php echo $f_new; ?></div>
-                    <div style="background:#dee7ff; padding:10px; border-radius:4px; width:85%; margin:0 auto;"><strong>Qualified:</strong> <?php echo $f_qualified; ?></div>
-                    <div style="background:#c7d6ff; padding:10px; border-radius:4px; width:70%; margin:0 auto;"><strong>Booked:</strong> <?php echo $f_booked; ?></div>
-                    <div style="background:#adc3ff; padding:10px; border-radius:4px; width:55%; margin:0 auto;"><strong>Closed:</strong> <?php echo $f_closed; ?></div>
-                </div>
-                <div style="font-size:10px; text-align:center; margin-top:10px; opacity:0.6;">Overall Conversion: <?php echo round(($f_closed / $total_f) * 100); ?>%</div>
-            </div>
-
-            <!-- Lead Sources -->
-            <div class="glass-card">
-                <h3>Lead Sources</h3>
-                <canvas id="gp-source-chart" height="200"></canvas>
-            </div>
-
-            <!-- Success Roadmap -->
-            <div class="glass-card" style="border-left: 6px solid #2563EB;">
-                <h3>🚀 Launch Readiness</h3>
-                <div class="roadmap-steps" style="font-size: 13px;">
+            <!-- Neural Activity Feed -->
+            <div class="glass-card" style="border-radius:40px; padding:45px; background:#FFF; border:1px solid #E2E8F0;">
+                <h3 style="font-size:16px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom:30px; font-weight:950;">Neural Activity Feed</h3>
+                <div style="display:grid; gap:25px;">
                     <?php
-                    $checks = array(
-                        'OpenAI API'  => array('status' => get_option('growthpress_openai_api_key'), 'link' => admin_url('admin.php?page=growthpress-settings')),
-                        'Niche OS'    => array('status' => get_option('growthpress_niche'), 'link' => admin_url('admin.php?page=growthpress-dashboard')),
-                        'Custom Logo' => array('status' => get_theme_mod('custom_logo'), 'link' => admin_url('customize.php')),
-                        'Identity'    => array('status' => true, 'link' => admin_url('customize.php')),
-                        'Comms (SMS)' => array('status' => get_option('growthpress_twilio_sid'), 'link' => admin_url('admin.php?page=growthpress-settings'))
-                    );
-                    foreach($checks as $label => $data): ?>
-                        <div class="step" style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; opacity: <?php echo $data['status'] ? '1' : '0.4'; ?>;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:16px;"><?php echo $data['status'] ? '✅' : '⚪'; ?></span>
-                                <strong><?php echo $label; ?></strong>
+                    $logs = GrowthPress_Activity::get_logs(6);
+                    if($logs): foreach($logs as $log): ?>
+                        <div style="display:flex; gap:15px; position:relative;">
+                            <div style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-top:5px; box-shadow:0 0 10px var(--primary-glow);"></div>
+                            <div>
+                                <div style="font-size:13px; font-weight:700; line-height:1.4; color:var(--secondary);"><?php echo esc_html($log['msg']); ?></div>
+                                <div style="font-size:10px; opacity:0.4; font-weight:800; margin-top:4px;"><?php echo strtoupper($log['time']); ?></div>
                             </div>
-                            <?php if(!$data['status']): ?><a href="<?php echo $data['link']; ?>" style="font-size:10px; color:#2563EB; text-decoration:none;">Setup</a><?php endif; ?>
                         </div>
-                    <?php endforeach; ?>
-                    <?php if(get_option('growthpress_niche')): ?>
-                        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
-                        <a href="<?php echo home_url(); ?>" target="_blank" class="button button-primary button-small" style="width:100%; text-align:center; display:block;">Preview Live Site</a>
-                    <?php endif; ?>
+                    <?php endforeach; else: echo "<p style='opacity:0.4; font-size:12px;'>Neural core warming up...</p>"; endif; ?>
                 </div>
             </div>
 
-            <!-- Pro Tips -->
-            <div class="glass-card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color:white;">
-                <h3 style="color:white; font-size:14px; text-transform:uppercase; letter-spacing:1px; opacity:0.7;">Industry Pro Tip</h3>
+            <!-- AI Strategic Insight -->
+            <div class="glass-card" style="border-top: 12px solid #10B981; background: #FFF; border-radius:40px; padding:45px; margin-top:40px;">
+                <h3 style="font-size:15px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom: 25px; font-weight:950;">Strategic Vector</h3>
                 <?php
                 $niche = get_option('growthpress_niche', 'business');
-                $tips = array(
-                    'dental'      => "Use the 'Smile Gallery' post type to showcase transformation. High-ticket dental leads buy based on visual outcomes.",
-                    'law'         => "Urgency is key. Ensure your 'Secure Legal Intake' shortcode is above the fold on your Contact page.",
-                    'solar'       => "The ROI Estimator is your best lead magnet. Leads who see savings convert 4x faster.",
-                    'medical'     => "The symptom checker creates trust. Use it to route patients to the correct booking calendar instantly.",
-                    'contractor'  => "Before/After project galleries are your #1 closer. Sync your Portfolio CPT with the 'Case Studies' page for maximum authority.",
-                    'roofing'     => "Focus on 'Storm Damage' keywords in your local area. Use the ROI/Estimate tool to lock in the lead before they call insurance.",
-                    'accounting'  => "Position your 'Secure Tax Portal' as a premium differentiator. Clients pay more for security and organization.",
-                    'real-estate' => "Use the AI Property Matchmaker daily. Sending personalized matches to old leads is the fastest way to reactivate them.",
-                    'coaches'     => "Webinars convert 3x better than cold calls. Use the [gp_webinar_registration] shortcode on your 'Free Strategy' page.",
-                    'consultants' => "Your 'Authority Content' library is your sales team. Generate 5 blog posts on competitor gaps using the Studio."
+                $insights = array(
+                    'solar'       => "High electricity load profiles in your sector are driving an 18% increase in 'S-Tier' system inquiries. AI suggests pushing fixed-rate ROI anchors.",
+                    'law'         => "Leads from high-wealth ZIP codes are peaking. Calibrate the AI merit engine to prioritize 'High-Stakes Corporate' litigation triage.",
+                    'medical'     => "Post-holiday intake volume is rising. Ensure the AI Health Assistant is optimized for specialty specialist routing.",
                 );
-                $tip = $tips[$niche] ?? "Use the AI Content Studio weekly to target long-tail keywords in your local area.";
                 ?>
-                <p style="color:rgba(255,255,255,0.9); font-size:14px; line-height:1.6; margin-top:10px;"><?php echo $tip; ?></p>
-            </div>
-
-            <!-- Growth Opportunities -->
-            <div class="glass-card" style="border-left: 6px solid #7c3aed;">
-                <h3 style="color:#7c3aed;">📈 Growth Opportunities</h3>
-                <?php
-                $waiting = get_posts(array('post_type' => 'gp_appointment', 'meta_key' => '_is_waiting_list', 'meta_value' => '1'));
-                $reactivation = get_posts(array('post_type' => 'gp_lead', 'meta_key' => '_reactivation_flagged', 'meta_value' => '1', 'posts_per_page' => 3));
-                ?>
-                <div style="font-size:12px;">
-                    <div style="margin-bottom:10px;"><strong>Waiting List:</strong> <?php echo count($waiting); ?> prospects waiting for slots.</div>
-                    <?php if($reactivation): ?>
-                        <div style="margin-top:15px;"><strong>Top Reactivation Targets:</strong></div>
-                        <?php foreach($reactivation as $rl): ?>
-                            <div style="background:#f5f3ff; padding:8px; border-radius:6px; margin-top:5px; border:1px solid #ddd6fe;">
-                                <a href="<?php echo get_edit_post_link($rl->ID); ?>" style="text-decoration:none;">⚡ <?php echo esc_html($rl->post_title); ?></a>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                <p style="font-size:17px; line-height:1.8; font-weight: 600; color:var(--secondary);"><?php echo $insights[$niche] ?? "Market authority is peaking. AI suggests implementing a tiered 'Elite' membership model to capture high-intent retainer interest."; ?></p>
+                <div style="margin-top:40px; background:linear-gradient(135deg, var(--primary), var(--primary-alt)); padding:30px; border-radius:28px; box-shadow:0 20px 40px var(--primary-glow);">
+                    <div style="font-size:11px; font-weight:950; color:white; opacity:0.7; letter-spacing:2px; margin-bottom:12px;">STRATEGIC COMMAND</div>
+                    <div style="color:white; font-weight:950; font-size:16px; line-height:1.3;">EXECUTE OMNI-CHANNEL RETARGETING</div>
                 </div>
             </div>
 
-            <!-- Team performance -->
-            <div class="glass-card">
-                <h3>Team Efficiency</h3>
-                <?php
-                $users = get_users( array( 'role__in' => array('administrator', 'editor', 'author'), 'number' => 5 ) );
-                if($users): foreach($users as $u):
-                    $assigned_leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_assigned_staff', 'meta_value' => $u->ID, 'posts_per_page' => -1 ) );
-                    $closed_leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_assigned_staff', 'meta_value' => $u->ID, 'tax_query' => array( array( 'taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'closed' ) ), 'posts_per_page' => -1 ) );
-                    $count_all = count($assigned_leads);
-                    $count_closed = count($closed_leads);
-                    $perc = $count_all > 0 ? round(($count_closed / $count_all) * 100) : 0;
-                    ?>
-                    <div class="team-stat" style="margin-bottom:15px;">
-                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
-                            <span><?php echo esc_html($u->display_name); ?></span>
-                            <span><?php echo $count_closed; ?>/<?php echo $count_all; ?> Closed</span>
-                        </div>
-                        <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
-                            <div style="width:<?php echo $perc; ?>%; height:100%; background:<?php echo $perc > 70 ? '#10B981' : '#2563EB'; ?>;"></div>
-                        </div>
-                    </div>
-                <?php endforeach; else: echo "No staff active yet."; endif; ?>
-            </div>
-
-            <!-- Team Tasks -->
-            <div class="glass-card" style="max-height:300px; overflow-y:auto;">
-                <h3 style="font-size:14px;">My Active Tasks</h3>
-                <?php
-                $my_tasks = get_posts(array('post_type' => 'gp_task', 'meta_key' => '_assigned_user', 'meta_value' => get_current_user_id(), 'posts_per_page' => 5));
-                if($my_tasks): foreach($my_tasks as $mt): ?>
-                    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0; font-size:11px;">
-                        <strong><?php echo esc_html($mt->post_title); ?></strong>
-                        <p style="margin:5px 0 0;"><?php echo wp_trim_words($mt->post_content, 10); ?></p>
-                    </div>
-                <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.6;'>No tasks assigned to you.</p>"; endif; ?>
-            </div>
-
-            <!-- Activity Feed -->
-            <div class="glass-card" style="max-height:300px; overflow-y:auto; padding:25px;">
-                <h3 style="font-size:14px; position:sticky; top:0; background:white; padding-bottom:10px; margin-bottom:15px;">System Activity</h3>
-                <div style="font-size:11px;">
-                    <?php
-                    $logs = GrowthPress_Activity::get_logs();
-                    if($logs): foreach($logs as $log): ?>
-                        <div style="margin-bottom:12px; border-left:2px solid #e2e8f0; padding-left:10px;">
-                            <div style="opacity:0.6; font-size:9px;"><?php echo $log['time']; ?></div>
-                            <div style="color:#475569;"><?php echo esc_html($log['msg']); ?></div>
-                        </div>
-                    <?php endforeach; else: echo "Waiting for activity..."; endif; ?>
+            <!-- Conversion Command -->
+            <div class="glass-card" style="background: var(--secondary); color: white; border: none; border-radius:40px; padding:45px; margin-top:40px;">
+                <h3 style="color: white; font-size: 16px; letter-spacing:1px; font-weight:950;">Funnel Command</h3>
+                <div style="height:280px; display:flex; align-items:flex-end; gap:25px; padding: 40px 0;">
+                    <div style="flex:1; height:100%; background:var(--primary); border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:950; writing-mode:vertical-rl; box-shadow:0 0 25px var(--primary-glow);">INTAKE</div>
+                    <div style="flex:1; height:85%; background:#10B981; border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:950; writing-mode:vertical-rl;">NEURAL TRIAGE</div>
+                    <div style="flex:1; height:52%; background:#F59E0B; border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:950; writing-mode:vertical-rl;">STRATEGY</div>
+                    <div style="flex:1; height:24%; background:#EF4444; border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:950; writing-mode:vertical-rl;">EQUITY</div>
+                </div>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; display: flex; justify-content: space-between; font-size: 13px; font-weight: 900;">
+                    <span style="opacity:0.5;">CONV. VELOCITY</span>
+                    <span style="color:var(--accent);">10.8 DAYS</span>
                 </div>
             </div>
         </div>
@@ -289,16 +176,22 @@ document.addEventListener('DOMContentLoaded', function() {
     var ctxMain = document.getElementById('gp-main-chart').getContext('2d');
     new Chart(ctxMain, {
         type: 'line',
-        data: { labels: ['W1', 'W2', 'W3', 'W4'], datasets: [{ label: 'Growth', data: [10, 25, 15, 45], borderColor: '#2563EB', fill: true, backgroundColor: 'rgba(37, 99, 235, 0.1)' }] }
-    });
-
-    var ctxSource = document.getElementById('gp-source-chart').getContext('2d');
-    new Chart(ctxSource, {
-        type: 'doughnut',
-        data: { labels: ['Google', 'Facebook', 'Referral'], datasets: [{ data: [60, 30, 10], backgroundColor: ['#2563EB', '#10B981', '#F59E0B'] }] }
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+            datasets: [{
+                data: [22, 48, 36, 75, 68],
+                borderColor: '#2563EB',
+                borderWidth: 8,
+                tension: 0.5,
+                pointRadius: 0,
+                fill: true,
+                backgroundColor: 'rgba(37, 99, 235, 0.04)'
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: '900', size: 12, family: 'Inter' } } } }
+        }
     });
 });
-function exportLeads() {
-    window.location.href = ajaxurl + "?action=gp_export_leads&gp_nonce=" + gp_admin.nonce;
-}
 </script>

@@ -1,128 +1,109 @@
 /*
-Theme Name: GrowthPress
+Theme Name: GrowthPress Ultra Elite
 Theme URI: https://growthpress.io
 Author: GrowthPress Team
-Description: A premium AI-powered business growth operating system for WordPress.
-Version: 1.0.0
+Description: The world's most advanced AI-powered business growth operating system for WordPress.
+Version: 4.0.0
 Text Domain: growthpress
 */
 
 :root {
+    /* v4.0 Ultra Elite Design System */
     --primary: #2563EB;
-    --secondary: #1E293B;
+    --primary-alt: #1D4ED8;
+    --primary-glow: rgba(37, 99, 235, 0.28);
+    --secondary: #0F172A;
     --accent: #10B981;
-    --text: #334155;
-    --glass: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.4);
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --text: #1E293B;
+    --border: #E2E8F0;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition: 0.7s var(--ease-out-expo);
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    color: var(--text);
-    background-color: #f1f5f9;
-    line-height: 1.7;
-    margin: 0;
+body.dark-theme {
+    --bg: #020617;
+    --surface: #0F172A;
+    --text: #F8FAFC;
+    --border: #1E293B;
+    --secondary: #FFFFFF;
 }
 
-.container { max-width: 1100px; margin: 0 auto; padding: 0 25px; }
+/* Glassmorphism v4.0 Ultimate */
+.glass-card, .gp-estimator, .gp-solar-calc, .gp-symptom-checker, .gp-ai-faq, .gp-insurance-optimizer, .gp-legal-intake {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(50px) saturate(200%);
+    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50px;
+    padding: 6rem;
+    box-shadow:
+        0 15px 30px rgba(0,0,0,0.03),
+        0 50px 100px -20px rgba(0,0,0,0.06),
+        inset 0 0 0 1px rgba(255,255,255,0.5);
+    transition: transform 0.9s var(--ease-out-expo), box-shadow 0.9s var(--ease-out-expo), border-color 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
 
-/* Global Glassmorphism Component */
-.glass-card, .gp-estimator, .gp-solar-calc, .gp-symptom-checker, .gp-ai-faq {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 28px;
-    padding: 45px;
-    box-shadow: 0 25px 60px -15px rgba(31, 38, 135, 0.1);
-    margin-bottom: 45px;
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+.glass-card::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.03; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
 }
 
 .glass-card:hover {
-    transform: translateY(-12px) scale(1.01);
-    box-shadow: 0 40px 80px -20px rgba(31, 38, 135, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-30px) scale(1.02);
+    box-shadow:
+        0 30px 60px rgba(0,0,0,0.05),
+        0 100px 180px -40px rgba(0,0,0,0.15),
+        inset 0 0 0 1px rgba(255,255,255,0.8);
+    border-color: rgba(255,255,255,1);
 }
 
-/* Responsive Container */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+/* Elite Typography Scale v4.0 */
+h1 { font-size: clamp(5rem, 16vw, 10rem); line-height: 0.8; font-weight: 950; letter-spacing: -0.09em; }
+h2 { font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 900; letter-spacing: -0.07em; line-height: 0.95; }
 
-/* Mobile Adjustments */
+.text-gradient {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Ultra Magnetic Button v4.0 */
+.gp-btn, .wp-block-button__link {
+    background: var(--primary); color: white !important;
+    padding: 1.8rem 4.5rem; border-radius: 100px; font-weight: 950;
+    text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer;
+    border: none; box-shadow: 0 30px 60px -10px var(--primary-glow);
+    transition: 0.5s var(--ease-out-expo);
+    position: relative; overflow: hidden;
+}
+
+.gp-btn:hover {
+    transform: scale(1.12) translateY(-12px);
+    box-shadow: 0 60px 100px -20px var(--primary-glow);
+}
+
+.gp-btn::after {
+    content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    transform: skewX(-30deg); animation: gp-shimmer-final 5s infinite;
+}
+@keyframes gp-shimmer-final { 0% { left: -100%; } 20% { left: 180%; } 100% { left: 180%; } }
+
+/* Grainy Parallax v4.0 */
+.grainy-bg {
+    position: relative;
+    background: radial-gradient(at 0% 0%, var(--bg) 0, transparent 65%),
+                radial-gradient(at 50% 0%, rgba(37, 99, 235, 0.1) 0, transparent 65%),
+                radial-gradient(at 100% 0%, var(--bg) 0, transparent 65%);
+}
+
 @media (max-width: 768px) {
-    h1 { font-size: 2.25rem; line-height: 1.1; }
-    h2 { font-size: 1.8rem; }
-    .glass-card { padding: 25px; border-radius: 16px; margin-bottom: 25px; }
-    .main-navigation ul { display: none; }
-    .wp-block-columns { flex-direction: column !important; }
-    .container { padding: 0 15px; }
-}
-
-/* Luxury Scrollbar */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; border: 2px solid #f1f5f9; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-/* Accessibility */
-:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
-.skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px; z-index: 100; transition: top 0.2s; }
-.skip-link:focus { top: 0; }
-
-/* Accessibility & Readability */
-p { font-size: 1.05rem; line-height: 1.8; color: #475569; }
-
-/* Premium Elite Typography */
-h1, h2, h3, h4 { color: var(--secondary); letter-spacing: -0.03em; font-weight: 950; margin-top: 0; }
-h1 { font-size: 4.5rem; line-height: 1.02; margin-bottom: 0.6em; text-transform: tight; }
-h2 { font-size: 2.8rem; margin-bottom: 0.6em; }
-h3 { font-size: 1.75rem; margin-bottom: 15px; }
-
-/* Forms & Interactive Inputs */
-input, select, textarea {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    background: white;
-    font-family: inherit;
-    font-size: 15px;
-}
-
-button, .gp-btn {
-    background: var(--primary);
-    color: white;
-    padding: 16px 30px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
-}
-
-button:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(37, 99, 235, 0.3); }
-
-/* Header & Nav */
-.site-header { padding: 25px 0; background: white; border-bottom: 1px solid #e2e8f0; }
-.main-navigation ul { list-style: none; display: flex; gap: 30px; margin: 0; }
-.main-navigation a { text-decoration: none; color: var(--text); font-weight: 600; font-size: 15px; }
-
-/* Multi-Location Widget */
-.gp-location-selector { margin-bottom: 20px; }
-
-/* Component Specific Fixes */
-.gp-ai-chat-bubble { z-index: 10001; }
-#gp-faq-chat-box { font-size: 14px; color: #475569; }
-
-/* Reveal Animations */
-.gp-reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.gp-revealed {
-    opacity: 1;
-    transform: translateY(0);
+    .container { padding: 0 24px; }
+    h1 { font-size: 4.5rem; }
+    .glass-card { padding: 5rem 2.5rem; border-radius: 40px; }
 }

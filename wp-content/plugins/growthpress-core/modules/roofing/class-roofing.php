@@ -1,67 +1,54 @@
 <?php
+/**
+ * Roofing Niche specialized Closer Tools - Ultra Elite v3.0
+ */
 class GrowthPress_Roofing {
     public function __construct() {
-        add_action( 'gp_emergency_booking', array( $this, 'handle_emergency' ) );
-        add_shortcode( 'gp_roofing_estimator', array( $this, 'render_roofing_estimator' ) );
+        add_shortcode('gp_roofing_estimator', array($this, 'render_roofing_estimator'));
     }
 
     public function render_roofing_estimator() {
-        ob_start(); ?>
-        <div class="gp-roofing-calc glass-card">
-            <h3>Precision Roofing Estimate</h3>
-            <div class="form-row">
-                <label>Roof Surface Area (Squares)</label>
-                <input type="number" id="gp-roof-squares" placeholder="e.g. 20">
+        return '<div class="gp-estimator glass-card gp-reveal" style="border-left: 15px solid #475569; padding:80px 60px; background: linear-gradient(135deg, var(--surface), #F1F5F9);">
+            <div style="text-align:center; margin-bottom:50px;">
+                <div style="font-size:10px; font-weight:950; color:#475569; text-transform:uppercase; letter-spacing:3px; margin-bottom:15px;">ASSET PROTECTION ENGINE</div>
+                <h3 class="text-gradient" style="font-size:2.8rem;">Elite Roof Replacement Estimator</h3>
+                <p style="font-size:1.1rem; opacity:0.7; max-width:600px; margin:20px auto 0;">Determine your replacement investment based on material quality and structural complexity.</p>
             </div>
-            <div class="form-row">
-                <label>Material Quality</label>
-                <select id="gp-roof-material">
-                    <option value="standard">Standard Asphalt Shingle</option>
-                    <option value="premium">Premium Architectural Shingle</option>
-                    <option value="metal">Standing Seam Metal</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <label>Roof Pitch</label>
-                <select id="gp-roof-pitch">
-                    <option value="flat">Flat / Low Slope</option>
-                    <option value="standard">Standard (4/12 - 8/12)</option>
-                    <option value="steep">Steep (>9/12)</option>
-                </select>
-            </div>
-            <button onclick="calcRoofEstimate()" style="margin-top:15px;">Get Instant Quote</button>
-            <div id="roof-estimate-result" style="margin-top:20px; font-weight:bold; color: #2563EB;"></div>
-        </div>
-        <script>
-        function calcRoofEstimate() {
-            var squares = jQuery('#gp-roof-squares').val();
-            var material = jQuery('#gp-roof-material').val();
-            var pitch = jQuery('#gp-roof-pitch').val();
 
-            var basePrice = material === 'metal' ? 1200 : (material === 'premium' ? 600 : 400);
-            var pitchMultiplier = pitch === 'steep' ? 1.3 : 1.0;
-
-            var total = squares * basePrice * pitchMultiplier;
-            if(squares) {
-                jQuery('#roof-estimate-result').html('Estimated Investment: $' + Math.round(total).toLocaleString());
-            }
-        }
-        </script>
-        <?php
-        return ob_get_clean();
+            <div id="roof-steps" class="glass-card" style="background:#FFF; padding:50px; border-radius:32px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
+                    <div>
+                        <label style="font-weight:950; font-size:11px; opacity:0.5; letter-spacing:2px; display:block; margin-bottom:15px;">MATERIAL GRADE</label>
+                        <select id="roof-mat" style="width:100%; height:70px; border-radius:18px; font-weight:700; border:2px solid #F1F5F9; padding:0 25px; font-size:16px;">
+                            <option value="550">Architectural Shingle</option>
+                            <option value="1100">Standing Seam Metal</option>
+                            <option value="2200">Luxury Natural Slate</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight:950; font-size:11px; opacity:0.5; letter-spacing:2px; display:block; margin-bottom:15px;">TOTAL SQUARES (100sqft)</label>
+                        <input type="number" id="roof-sqs" value="30" style="width:100%; height:70px; border-radius:18px; font-weight:700; border:2px solid #F1F5F9; padding:0 25px; font-size:16px;">
+                    </div>
+                </div>
+                <div style="background:#F1F5F9; border:2px solid #E2E8F0; padding:40px; border-radius:28px; text-align:center; margin-bottom:40px;">
+                    <div style="font-size:11px; font-weight:900; color:var(--secondary); opacity:0.6; letter-spacing:1px; margin-bottom:10px;">ESTIMATED REPLACEMENT INVESTMENT</div>
+                    <div class="text-gradient" style="font-size:4rem; font-weight:950; color:#475569;">$<span id="roof-val">16,500</span></div>
+                </div>
+                <button class="gp-btn" style="width:100%; height:80px; font-size:20px; background:#475569;" onclick="jQuery(\'#roof-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Initiate Drone Site Survey</button>
+            </div>
+            <div id="gp-quiz-form" style="display:none;">[gp_lead_form]</div>
+            <script>
+                jQuery("#roof-mat, #roof-sqs").on("change input", function() {
+                    var mat = parseInt(jQuery("#roof-mat").val());
+                    var sqs = parseInt(jQuery("#roof-sqs").val());
+                    jQuery("#roof-val").text((mat * sqs).toLocaleString());
+                });
+            </script>
+        </div>';
     }
 
     public function generate_sample_data() {
-        $services = array(
-            'Emergency Leak Repair' => 'Rapid response for critical roofing failures.',
-            'Full Roof Replacement' => 'Precision installation of premium shingle or metal systems.',
-            'Storm Damage Inspection' => 'Thorough assessment and insurance claim assistance.'
-        );
-        foreach($services as $t => $c) {
-            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
-                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
-            }
-        }
+        wp_insert_post(array('post_title' => 'Coastal Manor Slate', 'post_content' => 'High-stakes roof replacement for a heritage property.', 'post_type' => 'gp_project', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Roofing();

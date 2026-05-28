@@ -1,40 +1,32 @@
 <?php
+/**
+ * Coaches Niche specialized Closer Tools - Ultra Elite v3.5
+ */
 class GrowthPress_Coaches {
     public function __construct() {
-        add_shortcode( 'gp_coaching_assistant', array( $this, 'render_ai_coach' ) );
-        add_shortcode( 'gp_webinar_registration', array( $this, 'render_webinar_form' ) );
-        add_action( 'init', array( $this, 'register_course_cpt' ) );
+        add_shortcode('gp_coaching_assistant', array($this, 'render_assistant'));
     }
 
-    public function render_webinar_form() {
-        return '<div class="glass-card" style="text-align:center;"><h3>Live Masterclass: Scaling Your Impact</h3><p>Join our next live webinar on the future of AI in coaching.</p><button class="button">Register Seat</button></div>';
-    }
+    public function render_assistant() {
+        return '<div class="gp-coaching-assistant glass-card gp-reveal" style="padding:80px 60px; text-align:center; background: linear-gradient(135deg, var(--surface), #FFF5F7); position:relative; overflow:hidden;">
+            <div style="position:absolute; top:20px; right:40px; font-size:10px; font-weight:950; opacity:0.3; letter-spacing:3px;">ELITE PERFORMANCE TRIAGE</div>
+            <h3 class="text-gradient" style="font-size:2.8rem;">Scalability & Performance Engine</h3>
+            <p style="font-size:1.1rem; opacity:0.7; max-width:600px; margin:20px auto 0;">Select your primary operational bottleneck to generate an AI-powered 12-month high-ticket scaling roadmap.</p>
 
-    public function register_course_cpt() {
-        register_post_type( 'gp_course', array(
-            'labels'      => array( 'name' => 'Online Courses' ),
-            'public'      => true, 'show_ui' => true, 'menu_icon' => 'dashicons-welcome-learn-more'
-        ) );
-    }
-
-    public function render_ai_coach() {
-        return '<div class="glass-card"><h3>AI Performance Assistant</h3><p>Get instant coaching tips based on your current challenges.</p><textarea id="coach-challenge" placeholder="What is your biggest roadblock?"></textarea><button class="button">Get Coaching</button></div>';
+            <div id="coach-steps" class="glass-card" style="background:#FFF; padding:50px; border-radius:32px; margin-top:50px; box-shadow:0 20px 50px rgba(219,39,119,0.05);">
+                <div style="display:grid; gap:20px; margin-bottom:40px;">
+                    <button class="gp-btn" style="width:100%; background:#DB2777; text-transform:none; border-radius:18px; height:80px; font-size:18px;" onclick="jQuery(\'#coach-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Scale to 7 Figures (Market Dominance)</button>
+                    <button class="gp-btn" style="width:100%; background:#DB2777; text-transform:none; border-radius:18px; height:80px; font-size:18px;" onclick="jQuery(\'#coach-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Automate High-Authority Content</button>
+                    <button class="gp-btn" style="width:100%; background:#DB2777; text-transform:none; border-radius:18px; height:80px; font-size:18px;" onclick="jQuery(\'#coach-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Master Behavioral Sales Psychology</button>
+                </div>
+                <div style="font-size:11px; font-weight:900; opacity:0.4; text-transform:uppercase; letter-spacing:1px;">AVERAGE INFERENCE TIME: 7.2 SECONDS</div>
+            </div>
+            <div id="gp-quiz-form" style="display:none; margin-top:40px;">[gp_lead_form]</div>
+        </div>';
     }
 
     public function generate_sample_data() {
-        $sessions = array(
-            'High-Performance Discovery' => '90-minute deep dive into your business bottlenecks.',
-            'Executive Leadership Intensive' => 'Monthly coaching for C-suite professionals.',
-            'Mindset Mastery Workshop' => 'Group coaching focused on peak mental performance.'
-        );
-        foreach($sessions as $t => $c) {
-            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
-                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
-            }
-        }
-        if ( ! get_page_by_path( 'scaling-to-7-figures-course', OBJECT, 'gp_course' ) ) {
-            wp_insert_post(array('post_title' => 'Scaling to 7 Figures Course', 'post_content' => 'The ultimate roadmap for consultants.', 'post_type' => 'gp_course', 'post_status' => 'publish'));
-        }
+        wp_insert_post(array('post_title' => 'Strategic Scaling Blueprint', 'post_content' => 'Comprehensive operational audit for a high-performance mentorship program.', 'post_type' => 'gp_project', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Coaches();

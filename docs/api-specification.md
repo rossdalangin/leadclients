@@ -1,41 +1,30 @@
-# GrowthPress REST API Specification
+# GrowthPress Elite: API & Integration Specification
 
-The GrowthPress OS provides a secure REST API for external integrations (e.g., Zapier, Make, Twilio).
+The GrowthPress OS is built with a REST-first architecture, allowing seamless integration with Zapier, Make.com, and custom enterprise middleware.
 
-## Authentication
-All requests must include a Bearer Token in the authorization header.
-- **Header**: `Authorization: Bearer YOUR_API_TOKEN`
-- **Setup**: Configure your token in `GrowthPress > Settings`.
+## 🔒 Authentication
+All requests must include the `growthpress_api_token` in the Bearer header.
+`Authorization: Bearer YOUR_TOKEN`
 
-## Endpoints
+## 📡 Endpoints
 
-### 1. Create Lead
-- **URL**: `/wp-json/growthpress/v1/leads`
-- **Method**: `POST`
-- **Parameters**:
-  - `name` (string, required): Full name of the prospect.
-  - `email` (string): Prospect's email address.
-  - `msg` (string): Details of the inquiry.
-  - `zip` (string): Used for multi-location routing.
-- **Behavior**: Automatically triggers AI sentiment analysis and lead scoring upon ingestion.
+### 1. Lead Injection (`POST /wp-json/gp/v1/leads`)
+Inject leads from external sources (e.g., Facebook Lead Ads).
+**Payload**: `{"name": "...", "email": "...", "message": "...", "niche": "..."}`
 
-### 2. Missed Call Webhook (Twilio)
-- **URL**: `/wp-json/growthpress/v1/missed-call`
-- **Method**: `POST`
-- **Parameters**:
-  - `From` (string, required): The phone number that called.
-- **Behavior**: Logs the missed call in the Activity Feed and generates an AI-personalized SMS response for re-engagement.
+### 2. Appointment Webhook (`POST /wp-json/gp/v1/missed-call`)
+Twilio webhook endpoint for automated missed call follow-up.
+**Logic**: Triggers the AI to generate a niche-aware SMS response.
 
-### 3. Track Funnel Event
-- **URL**: `/wp-json/growthpress/v1/track-funnel`
-- **Method**: `POST`
-- **Parameters**:
-  - `funnel_id` (int): ID of the `gp_funnel` CPT.
-  - `variation` (string): 'A' or 'B'.
-- **Behavior**: Increments the performance counter for the specified variation, used in the ROI Report.
+### 3. Strategy Fetch (`GET /wp-json/gp/v1/strategy/{lead_id}`)
+Retrieve AI-generated sales insights and probability scores for a specific lead.
 
-## Response Codes
-- `201 Created`: Object successfully created.
-- `200 OK`: Request handled successfully.
-- `401 Unauthorized`: Missing or invalid Bearer Token.
-- `400 Bad Request`: Missing required parameters.
+### 4. Portal Sync (`GET /wp-json/gp/v1/portal/{user_id}`)
+Fetch active proposals and case statuses for external client dashboards.
+
+---
+
+## 🛠️ Internal Hooks for Developers
+*   `gp_lead_captured`: Triggered after successful intake.
+*   `gp_proposal_accepted`: Triggered after one-click acceptance in the portal.
+*   `gp_niche_lead_analysis`: Fires after the AI completes sentiment and intent scoring.

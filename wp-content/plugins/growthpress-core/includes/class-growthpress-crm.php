@@ -1,6 +1,6 @@
 <?php
 /**
- * GrowthPress CRM Core Class - Final Advanced
+ * GrowthPress CRM Core Class - Final Advanced Elite v2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -92,10 +92,10 @@ class GrowthPress_CRM {
         $nonce = wp_create_nonce('gp_lead_nonce');
         return '<form class="gp-form glass-card" data-action="gp_submit_lead">
             <input type="hidden" name="nonce" value="' . $nonce . '">
-            <input type="text" name="lead_name" placeholder="Full Name" required>
-            <input type="email" name="lead_email" placeholder="Email Address" required>
-            <textarea name="lead_msg" placeholder="Tell us about your needs..."></textarea>
-            <button type="submit" class="button button-primary">Scale My Business</button>
+            <div style="margin-bottom:20px;"><label style="font-weight:900; font-size:10px; opacity:0.5; letter-spacing:1px; display:block; margin-bottom:10px;">IDENTITY</label><input type="text" name="lead_name" placeholder="Full Name" required></div>
+            <div style="margin-bottom:20px;"><label style="font-weight:900; font-size:10px; opacity:0.5; letter-spacing:1px; display:block; margin-bottom:10px;">COMMUNICATION</label><input type="email" name="lead_email" placeholder="Email Address" required></div>
+            <div style="margin-bottom:20px;"><label style="font-weight:900; font-size:10px; opacity:0.5; letter-spacing:1px; display:block; margin-bottom:10px;">INQUIRY DETAIL</label><textarea name="lead_msg" placeholder="Describe your growth goals..."></textarea></div>
+            <button type="submit" class="gp-btn" style="width:100%;">Initialize Sequence</button>
         </form>';
     }
 
@@ -111,50 +111,34 @@ class GrowthPress_CRM {
         $data = $questions[$niche] ?? array('q' => 'What is your primary goal?', 'opts' => array('Rapid Growth', 'Process Automation', 'Lead Generation'));
 
         $opts_html = '';
-        foreach($data['opts'] as $o) $opts_html .= '<button onclick="nextStep(\''.esc_js($o).'\')" style="margin-bottom:10px;">'.esc_html($o).'</button>';
+        foreach($data['opts'] as $o) $opts_html .= '<button class="gp-btn" style="margin-bottom:15px; width:100%; border-radius:15px; text-transform:none;" onclick="nextStep(\''.esc_js($o).'\')">'.esc_html($o).'</button>';
 
-        return '<div class="gp-quiz-container glass-card">
-            <h3>'.ucwords($niche).' Qualification Quiz</h3>
+        return '<div class="gp-quiz-container glass-card" style="padding:60px;">
+            <div class="gp-quiz-progress" style="height:6px; background:#F1F5F9; border-radius:10px; margin-bottom:40px; overflow:hidden;"><div class="gp-quiz-progress-fill" style="width:33%; height:100%; background:var(--primary); transition:width 0.5s ease;"></div></div>
+            <h3 class="text-gradient" style="margin-bottom:30px;">'.ucwords($niche).' OS Qualification</h3>
             <div id="gp-quiz-step-1">
-                <p>'.esc_html($data['q']).'</p>
+                <p style="font-size:20px; font-weight:700; margin-bottom:40px;">'.esc_html($data['q']).'</p>
                 <div style="display:flex; flex-direction:column;">'.$opts_html.'</div>
             </div>
-            <div id="gp-quiz-form" style="display:none;">
-                '.$this->render_lead_form().'
-            </div>
+            <div id="gp-quiz-form" style="display:none;">'.$this->render_lead_form().'</div>
         </div>';
     }
 
     public function handle_lead_submission() {
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) {
-            wp_send_json_error('Security check failed.');
-        }
-
+        if ( ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) wp_send_json_error('Security failed.');
         $name = sanitize_text_field($_POST['lead_name']);
         $email = sanitize_email($_POST['lead_email']);
         $msg = sanitize_textarea_field($_POST['lead_msg']);
-
         $ai = GrowthPress_AI::get_instance();
-        if ( $ai->is_spam($msg, $name, $email) ) {
-            wp_send_json_error("Inquiry flagged as spam. Please try again with valid information.");
-        }
-
-        $lead_id = wp_insert_post(array(
-            'post_title' => $name,
-            'post_content' => $msg,
-            'post_type' => 'gp_lead',
-            'post_status' => 'publish'
-        ));
-
+        if ( $ai->is_spam($msg, $name, $email) ) wp_send_json_error("Flagged as spam.");
+        $lead_id = wp_insert_post(array( 'post_title' => $name, 'post_content' => $msg, 'post_type' => 'gp_lead', 'post_status' => 'publish' ));
         update_post_meta($lead_id, '_lead_email', $email);
         wp_set_object_terms($lead_id, 'new', 'gp_lead_stage');
-
         do_action('gp_lead_captured', $lead_id);
-        wp_send_json_success("Lead captured! We will contact you soon.");
+        wp_send_json_success("Sequence initiated. AI Triage in progress.");
     }
 
     public function trigger_lead_automations( $lead_id ) {
-        // Offload to async event to prevent frontend blocking
         wp_schedule_single_event( time(), 'gp_async_lead_analysis', array($lead_id) );
     }
 
@@ -165,323 +149,144 @@ class GrowthPress_CRM {
 
         $analysis_raw = $ai->analyze_sentiment($lead->post_content);
         $analysis = json_decode($analysis_raw, true) ?: array('urgency' => 5);
-
         $prob = $ai->predict_deal_probability($lead_id);
         update_post_meta($lead_id, '_gp_ai_probability', $prob);
         update_post_meta($lead_id, '_gp_ai_sentiment_json', $analysis_raw);
 
-        // Lead Intent Scoring
-        $intent_score = ($prob > 80) ? 'High' : ($prob > 40 ? 'Medium' : 'Low');
-        update_post_meta($lead_id, '_gp_lead_intent_score', $intent_score);
+        $tag_prompt = "Categorize lead: \"{$lead->post_content}\" as 'Residential', 'Commercial', or 'Enterprise'. Return ONE word.";
+        $tag = $ai->call_ai($tag_prompt, "Classifier");
+        if ( ! is_wp_error($tag) ) wp_set_object_terms($lead_id, trim($tag), 'gp_lead_tag');
 
-        // Auto-tagging based on content analysis
-        $tag_prompt = "Categorize this lead inquiry: \"{$lead->post_content}\" as either 'Residential', 'Commercial', or 'Enterprise'. Return ONLY the word.";
-        $tag = $ai->call_ai($tag_prompt, "Lead Classifier");
-        if ( ! is_wp_error($tag) && in_array(trim($tag), array('Residential', 'Commercial', 'Enterprise')) ) {
-            wp_set_object_terms($lead_id, trim($tag), 'gp_lead_tag');
-        }
+        $action_plan = $ai->call_ai("3 sales steps for lead: \"{$lead->post_content}\"", "Strategist");
+        if ( ! is_wp_error($action_plan) ) $this->create_task( "Action Plan: " . $lead->post_title, $action_plan, $lead_id );
 
-        if ( isset($analysis['urgency']) && $analysis['urgency'] >= 9 ) {
-            $staff = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
-            if ( ! empty($staff) ) {
-                update_post_meta( $lead_id, '_assigned_staff', $staff[0]->ID );
-                GrowthPress_Activity::log( "URGENT LEAD #$lead_id routed to " . $staff[0]->display_name );
-            }
-        }
+        $closing = $ai->call_ai("3 closing tactics for: \"{$lead->post_content}\"", "Closer");
+        if ( ! is_wp_error($closing) ) update_post_meta($lead_id, '_gp_ai_closing_tips', $closing);
 
-        // Generate Automated Action Plan
-        $task_prompt = "Based on this lead: \"{$lead->post_content}\", generate 3 immediate next steps for our sales team. Return as a numbered list.";
-        $action_plan = $ai->call_ai($task_prompt, "Sales Strategist");
-        if ( ! is_wp_error($action_plan) ) {
-            $this->create_task( "Action Plan for " . $lead->post_title, $action_plan, $lead_id );
-            GrowthPress_Activity::log( "Autonomous Action Plan generated for Lead #$lead_id." );
-        }
+        $discovery = $ai->call_ai("4 discovery questions for: \"{$lead->post_content}\"", "Qualifier");
+        if ( ! is_wp_error($discovery) ) update_post_meta($lead_id, '_gp_ai_discovery_questions', $discovery);
 
-        // Cache additional insights
-        $closing_tips = $ai->call_ai("Provide 3 high-ticket closing tactics for this lead: \"{$lead->post_content}\"", "Sales Closer");
-        if ( ! is_wp_error($closing_tips) ) update_post_meta($lead_id, '_gp_ai_closing_tips', $closing_tips);
-
-        $suggested_reply = $ai->call_ai("Generate a professional, high-ticket personalized email reply for this lead inquiry: \"{$lead->post_content}\". Mention their specific concern.", "Executive Assistant");
-        if ( ! is_wp_error($suggested_reply) ) update_post_meta($lead_id, '_gp_ai_suggested_reply', $suggested_reply);
-
-        $discovery_questions = $ai->call_ai("Based on this inquiry: \"{$lead->post_content}\", generate 4 deep-dive discovery questions for the first call to qualify them for a high-ticket service.", "Lead Qualifier");
-        if ( ! is_wp_error($discovery_questions) ) update_post_meta($lead_id, '_gp_ai_discovery_questions', $discovery_questions);
+        $suggested = $ai->call_ai("Personalized reply for: \"{$lead->post_content}\"", "Assistant");
+        if ( ! is_wp_error($suggested) ) update_post_meta($lead_id, '_gp_ai_suggested_reply', $suggested);
 
         do_action('gp_niche_lead_analysis', $lead_id);
     }
 
     public function add_crm_meta_boxes() {
-        add_meta_box( 'gp_lead_nudges', '🧠 Behavioral Sales Nudges', array( $this, 'render_nudge_meta' ), 'gp_lead', 'side', 'high' );
-        add_meta_box( 'gp_lead_insights', 'AI Sales Insights', array( $this, 'render_insights_meta' ), 'gp_lead', 'normal', 'high' );
-        add_meta_box( 'gp_lead_notes', 'Internal Team Notes', array( $this, 'render_notes_meta' ), 'gp_lead', 'normal', 'default' );
-        add_meta_box( 'gp_lead_tasks', 'Related Tasks', array( $this, 'render_tasks_meta' ), 'gp_lead', 'normal', 'default' );
-        add_meta_box( 'gp_lead_behavior', 'Lead Behavioral Log', array( $this, 'render_behavior_meta' ), 'gp_lead', 'side' );
+        add_meta_box( 'gp_lead_insights', '🧠 AI Strategic Intelligence', array( $this, 'render_insights_meta' ), 'gp_lead', 'normal', 'high' );
+        add_meta_box( 'gp_lead_behavior', '📈 Behavioral Timeline', array( $this, 'render_behavior_meta' ), 'gp_lead', 'side', 'default' );
+        add_meta_box( 'gp_lead_notes', 'Team Collaboration', array( $this, 'render_notes_meta' ), 'gp_lead', 'side', 'low' );
     }
 
-    public function render_notes_meta( $post ) {
-        $notes = get_post_meta($post->ID, '_gp_internal_notes', true) ?: array();
+    public function render_behavior_meta( $post ) {
+        $log = get_post_meta($post->ID, '_behavior_log', true) ?: array();
         ?>
-        <div class="gp-notes-container">
-            <div id="gp-notes-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
-                <?php if($notes): foreach(array_reverse($notes) as $note): ?>
-                    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
-                        <div style="font-size:11px; color:#64748b; margin-bottom:5px;">
-                            <strong><?php echo esc_html($note['user']); ?></strong> @ <?php echo $note['time']; ?>
-                        </div>
-                        <div style="font-size:13px;"><?php echo nl2br(esc_html($note['text'])); ?></div>
-                    </div>
-                <?php endforeach; else: echo "No internal notes yet."; endif; ?>
-            </div>
-            <textarea id="gp-new-note" style="width:100%; height:60px;" placeholder="Add a team note..."></textarea>
-            <button type="button" class="button" onclick="addGPNote(<?php echo $post->ID; ?>)">Add Note</button>
-        </div>
-        <script>
-        function addGPNote(leadId) {
-            var text = jQuery('#gp-new-note').val();
-            if(!text) return;
-            jQuery.post(ajaxurl, {
-                action: 'gp_add_lead_note',
-                lead_id: leadId,
-                note: text,
-                gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
-            }, function(res) {
-                if(res.success) location.reload();
-            });
-        }
-        </script>
-        <?php
-    }
-
-    public function render_tasks_meta( $post ) {
-        $tasks = get_posts( array( 'post_type' => 'gp_task', 'meta_key' => '_related_lead', 'meta_value' => $post->ID, 'posts_per_page' => -1 ) );
-        ?>
-        <div class="gp-tasks-meta">
-            <?php if($tasks): foreach($tasks as $t): ?>
-                <div style="padding:10px; border:1px solid #ddd; border-radius:6px; margin-bottom:10px; background:#fff;">
-                    <strong><?php echo esc_html($t->post_title); ?></strong>
-                    <p style="margin:5px 0 0; font-size:12px;"><?php echo esc_html($t->post_content); ?></p>
+        <div class="gp-timeline" style="position:relative; padding-left:30px;">
+            <div style="position:absolute; left:10px; top:0; bottom:0; width:2px; background:#E2E8F0;"></div>
+            <?php if($log): foreach(array_reverse($log) as $item): ?>
+                <div class="timeline-item" style="position:relative; margin-bottom:20px;">
+                    <div style="position:absolute; left:-25px; top:3px; width:12px; height:12px; border-radius:50%; background:var(--primary); border:2px solid white; box-shadow:0 0 5px rgba(0,0,0,0.1);"></div>
+                    <div style="font-size:12px; font-weight:800; color:var(--secondary);"><?php echo esc_html($item['page']); ?></div>
+                    <div style="font-size:10px; opacity:0.5; font-weight:600;"><?php echo date('M j, H:i', strtotime($item['time'])); ?></div>
                 </div>
-            <?php endforeach; else: echo "No tasks assigned to this lead."; endif; ?>
-            <hr>
-            <p><a href="<?php echo admin_url('post-new.php?post_type=gp_task'); ?>" class="button">Create New Task</a></p>
+            <?php endforeach; else: echo "<p style='font-size:11px; opacity:0.5;'>Tracking visitor movements...</p>"; endif; ?>
+            <div class="timeline-item" style="position:relative;">
+                <div style="position:absolute; left:-25px; top:3px; width:12px; height:12px; border-radius:50%; background:#10B981; border:2px solid white;"></div>
+                <div style="font-size:12px; font-weight:800; color:#10B981;">LEAD CAPTURED</div>
+                <div style="font-size:10px; opacity:0.5; font-weight:600;"><?php echo get_the_date('M j, H:i', $post->ID); ?></div>
+            </div>
         </div>
         <?php
     }
 
     public function render_insights_meta( $post ) {
         $prob = get_post_meta($post->ID, '_gp_ai_probability', true) ?: 50;
-        $intent = get_post_meta($post->ID, '_gp_lead_intent_score', true) ?: 'Medium';
-
-        $closing_tips = get_post_meta($post->ID, '_gp_ai_closing_tips', true) ?: 'Analyzing closing tactics... (Refresh in a moment)';
-        $suggested_reply = get_post_meta($post->ID, '_gp_ai_suggested_reply', true) ?: 'Generating suggested response...';
-        $discovery_questions = get_post_meta($post->ID, '_gp_ai_discovery_questions', true) ?: 'Preparing discovery questions...';
-        $property_rec = get_post_meta($post->ID, '_gp_ai_property_recommendation', true);
-        $reactivation = get_post_meta($post->ID, '_gp_ai_reactivation_campaign', true);
+        $closing = get_post_meta($post->ID, '_gp_ai_closing_tips', true);
+        $discovery = get_post_meta($post->ID, '_gp_ai_discovery_questions', true);
+        $suggested = get_post_meta($post->ID, '_gp_ai_suggested_reply', true);
         ?>
-        <div class="gp-insights-box">
-            <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
-                <div style="text-align:center; padding:15px; border-radius:12px; background:#f0f9ff; border:1px solid #bae6fd;">
-                    <div style="font-size:24px; font-weight:800; color:#2563EB;"><?php echo $prob; ?>%</div>
-                    <div style="font-size:10px; text-transform:uppercase; opacity:0.7;">Deal Probability</div>
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:30px; padding:10px;">
+            <div>
+                <div style="background:#F0F9FF; padding:30px; border-radius:24px; text-align:center; border:1px solid #BAE6FD;">
+                    <div style="font-size:48px; font-weight:950; color:#2563EB;"><?php echo $prob; ?>%</div>
+                    <div style="font-size:11px; font-weight:900; opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Probability</div>
                 </div>
-                <div style="text-align:center; padding:15px; border-radius:12px; background:#fefce8; border:1px solid #fef08a;">
-                    <div style="font-size:24px; font-weight:800; color:#a16207;"><?php echo $intent; ?></div>
-                    <div style="font-size:10px; text-transform:uppercase; opacity:0.7;">Lead Intent</div>
+                <div style="margin-top:30px; background:#F8FAFC; padding:25px; border-radius:20px; border:1px solid #E2E8F0;">
+                    <h4 style="margin-top:0; font-size:13px;">Closing Tactics</h4>
+                    <div style="font-size:13px; line-height:1.6; opacity:0.8;"><?php echo nl2br(esc_html($closing)); ?></div>
                 </div>
             </div>
-            <h4>AI Suggested Closing Strategy:</h4>
-            <div style="background:#f8fafc; padding:15px; border-radius:8px; font-size:13px; margin-bottom:20px;"><?php echo nl2br(esc_html($closing_tips)); ?></div>
-
-            <h4>Suggested AI Response:</h4>
-            <div style="position:relative; margin-bottom:20px;">
-                <textarea id="gp-ai-reply-text" style="width:100%; height:120px; font-size:12px; background:#f0f9ff; border:1px solid #bae6fd; padding:10px; border-radius:8px;"><?php echo esc_textarea($suggested_reply); ?></textarea>
-                <button type="button" class="button button-small" onclick="copyReply()" style="margin-top:5px;">Copy to Clipboard</button>
-            </div>
-            <script>
-            function copyReply() {
-                var copyText = document.getElementById("gp-ai-reply-text");
-                copyText.select();
-                copyText.setSelectionRange(0, 99999);
-                navigator.clipboard.writeText(copyText.value);
-                alert("Response copied!");
-            }
-            </script>
-
-            <div style="background:#fff7ed; border:1px solid #ffedd5; padding:15px; border-radius:12px; margin-bottom:20px;">
-                <h4 style="margin-top:0; color:#c2410c;">🎯 Discovery Questions for First Call:</h4>
-                <div style="font-size:12px; line-height:1.6; color:#9a3412;"><?php echo nl2br(esc_html($discovery_questions)); ?></div>
-            </div>
-
-            <?php if($property_rec): ?>
-                <div style="background:#f5f3ff; border:1px solid #ddd6fe; padding:15px; border-radius:12px; margin-bottom:20px;">
-                    <h4 style="margin-top:0; color:#7c3aed;">🏠 AI Property Matches:</h4>
-                    <div style="font-size:12px; line-height:1.6; color:#5b21b6;"><?php echo nl2br(esc_html($property_rec)); ?></div>
+            <div>
+                <h4 style="margin-top:0;">AI Suggested Discovery Call Questions</h4>
+                <div style="background:#FFFBEB; padding:25px; border-radius:20px; border:1px solid #FEF3C7; color:#92400E; font-size:14px; line-height:1.7; margin-bottom:30px;">
+                    <?php echo nl2br(esc_html($discovery)); ?>
                 </div>
-            <?php endif; ?>
-
-            <?php if($reactivation): ?>
-            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:15px; border-radius:12px; margin-bottom:20px;">
-                    <h4 style="margin-top:0; color:#be185d;">⚡ AI Reactivation Campaign:</h4>
-                    <div style="font-size:12px; line-height:1.6; color:#9d174d;"><?php echo nl2br(esc_html($reactivation)); ?></div>
+                <h4>Draft Response</h4>
+                <textarea id="gp-ai-reply" style="width:100%; height:200px; border-radius:15px; border:1px solid #E2E8F0; padding:20px; font-size:14px; background:#F0FDF4;"><?php echo esc_textarea($suggested); ?></textarea>
+                <div style="margin-top:15px; display:flex; gap:10px;">
+                    <button type="button" class="button button-primary" style="flex:1;" onclick="copyGPReply()">Copy Strategy</button>
+                    <button type="button" class="button" style="flex:1;" onclick="window.location.href='mailto:<?php echo get_post_meta($post->ID, '_lead_email', true); ?>?body=' + encodeURIComponent(jQuery('#gp-ai-reply').val())">Send via Email</button>
                 </div>
-            <?php endif; ?>
-
-            <div class="gp-strategic-actions" style="margin-top:25px;">
-                <button type="button" class="button button-primary button-hero" onclick="generateAIProposal(<?php echo $post->ID; ?>)" style="width:100%; text-align:center;">Generate AI Strategic Proposal</button>
-                <script>
-                function generateAIProposal(leadId) {
-                    if(!confirm("Generate high-ticket AI proposal for this lead?")) return;
-                    jQuery.post(ajaxurl, {
-                        action: 'gp_generate_ai_proposal',
-                        lead_id: leadId,
-                        gp_nonce: '<?php echo wp_create_nonce("gp_admin_nonce"); ?>'
-                    }, function(res) {
-                        alert(res.data);
-                    });
-                }
-                </script>
             </div>
         </div>
+        <script>function copyGPReply() { var t = document.getElementById('gp-ai-reply'); t.select(); navigator.clipboard.writeText(t.value); alert('Strategy copied!'); }</script>
         <?php
     }
 
-    public function render_nudge_meta( $post ) {
-        $niche = get_option('growthpress_niche', 'business');
-        $nudges = array(
-            'dental'      => array('Highlight "Painless" treatments immediately.', 'Mention Invisalign if they are < 40 years old.', 'Social Proof: Mention our 500+ five-star reviews.'),
-            'law'         => array('Emphasize urgency: "Statute of limitations may apply".', 'Position as the "Aggressive Advocate".', 'Mention past settlement successes.'),
-            'solar'       => array('Anchor the price against 25 years of utility inflation.', 'Highlight the 30% Tax Credit ending soon.', 'Focus on "Energy Independence".'),
-            'contractor'  => array('Showcase the quartz upgrade as a limited-time bonus.', 'Emphasize "Licensed & Insured" for trust.', 'Mention the 10-year labor warranty.')
-        );
-        $active_nudges = $nudges[$niche] ?? array('Focus on transformation, not price.', 'Use the "Feel-Felt-Found" objection handling.', 'Always secure the next discovery call.');
+    public function render_notes_meta( $post ) {
+        $notes = get_post_meta($post->ID, '_gp_internal_notes', true) ?: array();
         ?>
-        <div class="gp-nudges">
-            <ul style="margin:0; padding-left:15px; font-size:12px; color:#1e293b;">
-                <?php foreach($active_nudges as $n): ?>
-                    <li style="margin-bottom:10px;">⚡ <?php echo esc_html($n); ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <?php
-    }
-
-    public function render_behavior_meta( $post ) {
-        $log = get_post_meta($post->ID, '_behavior_log', true) ?: array();
-        ?>
-        <div class="gp-behavior-list">
-            <?php if($log): foreach(array_reverse($log) as $item): ?>
-                <div style="font-size:11px; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:4px;">
-                    <strong><?php echo esc_html($item['page']); ?></strong><br>
-                    <span style="opacity:0.6;"><?php echo esc_html($item['time']); ?></span>
+        <div id="gp-notes-list" style="max-height:250px; overflow-y:auto; margin-bottom:15px;">
+            <?php foreach(array_reverse($notes) as $n): ?>
+                <div style="background:#F1F5F9; padding:12px; border-radius:10px; margin-bottom:10px; font-size:12px;">
+                    <strong><?php echo esc_html($n['user']); ?>:</strong> <?php echo esc_html($n['text']); ?>
                 </div>
-            <?php endforeach; else: echo "No behavior tracked yet."; endif; ?>
+            <?php endforeach; ?>
         </div>
+        <textarea id="gp-new-note" style="width:100%; height:60px; font-size:12px;" placeholder="Add team note..."></textarea>
+        <button type="button" class="button" style="width:100%; margin-top:5px;" onclick="addGPNote(<?php echo $post->ID; ?>)">Post Update</button>
+        <script>function addGPNote(id) { var t = jQuery('#gp-new-note').val(); if(!t) return; jQuery.post(ajaxurl, {action:'gp_add_lead_note', lead_id:id, note:t, gp_nonce:'<?php echo wp_create_nonce("gp_admin_nonce"); ?>'}, function(){location.reload();}); }</script>
         <?php
-    }
-
-    public function handle_lead_export() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
-        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-        $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
-
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="growthpress_leads_export.csv"');
-
-        $output = fopen('php://output', 'w');
-        fputcsv($output, array('Lead Name', 'Email', 'Date', 'Stage'));
-
-        foreach ( $leads as $l ) {
-            $email = get_post_meta($l->ID, '_lead_email', true);
-            $stage = wp_get_object_terms( $l->ID, 'gp_lead_stage', array('fields' => 'names') );
-            fputcsv($output, array($l->post_title, $email, $l->post_date, implode(', ', $stage)));
-        }
-        fclose($output);
-        exit;
     }
 
     public function handle_add_note() {
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-
-        $lead_id = intval($_POST['lead_id']);
-        $text = sanitize_textarea_field($_POST['note']);
-        $user = wp_get_current_user()->display_name;
-
-        $notes = get_post_meta($lead_id, '_gp_internal_notes', true) ?: array();
-        $notes[] = array(
-            'user' => $user,
-            'time' => current_time('mysql'),
-            'text' => $text
-        );
-
-        update_post_meta($lead_id, '_gp_internal_notes', $notes);
-        GrowthPress_Activity::log( "Note added to Lead #$lead_id by $user" );
+        $notes = get_post_meta(intval($_POST['lead_id']), '_gp_internal_notes', true) ?: array();
+        $notes[] = array( 'user' => wp_get_current_user()->display_name, 'time' => current_time('mysql'), 'text' => sanitize_textarea_field($_POST['note']) );
+        update_post_meta(intval($_POST['lead_id']), '_gp_internal_notes', $notes);
         wp_send_json_success();
     }
 
     public function handle_behavior_logging() {
-        $email = sanitize_email($_POST['email']);
-        $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => $email, 'number' => 1 ) );
+        $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => sanitize_email($_POST['email']), 'number' => 1 ) );
         if ( ! empty($leads) ) {
-            $lead_id = $leads[0]->ID;
-            $log = get_post_meta($lead_id, '_behavior_log', true) ?: array();
+            $log = get_post_meta($leads[0]->ID, '_behavior_log', true) ?: array();
             $log[] = array('page' => sanitize_text_field($_POST['page']), 'time' => current_time('mysql'));
-            update_post_meta($lead_id, '_behavior_log', array_slice($log, -10)); // Keep last 10
+            update_post_meta($leads[0]->ID, '_behavior_log', array_slice($log, -15));
         }
         wp_send_json_success();
     }
 
     public function create_task( $title, $desc = '', $lead_id = 0 ) {
-        $task_id = wp_insert_post( array(
-            'post_title'   => $title,
-            'post_content' => $desc,
-            'post_type'    => 'gp_task',
-            'post_status'  => 'publish'
-        ) );
-        if ( $lead_id ) {
-            update_post_meta( $task_id, '_related_lead', $lead_id );
-        }
+        $task_id = wp_insert_post( array( 'post_title' => $title, 'post_content' => $desc, 'post_type' => 'gp_task', 'post_status' => 'publish' ) );
+        if ( $lead_id ) update_post_meta( $task_id, '_related_lead', $lead_id );
         return $task_id;
     }
 
-    public function handle_abandoned_inquiry_followup() {
-        $new_leads = get_posts( array(
-            'post_type'  => 'gp_lead',
-            'posts_per_page' => 20,
-            'tax_query' => array( array( 'taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'new' ) ),
-            'date_query' => array( array( 'before' => '24 hours ago' ) ),
-        ) );
-
-        foreach ( $new_leads as $lead ) {
-            if ( get_post_meta( $lead->ID, '_followup_sent', true ) ) continue;
-
-            $ai = GrowthPress_AI::get_instance();
-            $niche = get_option('growthpress_niche', 'business');
-            $msg = $ai->call_ai("Generate a short, friendly re-engagement message for a lead that hasn't responded in 24 hours for a $niche business.", "Sales Assistant");
-
-            GrowthPress_Activity::log( "CRM Automation: Abandoned inquiry follow-up triggered for Lead #{$lead->ID}." );
-            update_post_meta( $lead->ID, '_followup_sent', 'true' );
-        }
-
-        $this->run_reactivation_scout();
+    public function handle_lead_export() {
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        header('Content-Type: text/csv'); header('Content-Disposition: attachment; filename="gp_leads.csv"');
+        $output = fopen('php://output', 'w'); fputcsv($output, array('Name', 'Email', 'Date'));
+        $leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => -1 ) );
+        foreach($leads as $l) fputcsv($output, array($l->post_title, get_post_meta($l->ID, '_lead_email', true), $l->post_date));
+        fclose($output); exit;
     }
 
-    private function run_reactivation_scout() {
-        $cold_leads = get_posts( array(
-            'post_type'  => 'gp_lead',
-            'posts_per_page' => 10,
-            'date_query' => array( array( 'before' => '30 days ago' ) ),
-            'meta_query' => array( array( 'key' => '_reactivation_flagged', 'compare' => 'NOT EXISTS' ) )
-        ) );
-
-        foreach ( $cold_leads as $lead ) {
-            $ai = GrowthPress_AI::get_instance();
-            $niche = get_option('growthpress_niche', 'business');
-            $campaign = $ai->call_ai("Generate a 3-sentence high-ticket reactivation message for a cold lead ($niche niche) who hasn't spoken to us in a month. Focus on a new value offer or market update.", "Growth Strategist");
-
-            update_post_meta( $lead->ID, '_reactivation_flagged', '1' );
-            update_post_meta( $lead->ID, '_gp_ai_reactivation_campaign', $campaign );
-            GrowthPress_Activity::log( "Growth Engine: Cold lead identified (#{$lead->ID}). Reactivation campaign generated." );
+    public function handle_abandoned_inquiry_followup() {
+        $new_leads = get_posts( array( 'post_type' => 'gp_lead', 'posts_per_page' => 20, 'tax_query' => array( array( 'taxonomy' => 'gp_lead_stage', 'field' => 'slug', 'terms' => 'new' ) ), 'date_query' => array( array( 'before' => '24 hours ago' ) ) ) );
+        foreach ( $new_leads as $lead ) {
+            if ( get_post_meta( $lead->ID, '_followup_sent', true ) ) continue;
+            update_post_meta( $lead->ID, '_followup_sent', 'true' );
         }
     }
 }

@@ -1,80 +1,47 @@
 <?php
 /**
- * GrowthPress Accounting Module - Intelligence Enhanced
+ * Accounting Niche specialized Closer Tools - Ultra Elite v3.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
-
 class GrowthPress_Accounting {
-
     public function __construct() {
-        add_shortcode( 'gp_tax_estimator', array( $this, 'render_tax_estimator' ) );
-        add_action( 'gp_client_portal_dashboard', array( $this, 'render_tax_docs' ) );
+        add_shortcode('gp_tax_estimator', array($this, 'render_tax_estimator'));
     }
 
     public function render_tax_estimator() {
-        ob_start(); ?>
-        <div class="gp-tax-calc glass-card">
-            <h3>Small Business Tax & Savings Estimator</h3>
-            <div class="form-group">
-                <label>Total Annual Revenue ($)</label>
-                <input type="number" id="gp-revenue" placeholder="e.g. 500000">
+        return '<div class="gp-tax-estimator glass-card gp-reveal" style="border-right: 15px solid #7C3AED; padding:80px 60px; background: linear-gradient(135deg, var(--surface), #F5F3FF);">
+            <div style="text-align:center; margin-bottom:50px;">
+                <div style="font-size:10px; font-weight:950; color:#7C3AED; text-transform:uppercase; letter-spacing:3px; margin-bottom:15px;">WEALTH PRESERVATION ENGINE</div>
+                <h3 class="text-gradient" style="font-size:2.8rem;">AI Tax Savings Estimator</h3>
+                <p style="font-size:1.1rem; opacity:0.7; max-width:600px; margin:20px auto 0;">Determine your potential tax optimization benefits based on your current corporate revenue profile.</p>
             </div>
-            <div class="form-group">
-                <label>Business Expenses ($)</label>
-                <input type="number" id="gp-expenses" placeholder="e.g. 200000">
-            </div>
-            <button onclick="runTaxCalc()">Calculate Tax Strategy</button>
-            <div id="tax-result"></div>
-        </div>
-        <script>
-        function runTaxCalc() {
-            var rev = jQuery('#gp-revenue').val();
-            var exp = jQuery('#gp-expenses').val();
-            var profit = rev - exp;
-            var tax = profit * 0.21; // Standard 21% Corporate
-            var potentialSavings = profit * 0.05; // AI-driven mock savings
 
-            if(profit > 0) {
-                jQuery('#tax-result').html("<div class='glass-card' style='margin-top:20px; border-color:#2563EB;'><h4>Strategic Projection</h4><p>Estimated Tax: <strong>$" + Math.round(tax).toLocaleString() + "</strong></p><p>Potential Savings with AI Optimization: <strong style='color:#10B981;'>$" + Math.round(potentialSavings).toLocaleString() + "</strong></p></div>");
-            }
-        }
-        </script>
-        <?php
-        return ob_get_clean();
-    }
-
-    public function render_tax_docs() {
-        ?>
-        <div class="gp-doc-upload glass-card" style="margin-top:20px;">
-            <h4>Secure Financial Document Portal</h4>
-            <p class="description">Upload your W2s, 1099s, and Expense sheets securely for review.</p>
-            <div class="upload-zone" style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc;">
-                <input type="file" multiple id="gp-accounting-upload" style="display:none;">
-                <label for="gp-accounting-upload" style="cursor:pointer; color: #2563EB; font-weight: bold;">Click to upload or drag and drop</label>
+            <div id="tax-steps" class="glass-card" style="background:#FFF; padding:50px; border-radius:32px;">
+                <div style="margin-bottom:30px;">
+                    <label style="font-weight:950; font-size:11px; opacity:0.5; letter-spacing:2px; display:block; margin-bottom:15px;">ESTIMATED ANNUAL REVENUE</label>
+                    <select id="rev-select" style="width:100%; height:70px; border-radius:18px; font-weight:700; border:2px solid #F1F5F9; padding:0 25px; font-size:16px;">
+                        <option value="12000">$250k - $500k</option>
+                        <option value="45000">$500k - $2M</option>
+                        <option value="185000">$2M - $10M</option>
+                        <option value="420000">$10M+</option>
+                    </select>
+                </div>
+                <div style="background:rgba(124, 58, 237, 0.05); border:2px solid rgba(124, 58, 237, 0.1); padding:40px; border-radius:28px; text-align:center; margin-bottom:40px;">
+                    <div style="font-size:11px; font-weight:800; color:#7C3AED; opacity:0.6; letter-spacing:1px; margin-bottom:10px;">ESTIMATED SAVINGS POTENTIAL</div>
+                    <div class="text-gradient" style="font-size:4rem; font-weight:950; color:#7C3AED;">$<span id="tax-savings">12,000</span></div>
+                </div>
+                <button class="gp-btn" style="width:100%; height:80px; font-size:20px; background:#7C3AED;" onclick="jQuery(\'#tax-steps\').fadeOut(); jQuery(\'#gp-quiz-form\').fadeIn();">Secure High-Level Financial Audit</button>
             </div>
-            <div id="gp-uploaded-docs" style="margin-top:15px;">
-                <ul style="list-style:none; padding:0; font-size:13px; color:#64748b;">
-                    <li>📄 sample_invoice_2023.pdf (Pending Review)</li>
-                </ul>
-            </div>
-        </div>
-        <?php
+            <div id="gp-quiz-form" style="display:none;">[gp_lead_form]</div>
+            <script>
+                jQuery("#rev-select").on("change", function() {
+                    jQuery("#tax-savings").text(parseInt(jQuery(this).val()).toLocaleString());
+                });
+            </script>
+        </div>';
     }
 
     public function generate_sample_data() {
-        $services = array(
-            'Tax Strategy Session' => 'Comprehensive planning to minimize tax liability.',
-            'Fractional CFO Services' => 'Executive financial leadership for growing firms.',
-            'Audit Representation' => 'Professional defense and guidance during tax audits.'
-        );
-        foreach($services as $t => $c) {
-            if ( ! get_page_by_path( sanitize_title($t), OBJECT, 'page' ) ) {
-                wp_insert_post(array('post_title' => $t, 'post_content' => $c, 'post_type' => 'page', 'post_status' => 'publish'));
-            }
-        }
+        wp_insert_post(array('post_title' => 'Nexus Restructuring', 'post_content' => 'Full restructuring for a high-growth SaaS entity.', 'post_type' => 'gp_project', 'post_status' => 'publish'));
     }
 }
 new GrowthPress_Accounting();

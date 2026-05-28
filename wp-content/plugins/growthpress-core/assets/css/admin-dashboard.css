@@ -1,66 +1,105 @@
+/* Refined Admin Dashboard Styles - Final Elite v1.6 */
 .growthpress-dashboard, .growthpress-studio, .growthpress-settings {
-    padding: 30px;
-    background: #f1f5f9;
+    padding: 50px;
+    background: #F8FAFC;
     min-height: 100vh;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #0F172A;
 }
 
+/* Glass Card Elite Refinement */
 .glass-card {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border: 1px solid #fff;
-    border-radius: 30px;
-    padding: 45px;
-    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.04), 0 18px 36px -18px rgba(0, 0, 0, 0.02);
-    margin-bottom: 40px;
-    transition: transform 0.3s ease;
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    border-radius: 28px;
+    padding: 35px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 35px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-.glass-card:hover { transform: translateY(-3px); }
-
-.dashboard-header h1 { font-weight: 900; color: #1e293b; font-size: 2rem; margin: 0; }
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
+.glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
 }
 
-.kanban-board {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 20px;
-}
-
+/* Kanban Elite UI */
 .kanban-col {
-    background: rgba(203, 213, 225, 0.3);
-    border-radius: 16px;
-    padding: 20px;
-    min-width: 300px;
+    background: rgba(226, 232, 240, 0.4);
+    border-radius: 32px;
+    padding: 25px;
+    min-width: 360px;
+    border: 1px solid rgba(255,255,255,0.6);
 }
 
 .kanban-card {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    cursor: grab;
-    border-left: 5px solid #2563EB;
+    background: #FFF;
+    border-radius: 24px;
+    padding: 25px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 8px solid var(--primary);
+    margin-bottom: 20px;
 }
 
-.status-badge {
-    background: #e2e8f0;
-    color: #475569;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
+.kanban-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 40px -12px rgba(0,0,0,0.12);
+    border-left-width: 15px;
 }
 
-@media (max-width: 900px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
+/* Priority Ribbons & Indicators */
+.kanban-card .hot-ribbon {
+    position: absolute;
+    top: 0; right: 0;
+    background: linear-gradient(135deg, #EF4444, #B91C1C);
+    color: white;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 4px 20px;
+    transform: rotate(45deg) translate(15px, -15px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
+/* Typography & Visual Hierarchy */
+.growthpress-dashboard h1 { font-weight: 950; letter-spacing: -0.06em; color: #0F172A; font-size: 2.5rem; }
+.growthpress-dashboard h3 { font-weight: 900; letter-spacing: -0.04em; color: #1E293B; margin-top: 0; margin-bottom: 25px; }
+
+/* Stats Hub */
+.stats-grid .stat {
+    background: #FFF;
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid #E2E8F0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+}
+.stats-grid .stat:hover { transform: scale(1.04); border-color: var(--primary); }
+
+/* Staff Avatars */
+.staff-avatar {
+    transition: transform 0.3s ease;
+}
+.staff-avatar:hover { transform: scale(1.2) rotate(10deg); z-index: 10; }
+
+/* AI Status Indicator */
+.ai-status {
+    background: linear-gradient(135deg, #10B981, #059669) !important;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+    animation: gp-pulse-elite 2.5s infinite;
+}
+
+@keyframes gp-pulse-elite {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Scrollbar Refinement */
+.growthpress-dashboard ::-webkit-scrollbar { width: 8px; }
+.growthpress-dashboard ::-webkit-scrollbar-track { background: transparent; }
+.growthpress-dashboard ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; border: 2px solid #F8FAFC; }
