@@ -4,7 +4,7 @@ Each business niche in GrowthPress includes tailored logic, Custom Post Types (C
 
 | Niche | Key Features | Unique Tool |
 | :--- | :--- | :--- |
-| **Dental** | Smile Gallery, Patient Education | `[gp_dental_insurance_form]` |
+| **Dental** | Smile Gallery, Patient Education | `[gp_insurance_optimizer]` |
 | **Law Firm** | Secure Intake, Case Lifecycle Tracking | `[gp_legal_intake]` |
 | **Solar** | ROI Projections, Financing Inquiry | `[gp_solar_calculator]` |
 | **Contractor** | Portfolio, Project Tracking | `[gp_contractor_estimator]` |

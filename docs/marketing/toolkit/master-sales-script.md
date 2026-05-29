@@ -3,11 +3,11 @@
 ## Part 1: The Hook (The System Gap)
 "Most of your competitors have a website that acts like a static billboard. It's 2023, and that's not enough. You're paying for traffic that lands on your site, gets confused, and leaves. You have a 'System Gap'."
 
-## Part 2: The Logic (Behavioral Triage)
-"GrowthPress fills that gap. It's a high-performance Operating System. When a lead enters their details, our AI immediately analyzes their intent. Are they just researching, or do they need a lawyer *now*? Our system scores them, tags them, and alerts your best rep in under 60 seconds."
+## Part 2: The Outcome (Autonomous Intelligence)
+"GrowthPress doesn't just 'track' leads; it **closes the gap between interest and transaction**. When a prospect interacts with your site, our Omni-AI engine instantly performs a 'Psychological Triage'. It determines their urgency, intent, and financial capacity before you even see the notification. By the time your team picks up the phone, they aren't 'cold calling'—they are conducting a high-probability closing consultation backed by AI data."
 
-## Part 3: The Close (Total Ecosystem)
-"We're going to replace your CRM, your booking calendar, and your content agency. We'll install a unified brain into your business that handles the follow-up, generates the proposals, and manages the client portal. How much is one extra high-ticket client worth to you each month?"
+## Part 3: The Vision (The High-Authority Exit)
+"We are going to move you from being a 'service provider' to a 'Market Authority'. We'll install a unified brain that handles the relentless follow-up that your team is currently ignoring. We’re replacing your fragmented tools with a single, high-fidelity command center. Imagine your business running with 70% less manual labor while your conversion rates double. How would that change your lifestyle this year?"
 
 ---
 

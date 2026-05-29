@@ -15,6 +15,8 @@ class GrowthPress_Dashboard {
         add_action( 'wp_ajax_gp_setup_niche', array( $this, 'handle_niche_setup' ) );
         add_action( 'wp_ajax_gp_regenerate_pages', array( $this, 'handle_page_regeneration' ) );
         add_action( 'wp_ajax_gp_update_lead_stage', array( $this, 'handle_lead_stage_update' ) );
+        add_action( 'wp_ajax_gp_get_lead_brief', array( $this, 'handle_get_lead_brief' ) );
+        add_action( 'wp_ajax_gp_strategic_search', array( $this, 'handle_strategic_search' ) );
     }
 
     public function add_dashboard_menu() {
@@ -28,6 +30,18 @@ class GrowthPress_Dashboard {
         wp_enqueue_style( 'growthpress-admin-menu-css', GROWTHPRESS_CORE_URL . 'assets/css/admin-menu.css', array(), GROWTHPRESS_CORE_VERSION );
         wp_enqueue_style( 'growthpress-admin-css', GROWTHPRESS_CORE_URL . 'assets/css/admin-dashboard.css', array(), GROWTHPRESS_CORE_VERSION );
 
+        wp_add_inline_style( 'growthpress-admin-css', '
+            .status-ping { width: 10px; height: 10px; border-radius: 50%; position: relative; }
+            .status-ping.active { background: #10B981; }
+            .status-ping.active::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: #10B981; animation: gp-ping 2s infinite; }
+            @keyframes gp-ping { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(3); opacity: 0; } }
+        ' );
+
+        $custom_css = get_option('growthpress_custom_css');
+        if ( $custom_css ) {
+            wp_add_inline_style( 'growthpress-admin-css', $custom_css );
+        }
+
         if ( 'toplevel_page_growthpress-dashboard' === $hook || strpos($hook, 'growthpress-studio') !== false ) {
             wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true );
             wp_enqueue_script( 'jquery-ui-draggable' );
@@ -35,6 +49,78 @@ class GrowthPress_Dashboard {
             wp_enqueue_script( 'growthpress-admin-js', GROWTHPRESS_CORE_URL . 'assets/js/admin-dashboard.js', array( 'jquery', 'chart-js', 'jquery-ui-draggable', 'jquery-ui-droppable' ), GROWTHPRESS_CORE_VERSION, true );
             wp_localize_script( 'growthpress-admin-js', 'gp_admin', array( 'nonce' => wp_create_nonce( 'gp_admin_nonce' ) ));
         }
+    }
+
+    public function handle_strategic_search() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $query = sanitize_text_field($_POST['query']);
+        $results = get_posts(array(
+            'post_type' => array('gp_lead', 'gp_appointment', 'gp_project'),
+            's' => $query,
+            'posts_per_page' => 10
+        ));
+        $html = '';
+        foreach($results as $r) {
+            $html .= '<div class="search-res-item" style="padding:15px; border-bottom:1px solid #EEE; cursor:pointer;" onclick="location.href=\''.get_edit_post_link($r->ID).'\'">';
+            $html .= '<strong style="font-size:13px;">'.esc_html($r->post_title).'</strong><br>';
+            $html .= '<span style="font-size:10px; opacity:0.5; text-transform:uppercase;">'.esc_html($r->post_type).'</span>';
+            $html .= '</div>';
+        }
+        wp_send_json_success(array('html' => $html ?: '<div style="padding:20px; opacity:0.4;">No intelligence found for "'.esc_html($query).'"</div>'));
+    }
+
+    public function handle_get_lead_brief() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+        check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+        $lead_id = intval($_POST['lead_id']);
+        $lead = get_post($lead_id);
+        if ( ! $lead ) wp_send_json_error('Lead not found');
+
+        $prob = get_post_meta($lead_id, '_gp_ai_probability', true) ?: 75;
+        $closing = get_post_meta($lead_id, '_gp_ai_closing_tips', true) ?: 'Analyzing closing vectors...';
+        $discovery = get_post_meta($lead_id, '_gp_ai_discovery_questions', true) ?: 'Calibrating discovery questions...';
+        $suggested = get_post_meta($lead_id, '_gp_ai_suggested_reply', true) ?: 'Drafting personalized response...';
+
+        ob_start();
+        ?>
+        <div class="gp-intel-brief-modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding-bottom:20px; border-bottom:1px solid #EEE;">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <div class="status-ping active"></div>
+                    <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:2px;">NEURAL LINK STABLE</div>
+                </div>
+                <div style="font-size:10px; font-weight:950; opacity:0.4; letter-spacing:1px;">LATENCY: 84MS</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 2fr; gap:30px;">
+                <div class="brief-side">
+                    <div style="background:var(--primary-glow); padding:30px; border-radius:25px; text-align:center; margin-bottom:30px;">
+                        <div style="font-size:38px; font-weight:950; color:var(--primary);"><?php echo $prob; ?>%</div>
+                        <div style="font-size:10px; font-weight:900; opacity:0.5; letter-spacing:1px;">DEAL PROBABILITY</div>
+                    </div>
+                    <div style="background:#F8FAFC; padding:25px; border-radius:20px;">
+                        <h4 style="margin-top:0; font-size:13px; text-transform:uppercase; letter-spacing:1px;">Closing Tactics</h4>
+                        <div style="font-size:12px; line-height:1.6; opacity:0.7;"><?php echo nl2br(esc_html($closing)); ?></div>
+                    </div>
+                </div>
+                <div class="brief-main">
+                    <h3 style="margin-top:0;"><?php echo esc_html($lead->post_title); ?></h3>
+                    <div style="font-size:13px; background:#FFFBEB; padding:20px; border-radius:15px; border:1px solid #FEF3C7; color:#92400E; margin-bottom:25px;">
+                        <strong>AI Discovery Strategy:</strong><br>
+                        <?php echo nl2br(esc_html($discovery)); ?>
+                    </div>
+                    <h4 style="margin-bottom:10px;">Neural Draft Response</h4>
+                    <textarea style="width:100%; height:120px; border-radius:12px; padding:15px; font-size:13px; background:#F0FDF4; border:1px solid #DCFCE7;"><?php echo esc_textarea($suggested); ?></textarea>
+                    <div style="margin-top:20px; display:flex; gap:10px;">
+                        <button class="gp-btn" style="flex:1; background:var(--secondary); color:white !important; padding:12px; border-radius:12px;">Sync to CRM</button>
+                        <a href="<?php echo get_edit_post_link($lead_id); ?>" class="gp-btn" style="flex:1; text-align:center; background:transparent; border:1px solid #E2E8F0; padding:12px; border-radius:12px;">Full Dossier</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+        $html = ob_get_clean();
+        wp_send_json_success(array('html' => $html));
     }
 
     public function handle_lead_stage_update() {

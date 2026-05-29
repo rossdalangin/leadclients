@@ -18,7 +18,8 @@ class GrowthPress_Activity {
         update_option( 'gp_activity_logs', array_slice( $logs, 0, 20 ) ); // Keep last 20
     }
 
-    public static function get_logs() {
-        return get_option( 'gp_activity_logs', array() );
+    public static function get_logs( $limit = 20 ) {
+        $logs = get_option( 'gp_activity_logs', array() );
+        return array_slice( $logs, 0, $limit );
     }
 }

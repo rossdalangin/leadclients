@@ -7,9 +7,22 @@
                 <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.08em; margin:0;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.4;">OS</span></h1>
             <?php endif; ?>
             <div style="height:35px; width:2px; background:rgba(0,0,0,0.1);"></div>
-            <div style="font-size:12px; font-weight:950; opacity:0.5; letter-spacing:3px; text-transform:uppercase;">OMNI-INTELLIGENCE v4.0</div>
+            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="background:transparent; border:none; font-size:12px; font-weight:950; opacity:0.5; letter-spacing:3px; text-transform:uppercase; cursor:pointer;">
+                <?php
+                $active_niche = get_option('growthpress_niche', 'business');
+                $niches = array('dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants');
+                foreach($niches as $n): ?>
+                    <option value="<?php echo $n; ?>" <?php selected($n, $active_niche); ?>><?php echo strtoupper($n); ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div style="display:flex; gap:15px; align-items:center;">
+            <div style="position:relative;" id="gp-search-container">
+                <input type="text" id="gp-strategic-search" placeholder="Strategic Search..." style="background:rgba(0,0,0,0.05); border:none; padding:12px 25px; border-radius:30px; font-size:12px; width:250px;">
+                <span class="dashicons dashicons-search" style="position:absolute; right:15px; top:10px; opacity:0.3;"></span>
+                <div id="gp-search-results" style="display:none; position:absolute; top:55px; left:0; width:100%; background:white; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.1); z-index:1000; overflow:hidden;"></div>
+            </div>
+            <div class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Strategic Dark Mode"><span class="dashicons dashicons-visibility"></span></div>
             <button class="gp-btn" style="padding:12px 25px; font-size:12px; border-radius:12px; background:var(--secondary); color:white !important;" onclick="exportLeads()">EXPORT INTEL</button>
             <div class="ai-status" style="background:#10B981; color:white; padding:12px 25px; border-radius:40px; font-size:12px; font-weight:950; letter-spacing:1px; box-shadow:0 15px 30px rgba(16,185,129,0.25);">NEURAL CORE ACTIVE</div>
         </div>
@@ -47,8 +60,15 @@
                         <div style="position:absolute; bottom:0; left:0; height:4px; width:100%; background:var(--primary);"></div>
                     </div>
                 </div>
-                <div style="background:#FFF; padding:50px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
-                    <canvas id="gp-main-chart" height="110"></canvas>
+                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:30px;">
+                    <div style="background:#FFF; padding:40px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
+                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:20px;">CONVERSION TRAJECTORY</div>
+                        <canvas id="gp-main-chart" height="150"></canvas>
+                    </div>
+                    <div style="background:#FFF; padding:40px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
+                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:20px;">MARKETING VELOCITY</div>
+                        <canvas id="gp-velocity-chart" height="230"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -83,7 +103,7 @@
                                     $staff_id = get_post_meta($lead->ID, '_assigned_staff', true);
                                     $staff = $staff_id ? get_userdata($staff_id) : null;
                                     ?>
-                                    <div class="kanban-card glass-card" data-id="<?php echo $lead->ID; ?>" style="padding:35px; border-radius:35px; border-left: 12px solid <?php echo $prob > 80 ? '#10B981' : 'var(--primary)'; ?>; margin-bottom:30px; position:relative;">
+                                    <div class="kanban-card glass-card <?php echo $prob > 85 ? 'neural-pulse' : ''; ?>" data-id="<?php echo $lead->ID; ?>" style="padding:35px; border-radius:35px; border-left: 12px solid <?php echo $prob > 80 ? '#10B981' : 'var(--primary)'; ?>; margin-bottom:30px; position:relative;">
                                         <?php if($prob > 88): ?>
                                             <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; font-size: 9px; font-weight: 950; padding: 6px 30px; transform: rotate(45deg) translate(25px, -25px); text-transform: uppercase; letter-spacing:1px; box-shadow:0 5px 15px rgba(239,68,68,0.3);">ELITE</div>
                                         <?php endif; ?>
@@ -153,6 +173,59 @@
                 </div>
             </div>
 
+            <!-- Autonomous Agent Feed -->
+            <div class="glass-card" style="border-radius:40px; padding:45px; background:linear-gradient(135deg, #FFF, #F8FAFC); border:1px solid #E2E8F0; margin-bottom:40px;">
+                <h3 style="font-size:14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom:30px; font-weight:950;">Agent Task Queue</h3>
+                <div style="display:grid; gap:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700;">
+                        <span>AI Triage: Lead #422</span>
+                        <span style="color:#10B981;">ACTIVE</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700;">
+                        <span>SEO Content: "Solar ROI"</span>
+                        <span style="opacity:0.4;">QUEUED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Staff Efficiency Hub -->
+            <div class="glass-card" style="border-radius:40px; padding:45px; background:#FFF; border:1px solid #E2E8F0; margin-bottom:40px;">
+                <h3 style="font-size:16px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; margin-bottom:30px; font-weight:950;">Staff Efficiency Hub</h3>
+                <div style="display:grid; gap:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:13px; font-weight:700;">Avg. Response Time</span>
+                        <span style="font-size:13px; font-weight:950; color:#10B981;">4.2 min</span>
+                    </div>
+                    <div style="height:6px; background:#F1F5F9; border-radius:10px; overflow:hidden;">
+                        <div style="width:85%; height:100%; background:var(--primary);"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <span style="font-size:13px; font-weight:700;">Closing Rate</span>
+                        <span style="font-size:13px; font-weight:950; color:#10B981;">28.4%</span>
+                    </div>
+                    <div style="height:6px; background:#F1F5F9; border-radius:10px; overflow:hidden;">
+                        <div style="width:62%; height:100%; background:#10B981;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Forecast Engine -->
+            <div class="forecast-widget">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:2px; margin-bottom:5px;">REVENUE FORECAST</div>
+                        <div style="font-size:32px; font-weight:950;">$<?php echo number_format($pipe_val * 0.65); ?></div>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.2); color:#10B981; padding:6px 12px; border-radius:20px; font-size:10px; font-weight:950;">+12.4%</div>
+                </div>
+                <div style="margin-top:25px; font-size:12px; opacity:0.6; line-height:1.6;">
+                    AI models predict a 65% weighted conversion probability for current high-intent pipeline items.
+                </div>
+                <div style="margin-top:20px; height:6px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+                    <div style="width:65%; height:100%; background:#10B981; box-shadow:0 0 15px rgba(16,185,129,0.5);"></div>
+                </div>
+            </div>
+
             <!-- Conversion Command -->
             <div class="glass-card" style="background: var(--secondary); color: white; border: none; border-radius:40px; padding:45px; margin-top:40px;">
                 <h3 style="color: white; font-size: 16px; letter-spacing:1px; font-weight:950;">Funnel Command</h3>
@@ -172,7 +245,32 @@
 </div>
 
 <script>
+function switchNiche(niche) {
+    if(confirm('Switching ecosystem to ' + niche.toUpperCase() + '? This will recalibrate Neural Hub prompts.')) {
+        jQuery.post(ajaxurl, {
+            action: 'gp_setup_niche',
+            niche: niche,
+            gp_nonce: gp_admin.nonce
+        }, function() { location.reload(); });
+    }
+}
+
+function toggleDarkMode() {
+    document.querySelector('.growthpress-dashboard').classList.toggle('gp-dark-mode');
+}
+
+function exportLeads() {
+    window.location.href = ajaxurl + '?action=gp_export_leads&gp_nonce=' + gp_admin.nonce;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    jQuery('#gp-strategic-search').on('keyup', function() {
+        const q = jQuery(this).val();
+        if(q.length < 3) { jQuery('#gp-search-results').hide(); return; }
+        jQuery.post(ajaxurl, { action: 'gp_strategic_search', query: q, gp_nonce: gp_admin.nonce }, function(res) {
+            if(res.success) jQuery('#gp-search-results').show().html(res.data.html);
+        });
+    });
     var ctxMain = document.getElementById('gp-main-chart').getContext('2d');
     new Chart(ctxMain, {
         type: 'line',
@@ -190,7 +288,30 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             plugins: { legend: { display: false } },
-            scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: '900', size: 12, family: 'Inter' } } } }
+            scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: '900', size: 10, family: 'Inter' } } } }
+        }
+    });
+
+    var ctxVel = document.getElementById('gp-velocity-chart').getContext('2d');
+    new Chart(ctxVel, {
+        type: 'bar',
+        data: {
+            labels: ['M', 'T', 'W', 'T', 'F'],
+            datasets: [{
+                label: 'Ad Spend',
+                data: [120, 190, 150, 250, 210],
+                backgroundColor: '#E2E8F0',
+                borderRadius: 10
+            }, {
+                label: 'Pipeline Value',
+                data: [400, 650, 590, 900, 820],
+                backgroundColor: '#2563EB',
+                borderRadius: 10
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { grid: { display: false }, stacked: true } }
         }
     });
 });

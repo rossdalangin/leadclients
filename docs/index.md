@@ -1,69 +1,103 @@
-# GrowthPress Documentation: Master Index
+# GrowthPress Documentation: Master Index v4.9 (Final)
 
-Welcome to the comprehensive documentation library for the GrowthPress Business Operating System. This library is divided into four main pillars: Technical, Strategic, Operations, and Marketing.
+Welcome to the comprehensive documentation library for the GrowthPress Business Operating System.
 
-## 🛠️ Pillar 1: Technical Specifications
-- `architecture.md`: Lead lifecycle and high-level architecture.
-- `system-technical-interaction-map.md`: Granular class and hook interactions.
-- `database-schema-deep-dive.md`: CPT, Taxonomy, and Meta Key mapping.
-- `api-specification.md`: Secure REST API endpoints and authentication.
-- `security-framework.md`: Nonces, sanitization, and data privacy protocols.
-- `enterprise-security-audit.md`: Compliance checklist for high-stakes niches.
-- `developer-guide.md`: Core system hooks and filters for extension.
-- `folder-structure.md`: Map of the theme and plugin file system.
-- `page-builder-guide.md`: Support for Elementor, Bricks, and Gutenberg.
-- `system-scalability-multisite.md`: Scaling to 100+ instances via WordPress Multisite.
+## Technical
+- [Api Specification](api-specification.md)
+- [Architecture Map](architecture-map.md)
+- [Architecture](architecture.md)
+- [Database Schema Deep Dive](database-schema-deep-dive.md)
+- [Enterprise Security Audit](enterprise-security-audit.md)
+- [Security Framework](security-framework.md)
+- [System Technical Interaction Map](system-technical-interaction-map.md)
 
-## 🧠 Pillar 2: Strategic Foundation
-- `master-prompt-library.md`: Complete list of system AI prompts.
-- `behavioral-psychology-glossary.md`: Detailed conversion triggers and logic.
-- `ux-strategy.md`: Core user experience and friction reduction philosophy.
-- `conversion-strategy.md`: Psychological maps for every page type.
-- `design-system.md`: Colors, typography, and aesthetic guidelines.
-- `design-specifications.md`: Granular mockup specs for dashboard and CRM.
-- `niche-success-blueprints.md`: Strategic roadmaps for 10 major industries.
-- `industry-module-summary.md`: Overview of niche-specific tools and logic.
+## Strategic
+- [Ai Prompts](ai-prompts.md)
+- [Behavioral Psychology Glossary](behavioral-psychology-glossary.md)
+- [Client Communication Strategy](client-communication-strategy.md)
+- [Conversion Strategy](conversion-strategy.md)
+- [Master Prompt Library](master-prompt-library.md)
+- [Niche Success Blueprints](niche-success-blueprints.md)
+- [Ux Strategy](ux-strategy.md)
 
-## 🚀 Pillar 3: Operational Excellence
-- `master-automation-logic.md`: Technical flows for lead triage, booking, and nurture.
-- `processes.md`: Comprehensive list of 30+ automated system workflows.
-- `user-guide.md`: Step-by-step setup and lead lifecycle management.
-- `onboarding-flow.md`: Onboarding roadmap and quick-start video script.
-- `team-collaboration-guide.md`: Protocols for Kanban, notes, and task management.
-- `client-communication-strategy.md`: Omnichannel SMS, WhatsApp, and Email strategy.
-- `white-label-guide.md`: Rebranding instructions for agencies.
-- `launch-checklist.md`: 5-step technical and brand readiness list.
-- `page-wireframes.md`: Structural layouts for high-converting pages.
+## Operations
+- [Agency White Label Guide](agency-white-label-guide.md)
+- [Ai Automation Diagrams](ai-automation-diagrams.md)
+- [Automation Map](automation-map.md)
+- [Automations](automations.md)
+- [Components](components.md)
+- [Design Specifications](design-specifications.md)
+- [Design System](design-system.md)
+- [Developer Guide](developer-guide.md)
+- [Folder Structure](folder-structure.md)
+- [Industry Module Summary](industry-module-summary.md)
+- [Launch Checklist](launch-checklist.md)
+- [Master Automation Logic](master-automation-logic.md)
+- [Monetization Roadmap](monetization-roadmap.md)
+- [Monetization](monetization.md)
+- [Onboarding Flow](onboarding-flow.md)
+- [Page Builder Guide](page-builder-guide.md)
+- [Page Wireframes](page-wireframes.md)
+- [Plugins](plugins.md)
+- [Processes](processes.md)
+- [System Map](system-map.md)
+- [System Reliability Guide](system-reliability-guide.md)
+- [System Scalability Multisite](system-scalability-multisite.md)
+- [Team Collaboration Guide](team-collaboration-guide.md)
+- [User Flows](user-flows.md)
+- [User Guide](user-guide.md)
+- [White Label Guide](white-label-guide.md)
 
-## 💰 Pillar 4: Marketing & Sales Toolkit
-- `marketing/toolkit/master-sales-script.md`: High-authority agency sales narrative.
-- `marketing/toolkit/niche-sales-scripts.md`: Tailored talking points for 10 niches.
-- `marketing/toolkit/sales-presentation.md`: 15-slide master pitch deck sequence.
-- `marketing/toolkit/sales-presentation-script.md`: Professional narrative for the deck.
-- `marketing/toolkit/pitch-deck.md`: High-level outline for rapid presentations.
-- `marketing/toolkit/competitor-battlecards.md`: Scripts to out-position GHL and HubSpot.
-- `marketing/toolkit/competitor-intelligence-brief.md`: Strategic edge analysis.
-- `marketing/toolkit/competitor-analysis-template.md`: ROI comparison for prospects.
-- `marketing/toolkit/high-ticket-offer-structure.md`: Transformation-based offer design.
-- `marketing/toolkit/high-ticket-playbook.md`: Speed-to-lead and closing protocols.
-- `marketing/toolkit/lead-nurture-playbook.md`: Psychology of the 5-day sequence.
-- `marketing/toolkit/agency-partner-playbook.md`: Roadmap to $1M+ ARR for agencies.
-- `marketing/toolkit/agency-white-label-pricing-guide.md`: Tiered bundling and pricing.
-- `marketing/toolkit/agency-service-agreement.md`: Professional contract framework.
-- `marketing/toolkit/client-onboarding-presentation.md`: System handover deck.
-- `marketing/toolkit/client-onboarding-checklist.md`: Agency client readiness guide.
-- `marketing/toolkit/success-interview-guide.md`: Protocol for high-authority case studies.
-- `marketing/toolkit/case-study-template.md`: Transformation and ROI documentation.
-- `marketing/toolkit/objection-handling.md`: Overcoming cost and AI-phobia.
-- `marketing/toolkit/email-sequence-cold-outreach.md`: Agency outreach templates.
-- `marketing/email-sequences.md`: Automated nurture sequence templates.
-- `marketing/email-templates.md`: General authority email templates.
-- `marketing/ad-copy-examples.md`: High-ticket lead gen ads for 10 niches.
-- `marketing/social-media-templates.md`: Conversion templates for authority posts.
-- `marketing/industry-campaigns.md`: Industry-specific campaign concepts.
-- `marketing/gtm-plans/high-ticket-gtm.md`: Product positioning and channel strategy.
-- `marketing/gtm-plans/law-firm-gtm.md`: Dedicated legal industry strategy.
-- `marketing/gtm-plans/solar-gtm.md`: Dedicated solar industry strategy.
-- `marketing/toolkit/market-dominance.md`: Strategic local market dominance guides.
-- `marketing/toolkit/market-dominance-whitepaper.md`: AI automation ROI whitepaper.
-- `monetization.md`: Agency vs. Business Owner profit strategies.
+## Marketing
+- [Ad Copy Examples](marketing/ad-copy-examples.md)
+- [Email Sequences](marketing/email-sequences.md)
+- [Email Templates](marketing/email-templates.md)
+- [Accounting Gtm](marketing/gtm-plans/accounting-gtm.md)
+- [Consultants Gtm](marketing/gtm-plans/consultants-gtm.md)
+- [Contractor Gtm](marketing/gtm-plans/contractor-gtm.md)
+- [Dental Clinic Gtm](marketing/gtm-plans/dental-clinic-gtm.md)
+- [High Ticket Gtm](marketing/gtm-plans/high-ticket-gtm.md)
+- [Law Firm Gtm](marketing/gtm-plans/law-firm-gtm.md)
+- [Medical Clinic Gtm](marketing/gtm-plans/medical-clinic-gtm.md)
+- [Real Estate Gtm](marketing/gtm-plans/real-estate-gtm.md)
+- [Roofing Gtm](marketing/gtm-plans/roofing-gtm.md)
+- [Solar Gtm](marketing/gtm-plans/solar-gtm.md)
+- [Industry Campaigns](marketing/industry-campaigns.md)
+- [Pitch Deck](marketing/pitch-deck.md)
+- [Promotion Image Prompts](marketing/promotion-image-prompts.md)
+- [Sales Battlecards](marketing/sales-battlecards.md)
+- [Sales Scripts](marketing/sales-scripts.md)
+- [Social Media Templates](marketing/social-media-templates.md)
+- [Agency Partner Playbook](marketing/toolkit/agency-partner-playbook.md)
+- [Agency Pitch Deck Speaker Notes](marketing/toolkit/agency-pitch-deck-speaker-notes.md)
+- [Agency Service Agreement](marketing/toolkit/agency-service-agreement.md)
+- [Agency White Label Pricing Guide](marketing/toolkit/agency-white-label-pricing-guide.md)
+- [Case Study Template](marketing/toolkit/case-study-template.md)
+- [Client Onboarding Checklist](marketing/toolkit/client-onboarding-checklist.md)
+- [Client Onboarding Presentation](marketing/toolkit/client-onboarding-presentation.md)
+- [Closing Tactics Reference](marketing/toolkit/closing-tactics-reference.md)
+- [Competitor Analysis Template](marketing/toolkit/competitor-analysis-template.md)
+- [Competitor Battlecards](marketing/toolkit/competitor-battlecards.md)
+- [Competitor Intelligence Brief](marketing/toolkit/competitor-intelligence-brief.md)
+- [Competitor Intelligence](marketing/toolkit/competitor-intelligence.md)
+- [Email Sequence Cold Outreach](marketing/toolkit/email-sequence-cold-outreach.md)
+- [High Ticket Offer Structure](marketing/toolkit/high-ticket-offer-structure.md)
+- [High Ticket Playbook](marketing/toolkit/high-ticket-playbook.md)
+- [Lead Nurture Playbook](marketing/toolkit/lead-nurture-playbook.md)
+- [Market Dominance Whitepaper](marketing/toolkit/market-dominance-whitepaper.md)
+- [Market Dominance](marketing/toolkit/market-dominance.md)
+- [Master Agency Playbook](marketing/toolkit/master-agency-playbook.md)
+- [Master Sales Script](marketing/toolkit/master-sales-script.md)
+- [Monetization Roadmap](marketing/toolkit/monetization-roadmap.md)
+- [Niche Sales Scripts](marketing/toolkit/niche-sales-scripts.md)
+- [Objection Handling](marketing/toolkit/objection-handling.md)
+- [Pitch Deck](marketing/toolkit/pitch-deck.md)
+- [Proposal Templates Niche](marketing/toolkit/proposal-templates-niche.md)
+- [Referral Engine Playbook](marketing/toolkit/referral-engine-playbook.md)
+- [Sales Presentation Script](marketing/toolkit/sales-presentation-script.md)
+- [Sales Presentation](marketing/toolkit/sales-presentation.md)
+- [Sales Scripts](marketing/toolkit/sales-scripts.md)
+- [Strategic Partnership Playbook](marketing/toolkit/strategic-partnership-playbook.md)
+- [Success Interview Guide](marketing/toolkit/success-interview-guide.md)
+- [Video Sales Letter Script](marketing/toolkit/video-sales-letter-script.md)
+- [Webinar Funnel Script](marketing/toolkit/webinar-funnel-script.md)

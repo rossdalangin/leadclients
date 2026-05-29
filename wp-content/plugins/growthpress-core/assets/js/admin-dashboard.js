@@ -18,6 +18,26 @@ jQuery(document).ready(function($) {
 
     // Kanban Drag & Drop
     if ($('.kanban-cards').length > 0) {
+        $('.kanban-card').on('click', function(e) {
+            if($(e.target).closest('a, button').length) return;
+            const leadId = $(this).data('id');
+            const overlay = $('<div class="gp-modal-overlay"><div class="gp-modal"><div class="modal-loader" style="text-align:center; padding:100px; font-weight:950; letter-spacing:2px; opacity:0.4;">NEURAL BRIEF SYNCHRONIZING...</div></div></div>').appendTo('body');
+
+            $.post(ajaxurl, {
+                action: 'gp_get_lead_brief',
+                lead_id: leadId,
+                gp_nonce: gp_admin.nonce
+            }, function(res) {
+                if(res.success) {
+                    overlay.find('.gp-modal').html(res.data.html);
+                }
+            });
+
+            overlay.on('click', function(e) {
+                if($(e.target).is('.gp-modal-overlay')) $(this).fadeOut(function(){ $(this).remove(); });
+            });
+        });
+
         $('.kanban-card').draggable({
             revert: "invalid",
             helper: "clone",
