@@ -1,4 +1,4 @@
-# GrowthPress Documentation: Master Index v4.9 (Final)
+# GrowthPress Documentation: Master Index v5.2 (Final)
 
 Welcome to the comprehensive documentation library for the GrowthPress Business Operating System.
 
@@ -18,6 +18,7 @@ Welcome to the comprehensive documentation library for the GrowthPress Business 
 - [Conversion Strategy](conversion-strategy.md)
 - [Master Prompt Library](master-prompt-library.md)
 - [Niche Success Blueprints](niche-success-blueprints.md)
+- [Operations Playbook](operations-playbook.md)
 - [Ux Strategy](ux-strategy.md)
 
 ## Operations
