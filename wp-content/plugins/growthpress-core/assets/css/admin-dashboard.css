@@ -15,7 +15,7 @@
 }
 
 .growthpress-dashboard, .growthpress-studio, .growthpress-settings {
-    padding: 60px;
+    padding: 40px;
     background-color: #F8FAFC;
     background-image:
         radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.07) 0px, transparent 50%),
@@ -38,14 +38,16 @@
 .dashboard-header {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
-    padding: 30px 50px;
-    border-radius: 35px;
+    padding: 20px 30px;
+    border-radius: 25px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--card-shadow);
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 #gp-strategic-search {
@@ -61,17 +63,62 @@
     box-shadow: 0 0 0 4px var(--primary-glow) !important;
 }
 
-/* Glass Card v5.0 */
+/* Settings Layout Harmony */
+.growthpress-settings .glass-card {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.growthpress-settings .nav-tab-wrapper {
+    display: flex;
+    justify-content: center;
+    border-bottom: none;
+    margin-bottom: 40px;
+}
+
+/* Dashboard Grid System */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: start;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .side-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .side-col {
+        grid-template-columns: 1fr;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Glass Card v5.1 */
 .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     border: 1px solid var(--glass-border);
-    border-radius: 40px;
+    border-radius: 35px;
     box-shadow: var(--card-shadow);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    padding: 40px;
 }
 
 .glass-card:hover {
@@ -81,22 +128,40 @@
 }
 
 /* Stats Display Polish */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .stats-grid .stat {
     background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-    padding: 45px;
-    border-radius: 35px;
+    padding: 30px;
+    border-radius: 25px;
     border: 1px solid #F1F5F9;
     position: relative;
     overflow: hidden;
 }
 
-.stat b { font-size: 56px; font-weight: 950; letter-spacing: -0.06em; line-height: 1; display: block; margin-top: 10px; }
+.stat b { font-size: 42px; font-weight: 950; letter-spacing: -0.06em; line-height: 1; display: block; margin-top: 10px; }
 
 /* Kanban Ultra-SaaS Aesthetic */
+.kanban-board-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding-bottom: 30px;
+    width: 100%;
+}
+
 .kanban-col {
     background: rgba(241, 245, 249, 0.5);
-    border-radius: 40px;
-    padding: 30px;
+    border-radius: 30px;
+    padding: 25px;
+    min-width: 320px;
     border: 1px dashed rgba(203, 213, 225, 0.6);
 }
 

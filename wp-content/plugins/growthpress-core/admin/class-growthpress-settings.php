@@ -53,9 +53,9 @@ class GrowthPress_Settings {
         @keyframes ping { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(3); opacity: 0; } }
         .growthpress-settings .glass-card { margin-top: 20px; }
         </style>
-        <div class="wrap growthpress-settings">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                <h1>Ecosystem Intelligence & Configuration</h1>
+        <div class="wrap growthpress-settings gp-reveal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding:30px; background:rgba(255,255,255,0.6); border-radius:30px; border:1px solid var(--glass-border);">
+                <h1 style="margin:0;">Ecosystem Intelligence & Configuration</h1>
                 <div style="background:var(--secondary); color:white; padding:8px 16px; border-radius:30px; font-size:11px; font-weight:900; letter-spacing:1px;">ELITE v4.5 OMNI-AI</div>
             </div>
 
@@ -70,7 +70,7 @@ class GrowthPress_Settings {
             </div>
 
             <div id="tab-config" class="tab-content">
-                <div class="glass-card" style="max-width:1000px; border-bottom: 8px solid #10B981; margin-bottom:40px;">
+                <div class="glass-card" style="max-width:1100px; border-bottom: 8px solid #10B981; margin-bottom:40px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <h3 style="margin:0;">Neural Health Grid</h3>
@@ -84,7 +84,7 @@ class GrowthPress_Settings {
                     </div>
                 </div>
 
-                <form method="post" action="options.php" class="glass-card" style="max-width:1000px;">
+                <form method="post" action="options.php" class="glass-card" style="max-width:1100px;">
                     <?php settings_fields( 'growthpress_settings_group' ); ?>
                     <table class="form-table">
                         <tr class="section-header"><th colspan="2"><h3>Active Intelligence Routing</h3></th></tr>
@@ -115,7 +115,7 @@ class GrowthPress_Settings {
             </div>
 
             <div id="tab-ai" class="tab-content" style="display:none;">
-                <form method="post" action="options.php" class="glass-card" style="max-width:1000px;">
+                <form method="post" action="options.php" class="glass-card" style="max-width:1100px;">
                     <?php settings_fields( 'growthpress_settings_group' ); ?>
                     <table class="form-table">
                         <tr class="section-header"><th colspan="2"><h3>Cloud Intelligence API Keys</h3></th></tr>
@@ -171,7 +171,7 @@ class GrowthPress_Settings {
             </div>
 
             <div id="tab-lab" class="tab-content" style="display:none;">
-                <div class="glass-card" style="max-width:1000px;">
+                <div class="glass-card" style="max-width:1100px;">
                     <h3 class="text-gradient">Neural Personality Lab</h3>
                     <p style="opacity:0.6;">Test and refine your autonomous agent's tone and strategy. Changes made here will be instantly injected into all Neural Hub conversations.</p>
 
@@ -206,7 +206,7 @@ class GrowthPress_Settings {
             </script>
 
             <div id="tab-white-label" class="tab-content" style="display:none;">
-                <form method="post" action="options.php" class="glass-card" style="max-width:1000px;">
+                <form method="post" action="options.php" class="glass-card" style="max-width:1100px;">
                     <?php settings_fields( 'growthpress_settings_group' ); ?>
                     <table class="form-table">
                         <tr class="section-header"><th colspan="2"><h3>Agency Branding</h3></th></tr>
@@ -269,7 +269,7 @@ class GrowthPress_Settings {
             </div>
 
             <div id="tab-docs" class="tab-content" style="display:none;">
-                <div class="glass-card" style="max-width:1000px;">
+                <div class="glass-card" style="max-width:1100px;">
                     <h2 class="text-gradient">Master Operations Manual v4.5</h2>
                     <p>GrowthPress v4.5 now supports **Multi-Intelligence Nodes**. You can toggle between providers instantly based on specialized niche requirements.</p>
                     <hr style="opacity:0.1; margin:30px 0;">
