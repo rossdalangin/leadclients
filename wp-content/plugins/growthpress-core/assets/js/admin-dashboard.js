@@ -16,6 +16,9 @@ jQuery(document).ready(function($) {
         });
     };
 
+    // Global Micro-interactions
+    $('.glass-card').addClass('gp-reveal');
+
     // Kanban Drag & Drop
     if ($('.kanban-cards').length > 0) {
         $('.kanban-card').on('click', function(e) {

@@ -27,6 +27,9 @@ class GrowthPress_Dashboard {
     public function enqueue_dashboard_assets( $hook ) {
         if ( strpos($hook, 'growthpress') === false ) return;
 
+        // Elite Typography Injection
+        wp_enqueue_style( 'gp-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Lexend:wght@300;400;600;700;800;900&display=swap', array(), null );
+
         wp_enqueue_style( 'growthpress-admin-menu-css', GROWTHPRESS_CORE_URL . 'assets/css/admin-menu.css', array(), GROWTHPRESS_CORE_VERSION );
         wp_enqueue_style( 'growthpress-admin-css', GROWTHPRESS_CORE_URL . 'assets/css/admin-dashboard.css', array(), GROWTHPRESS_CORE_VERSION );
 

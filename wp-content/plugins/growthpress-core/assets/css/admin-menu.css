@@ -1,34 +1,52 @@
-/* Admin Menu & UI Refinement v1.7 */
-#adminmenu li.toplevel_page_growthpress-dashboard .wp-menu-image::before {
-    content: "\f239"; /* chart-line */
-    color: #2563EB !important;
+/* GrowthPress Elite Admin Menu Accents v5.0 */
+
+#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+    background-color: #0F172A !important;
 }
 
-#adminmenu li.toplevel_page_growthpress-dashboard:hover .wp-menu-image::before {
-    transform: scale(1.2) rotate(-5deg);
-    transition: all 0.3s ease;
+#adminmenu a {
+    color: rgba(255,255,255,0.7) !important;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 12px 15px;
 }
 
-#adminmenu li.toplevel_page_growthpress-dashboard {
-    border-left: 4px solid transparent;
+#adminmenu li.current a.menu-top,
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head {
+    background: var(--primary) !important;
+    color: #FFF !important;
 }
 
-#adminmenu li.toplevel_page_growthpress-dashboard.current {
-    border-left-color: #2563EB;
-    background: rgba(37, 99, 235, 0.05) !important;
+#adminmenu .wp-has-current-submenu .wp-submenu {
+    background-color: #1E293B !important;
 }
 
-/* Custom Icons for Submenus */
-#adminmenu a[href="admin.php?page=growthpress-studio"]::before { content: "✨ "; font-size: 10px; }
-#adminmenu a[href="admin.php?page=growthpress-settings"]::before { content: "⚙️ "; font-size: 10px; }
-
-/* Dashboard UI Glow-up */
-.growthpress-dashboard .glass-card {
-    border-left: 6px solid var(--primary);
+#adminmenu li.wp-has-submenu:hover {
+    background-color: #1E293B !important;
 }
 
-.growthpress-dashboard .stat:hover {
-    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.08);
-    transform: translateY(-4px);
-    border-color: var(--primary);
+#adminmenu .wp-menu-image:before {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+#adminmenu li.current .wp-menu-image:before {
+    color: #FFF !important;
+}
+
+/* Specific GrowthPress Dashboard Icon Glow */
+#toplevel_page_growthpress-dashboard .wp-menu-image:before {
+    color: var(--primary) !important;
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Hide Standard WP Admin Bar for cleaner feel in OS mode */
+#wpadminbar {
+    background: #FFF !important;
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+#wpadminbar .ab-item, #wpadminbar a.ab-item, #wpadminbar > #wp-toolbar span.ab-label, #wpadminbar > #wp-toolbar span.noticon {
+    color: #1E293B !important;
 }

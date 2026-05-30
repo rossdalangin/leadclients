@@ -1,13 +1,13 @@
 <div class="wrap growthpress-dashboard">
-    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px;">
+    <div class="dashboard-header">
         <div style="display:flex; align-items:center; gap:25px;">
             <?php $dash_logo = get_option('growthpress_dashboard_logo'); if($dash_logo): ?>
                 <img src="<?php echo esc_url($dash_logo); ?>" style="max-height:60px;">
             <?php else: ?>
-                <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.08em; margin:0;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.4;">OS</span></h1>
+                <h1 style="font-size:3rem; font-weight:950; letter-spacing:-0.08em; margin:0; line-height:1;"><?php echo esc_html(get_option('growthpress_brand_name', 'GrowthPress')); ?> <span style="font-weight:300; opacity:0.3;">OS</span></h1>
             <?php endif; ?>
-            <div style="height:35px; width:2px; background:rgba(0,0,0,0.1);"></div>
-            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="background:transparent; border:none; font-size:12px; font-weight:950; opacity:0.5; letter-spacing:3px; text-transform:uppercase; cursor:pointer;">
+            <div style="height:40px; width:1px; background:rgba(0,0,0,0.08);"></div>
+            <select id="gp-niche-switcher" onchange="switchNiche(this.value)" style="background:rgba(255,255,255,0.5); border:1px solid rgba(0,0,0,0.05); padding:10px 20px; border-radius:15px; font-size:11px; font-weight:950; letter-spacing:2px; text-transform:uppercase; cursor:pointer;">
                 <?php
                 $active_niche = get_option('growthpress_niche', 'business');
                 $niches = array('dental', 'law', 'contractor', 'roofing', 'solar', 'accounting', 'medical', 'real-estate', 'coaches', 'consultants');
@@ -61,12 +61,16 @@
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:30px;">
-                    <div style="background:#FFF; padding:40px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
-                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:20px;">CONVERSION TRAJECTORY</div>
+                    <div style="background:rgba(255,255,255,0.4); padding:40px; border-radius:40px; border: 1px solid rgba(255,255,255,0.8); box-shadow:inset 0 10px 30px rgba(0,0,0,0.02);">
+                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:30px; display:flex; align-items:center; gap:10px;">
+                            <div style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></div> CONVERSION TRAJECTORY
+                        </div>
                         <canvas id="gp-main-chart" height="150"></canvas>
                     </div>
-                    <div style="background:#FFF; padding:40px; border-radius:40px; border: 1px solid #F1F5F9; box-shadow:inset 0 10px 30px rgba(0,0,0,0.03);">
-                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:20px;">MARKETING VELOCITY</div>
+                    <div style="background:rgba(255,255,255,0.4); padding:40px; border-radius:40px; border: 1px solid rgba(255,255,255,0.8); box-shadow:inset 0 10px 30px rgba(0,0,0,0.02);">
+                        <div style="font-size:11px; font-weight:950; opacity:0.4; letter-spacing:1px; margin-bottom:30px; display:flex; align-items:center; gap:10px;">
+                            <div style="width:8px; height:8px; background:var(--accent); border-radius:50%;"></div> MARKETING VELOCITY
+                        </div>
                         <canvas id="gp-velocity-chart" height="230"></canvas>
                     </div>
                 </div>
@@ -103,12 +107,12 @@
                                     $staff_id = get_post_meta($lead->ID, '_assigned_staff', true);
                                     $staff = $staff_id ? get_userdata($staff_id) : null;
                                     ?>
-                                    <div class="kanban-card glass-card <?php echo $prob > 85 ? 'neural-pulse' : ''; ?>" data-id="<?php echo $lead->ID; ?>" style="padding:35px; border-radius:35px; border-left: 12px solid <?php echo $prob > 80 ? '#10B981' : 'var(--primary)'; ?>; margin-bottom:30px; position:relative;">
+                                    <div class="kanban-card glass-card <?php echo $prob > 85 ? 'neural-pulse' : ''; ?> gp-reveal" data-id="<?php echo $lead->ID; ?>" style="border-left: 12px solid <?php echo $prob > 80 ? '#10B981' : 'var(--primary)'; ?>;">
                                         <?php if($prob > 88): ?>
-                                            <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; font-size: 9px; font-weight: 950; padding: 6px 30px; transform: rotate(45deg) translate(25px, -25px); text-transform: uppercase; letter-spacing:1px; box-shadow:0 5px 15px rgba(239,68,68,0.3);">ELITE</div>
+                                            <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; font-size: 9px; font-weight: 950; padding: 6px 30px; transform: rotate(45deg) translate(25px, -25px); text-transform: uppercase; letter-spacing:1px; box-shadow:0 5px 15px rgba(239,68,68,0.3);">HOT</div>
                                         <?php endif; ?>
 
-                                        <strong style="display:block; margin-bottom:18px; font-size:20px; font-weight:950; letter-spacing:-0.04em;"><?php echo esc_html($lead->post_title); ?></strong>
+                                        <strong style="display:block; margin-bottom:15px; font-size:20px; font-weight:950; letter-spacing:-0.04em; color:var(--secondary);"><?php echo esc_html($lead->post_title); ?></strong>
 
                                         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                                             <div>
