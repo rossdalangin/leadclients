@@ -132,8 +132,14 @@ class GrowthPress_Booking {
         if ( $id ) {
             update_post_meta( $id, '_appointment_date', $data['date'] . ' ' . $data['time'] );
             update_post_meta( $id, '_staff_id', intval($data['staff_id']) );
+
+            // Create Invoice for Deposit
+            $payments = new GrowthPress_Payments();
+            $invoice_id = $payments->create_invoice(150, $id, 'booking');
+            update_post_meta($id, '_deposit_invoice_id', $invoice_id);
+
             do_action( 'gp_appointment_created', $id );
-            wp_send_json_success();
+            wp_send_json_success(array('appointment_id' => $id, 'invoice_id' => $invoice_id));
         }
         wp_send_json_error();
     }

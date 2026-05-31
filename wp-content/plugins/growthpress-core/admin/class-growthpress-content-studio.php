@@ -28,6 +28,11 @@ class GrowthPress_Content_Studio {
     public function handle_generation() {
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
+
+        if ( ! isset( $_POST['content_type'] ) || ! isset( $_POST['topic'] ) ) {
+            wp_send_json_error( 'Missing parameters' );
+        }
+
         $type = sanitize_text_field($_POST['content_type']);
         $topic = sanitize_text_field($_POST['topic']);
         $niche = get_option('growthpress_niche', 'business');

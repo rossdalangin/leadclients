@@ -38,10 +38,9 @@ class GrowthPress_API {
 
     public function handle_missed_call( $request ) {
         $from = $request->get_param('From');
-        $niche = get_option('growthpress_niche', 'business');
 
         $ai = GrowthPress_AI::get_instance();
-        $sms_body = $ai->generate_missed_call_reply($niche);
+        $sms_body = $ai->generate_missed_call_reply($from);
 
         GrowthPress_Activity::log( "Missed call from $from. AI response generated." );
 

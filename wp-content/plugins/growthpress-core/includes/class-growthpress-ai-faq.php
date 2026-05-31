@@ -124,15 +124,19 @@ class GrowthPress_AI_FAQ {
     }
 
     public function render_faq_assistant() {
+        $niche = get_option('growthpress_niche', 'business');
         return '<div class="glass-card gp-reveal" style="text-align:center; padding:80px 60px;">
             <h3 class="text-gradient" style="font-size:2.5rem;">24/7 Intelligence Terminal</h3>
-            <p style="font-size:1.2rem; opacity:0.7; margin-bottom:40px;">Our neural-calibrated assistant is ready to handle your specialized <?php echo get_option(\'growthpress_niche\', \'business\'); ?> inquiries.</p>
+            <p style="font-size:1.2rem; opacity:0.7; margin-bottom:40px;">Our neural-calibrated assistant is ready to handle your specialized ' . esc_html($niche) . ' inquiries.</p>
             <button onclick="jQuery(\'#gp-chat-launcher\').click()" class="gp-btn" style="height:70px; padding:0 50px; font-size:18px;">Initiate Assistant</button>
         </div>';
     }
 
     public function handle_faq_query() {
         check_ajax_referer('gp_ai_faq_nonce', 'nonce');
+        if ( ! isset( $_POST['query'] ) ) {
+            wp_send_json_error( 'Missing query' );
+        }
         $query = sanitize_text_field($_POST['query']);
         $niche = get_option('growthpress_niche', 'Business');
         $ai = GrowthPress_AI::get_instance();

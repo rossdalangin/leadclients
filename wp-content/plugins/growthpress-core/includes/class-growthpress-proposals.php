@@ -21,6 +21,8 @@ class GrowthPress_Proposals {
     private function __construct() {
         add_action( 'init', array( $this, 'register_proposal_cpt' ) );
         add_action( 'wp_ajax_gp_generate_ai_proposal', array( $this, 'handle_ai_proposal_generation' ) );
+        add_action( 'wp_ajax_gp_accept_proposal', array( $this, 'handle_proposal_acceptance' ) );
+        add_action( 'wp_ajax_nopriv_gp_accept_proposal', array( $this, 'handle_proposal_acceptance' ) );
     }
 
     public function register_proposal_cpt() {
@@ -64,6 +66,18 @@ class GrowthPress_Proposals {
 
         GrowthPress_Activity::log( "AI Proposal #$proposal_id generated for " . $lead->post_title );
         wp_send_json_success( "Proposal generated! ID: $proposal_id. Value: $$est_val" );
+    }
+
+    public function handle_proposal_acceptance() {
+        $proposal_id = intval($_POST['proposal_id']);
+        update_post_meta($proposal_id, '_proposal_status', 'Accepted');
+
+        $value = get_post_meta($proposal_id, '_proposal_value', true);
+        $payments = new GrowthPress_Payments();
+        $invoice_id = $payments->create_invoice($value, $proposal_id, 'proposal');
+
+        GrowthPress_Activity::log( "Proposal #$proposal_id accepted. Invoice #$invoice_id generated." );
+        wp_send_json_success(array('invoice_id' => $invoice_id));
     }
 
     public function get_pipeline_value() {

@@ -125,10 +125,17 @@ class GrowthPress_CRM {
     }
 
     public function handle_lead_submission() {
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) wp_send_json_error('Security failed.');
-        $name = sanitize_text_field($_POST['lead_name']);
-        $email = sanitize_email($_POST['lead_email']);
-        $msg = sanitize_textarea_field($_POST['lead_msg']);
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gp_lead_nonce' ) ) {
+            wp_send_json_error( 'Security failed.' );
+        }
+        $name  = isset( $_POST['lead_name'] ) ? sanitize_text_field( $_POST['lead_name'] ) : '';
+        $email = isset( $_POST['lead_email'] ) ? sanitize_email( $_POST['lead_email'] ) : '';
+        $msg   = isset( $_POST['lead_msg'] ) ? sanitize_textarea_field( $_POST['lead_msg'] ) : '';
+
+        if ( empty( $name ) || empty( $email ) ) {
+            wp_send_json_error( 'Required fields missing.' );
+        }
+
         $ai = GrowthPress_AI::get_instance();
         if ( $ai->is_spam($msg, $name, $email) ) wp_send_json_error("Flagged as spam.");
         $lead_id = wp_insert_post(array( 'post_title' => $name, 'post_content' => $msg, 'post_type' => 'gp_lead', 'post_status' => 'publish' ));
@@ -251,18 +258,41 @@ class GrowthPress_CRM {
 
     public function handle_add_note() {
         check_ajax_referer( 'gp_admin_nonce', 'gp_nonce' );
-        $notes = get_post_meta(intval($_POST['lead_id']), '_gp_internal_notes', true) ?: array();
-        $notes[] = array( 'user' => wp_get_current_user()->display_name, 'time' => current_time('mysql'), 'text' => sanitize_textarea_field($_POST['note']) );
-        update_post_meta(intval($_POST['lead_id']), '_gp_internal_notes', $notes);
+
+        if ( ! isset( $_POST['lead_id'] ) || ! isset( $_POST['note'] ) ) {
+            wp_send_json_error( 'Missing parameters' );
+        }
+
+        $lead_id = intval( $_POST['lead_id'] );
+        $notes   = get_post_meta( $lead_id, '_gp_internal_notes', true ) ?: array();
+        $notes[] = array(
+            'user' => wp_get_current_user()->display_name,
+            'time' => current_time( 'mysql' ),
+            'text' => sanitize_textarea_field( $_POST['note'] )
+        );
+        update_post_meta( $lead_id, '_gp_internal_notes', $notes );
         wp_send_json_success();
     }
 
     public function handle_behavior_logging() {
-        $leads = get_posts( array( 'post_type' => 'gp_lead', 'meta_key' => '_lead_email', 'meta_value' => sanitize_email($_POST['email']), 'number' => 1 ) );
-        if ( ! empty($leads) ) {
-            $log = get_post_meta($leads[0]->ID, '_behavior_log', true) ?: array();
-            $log[] = array('page' => sanitize_text_field($_POST['page']), 'time' => current_time('mysql'));
-            update_post_meta($leads[0]->ID, '_behavior_log', array_slice($log, -15));
+        if ( ! isset( $_POST['email'] ) || ! isset( $_POST['page'] ) ) {
+            wp_send_json_error( 'Missing parameters' );
+        }
+
+        $leads = get_posts( array(
+            'post_type'  => 'gp_lead',
+            'meta_key'   => '_lead_email',
+            'meta_value' => sanitize_email( $_POST['email'] ),
+            'number'     => 1
+        ) );
+
+        if ( ! empty( $leads ) ) {
+            $log   = get_post_meta( $leads[0]->ID, '_behavior_log', true ) ?: array();
+            $log[] = array(
+                'page' => sanitize_text_field( $_POST['page'] ),
+                'time' => current_time( 'mysql' )
+            );
+            update_post_meta( $leads[0]->ID, '_behavior_log', array_slice( $log, - 15 ) );
         }
         wp_send_json_success();
     }

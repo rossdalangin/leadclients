@@ -144,5 +144,14 @@ class GrowthPress_AI {
         $res = $this->call_ai("Is this spam: Content: \"$m\", Name: \"$n\", Email: \"$e\"? Return ONLY 'SPAM' or 'LEGIT'.", "Security Filter");
         return (trim($res) === 'SPAM');
     }
+
+    public function generate_proposal( $data ) {
+        $niche = isset($data['niche']) ? $data['niche'] : 'general';
+        return $this->call_ai( "Generate a professional business growth proposal for a {$niche} client.", "Proposal Architect" );
+    }
+
+    public function generate_missed_call_reply( $caller_number ) {
+        return $this->call_ai( "Generate a polite, professional SMS response for a missed business call from {$caller_number}.", "Customer Support AI" );
+    }
 }
 GrowthPress_AI::get_instance();
